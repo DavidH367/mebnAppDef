@@ -154,6 +154,7 @@ const Purchasing1 = () => {
                   <select
                     id="zona"
                     name="zona"
+                    defaultValue={"Zona"}
                     autoComplete="zona"
                     value={zona}
                     onChange={(e) => setZona(e.target.value)}
@@ -179,6 +180,7 @@ const Purchasing1 = () => {
                   <select
                     id="tipoCafe"
                     name="tipoCafe"
+                    defaultValue={"Tipo de Café"}
                     autoComplete="tipoCafe"
                     value={tipoCafe}
                     onChange={(e) => setTipoCafe(e.target.value)}

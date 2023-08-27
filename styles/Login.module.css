@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&family=Source+Serif+Pro:wght@300&display=swap');
+@import url('/public/GeorgiaPro/style.css');
+
+.loginLogo{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+h1.letras{
+    font-family: 'Georgia', sans-serif!important;
+    color: #e5ab51;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    font-size: 30px;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+h1.H{
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: 'Georgia', sans-serif!important;
+    color: #e5ab51;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    font-size: 17px;
+
+}
+.loginForm{
+    width: 70%;
+    min-height: 40vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    background-color: rgba(255, 255, 255, .7);
+    box-shadow: 0 0 5px #222;
+    padding: 30px 25px ;
+}
+.loginTitle{
+    margin: 20px 0 30px 0;
+}
+.btnLogin{
+    width: 65%;
+}
+.loginButtonContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 15px;
+}
+.lblRecoverPassword{
+    color: #2a1b75;
+    font-size: 16px;
+    word-spacing: 2px;
+    padding: 10px;
+}
+.passwordSubtitle{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+}
+
+/* password recovery styles */
+
+.recoverMainContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+
+}
+.recoverySections{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+}
+.recoverTitle{
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+}
+.recoverSubtitle{
+    font-weight: 100;
+    font-size: 15px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+.recoveryButtonContainer{
+    display: flex;
+    flex-direction: column;
+    min-height: 20vh;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+}
+.buttonsRecovery{
+    width: 80%;
+    font-size: 30px;
+}
+.introContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    text-align: center;
+}
