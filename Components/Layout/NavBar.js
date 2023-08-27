@@ -1,93 +1,88 @@
-import Image from "next/image";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { useAuth } from "../../lib/context/AuthContext";
+import React from "react";
+import {Link, Button} from "@nextui-org/react";
 
 import {
-  Avatar,
-  Dropdown,
-  Navbar as NextUINavbar,
-  Text,
-  Link,
-  Button,
-  Modal,
+  Navbar, 
+  NavbarBrand, 
+  NavbarContent, 
+  NavbarItem, 
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem
 } from "@nextui-org/react";
 
-export default function NavBar() {
-  
-  return <div className="navbar bg-base-100">
-  <div className="navbar-start">
-    <div className="dropdown">
-      <label tabIndex={0} className="btn btn-ghost lg:hidden">
-      </label>
-      <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        <li><a>Inicio</a></li>
-        <li>
-          <Link href= "../purchasing" color="secondary">
-            Compras
+export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const menuItems = [
+    "Profile",
+    "Dashboard",
+    "Activity",
+    "Analytics",
+    "System",
+    "Deployments",
+    "My Settings",
+    "Team Settings",
+    "Help & Feedback",
+    "Log Out",
+  ];
+
+  return (
+    <Navbar onMenuOpenChange={setIsMenuOpen}>
+      <NavbarContent>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden"
+        />
+        <NavbarBrand>
+          
+          <p className="font-bold text-inherit">ACME</p>
+        </NavbarBrand>
+      </NavbarContent>
+
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            Features
           </Link>
-        </li>
-        <li>
-        <Link href="../sales" >
-          Ventas
-        </Link>
-        </li>
-        <li>
-        <Link href="../supliers" >
-          Inversionistas
-        </Link>
-        </li>
-        <li>
-          <Link href="../intake_control" >
-            Control de Ingreso de Cafe
+        </NavbarItem>
+        <NavbarItem isActive>
+          <Link href="#" aria-current="page">
+            Customers
           </Link>
-        </li>
-        <li>
-          <Link href="../intake_control" >
-            Control de Ganacia y Rendimiendo
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            Integrations
           </Link>
-        </li>
-      </ul>
-    </div>
-    <a className="btn btn-ghost normal-case text-xl">G-Café</a>
-  </div>
-  <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
-      <li><a>Inicio</a></li>
-      <li className ="compra compra-accent" >
-        <Link href="../purchasing" >
-          Compras
-        </Link>
-      </li>
-      <li>
-        <Link href="../sales" >
-          Ventas
-        </Link>
-      </li>
-      <li>
-      <Link href="../supliers" >
-          Inversionistas
-      </Link>
-      </li>
-      <li>
-      <Link href="../intake_control" >
-        Control de Ingreso de Cafe
-      </Link>
-      </li>
-      <li>
-        <Link href="../intake_control" >
-          Control de Ganacia y Rendimiendo
-        </Link>
-      </li>
-      
-    </ul>
-  </div>
-  <div className="navbar-end">
-  <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-        <div className="w-20 rounded-full">
-          <img src="../img/perfil.jpg" />
-        </div>
-      </label>
-  </div>
-</div>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarItem className="hidden lg:flex">
+          <Link href="#">Login</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Button as={Link} color="primary" href="#" variant="flat">
+            Sign Up
+          </Button>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarMenu>
+        {menuItems.map((item, index) => (
+          <NavbarMenuItem key={`${item}-${index}`}>
+            <Link
+              color={
+                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+              }
+              className="w-full"
+              href="#"
+              size="lg"
+            >
+              {item}
+            </Link>
+          </NavbarMenuItem>
+        ))}
+      </NavbarMenu>
+    </Navbar>
+  );
 }
