@@ -187,7 +187,6 @@ export const EmailInput = ({
         {label}
       </p>
       <Input
-        isClearable={!isDisabled}
         variant="bordered"
         aria-label="Text input"
         type={type}
@@ -198,7 +197,7 @@ export const EmailInput = ({
         }}
         disabled={isDisabled}
         fullWidth
-        size="lg"
+        size="xl"
         startContent={
           <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }
@@ -224,7 +223,6 @@ export const PasswordInput = ({
         {label}
       </p>
       <Input
-        isClearable
         variant="bordered"
         aria-label="Text input"
         type={showPassword ? "text" : "password"}
@@ -234,7 +232,7 @@ export const PasswordInput = ({
           setValue(e.target.value);
         }}
         fullWidth
-        size="lg"
+        size="xl"
         startContent={
           <UserIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }

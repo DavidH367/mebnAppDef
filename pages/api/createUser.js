@@ -7,8 +7,6 @@ export default async function handler(req, res) {
     firstName,
     lastName,
     cellphone,
-    hospital,
-    campaign,
     role,
     state,
     adminRegister,
@@ -27,8 +25,6 @@ export default async function handler(req, res) {
       firstName: firstName,
       lastName: lastName,
       cellphone: cellphone,
-      hospital: hospital,
-      campaign: campaign,
       user_role: role,
       user_state: state,
       user_code: userId,
@@ -37,7 +33,7 @@ export default async function handler(req, res) {
     });
     res
       .status(201)
-      .json({ success: true, message: "User created successfully" });
+      .json({ success: true, message: "Usuario creado con éxito" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: error.message });

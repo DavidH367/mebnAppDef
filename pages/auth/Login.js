@@ -44,7 +44,7 @@ return (
                 justifyContent: "center",
                 minHeight: "100vh",
             }}>
-            <Card style={{padding: "30px", paddingBottom:"40px"}}>
+            <Card style={{padding: "45px"}}>
                 <div className={styles.loginLogo}>
                     <Image
                         width={110}
