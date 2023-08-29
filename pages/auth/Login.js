@@ -44,7 +44,9 @@ return (
                 justifyContent: "center",
                 minHeight: "100vh",
             }}>
-            <Card style={{padding: "45px"}}>
+            <Card 
+                isBlurred
+                style={{padding: "45px 45px 45px 45px"}}>
                 <div className={styles.loginLogo}>
                     <Image
                         width={110}
@@ -54,18 +56,26 @@ return (
                     />
                 </div>
                 <h1 style={{ textAlign: "center", fontWeight: "bold", fontSize: "24px",padding: "10px"}}>Inicio de Sesión</h1>
-                <EmailInput
-                    label="Correo Electrónico"
-                    value={email}
-                    type="email"
-                    setValue={setEmail}
-                    className="login-input"/>
-                <PasswordInput
-                    label="Contraseña"
-                    value={password}
-                    type="password"
-                    setValue={setPassword}
-                    className={"login-input"}/>
+                <div className="w-60">
+                    <div>
+                        <EmailInput
+                            label="Correo Electrónico"
+                            value={email}
+                            type="email"
+                            setValue={setEmail}
+                            className="login-input"/>
+                    </div>
+                    <div>
+                        <PasswordInput
+                            label="Contraseña"
+                            value={password}
+                            type="password"
+                            setValue={setPassword}
+                            className={"login-input"}/>
+                    </div>
+                    
+                    
+                </div>
             </Card>
             <div className={styles.loginButtonContainer}>
                 {/* {loading && <Spinner type="points-opacity" style={{ margin: "20px" }} />}

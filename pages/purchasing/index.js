@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs } from 'firebase/firestore';
-import PurchasesTable from '../../Components/Layout/PurchasesTable';
+import PurchasesTable from '../../Components/Form/PurchasesTable';
 import { Input } from '@nextui-org/react';
 
 const purchasesRef = collection(db, 'purchases');

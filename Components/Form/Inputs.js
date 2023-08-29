@@ -197,7 +197,7 @@ export const EmailInput = ({
         }}
         disabled={isDisabled}
         fullWidth
-        size="xl"
+        size="md"
         startContent={
           <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }
@@ -232,7 +232,7 @@ export const PasswordInput = ({
           setValue(e.target.value);
         }}
         fullWidth
-        size="xl"
+        size="md"
         startContent={
           <UserIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }

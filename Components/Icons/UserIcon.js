@@ -25,14 +25,7 @@ export const UserIcon = ({
         strokeMiterlimit={10}
         strokeWidth={1.5}
     >
-        <path
-            data-name="Stroke 1"
-            d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
-        />
-        <path
-            data-name="Stroke 3"
-            d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
-        />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
     </g>
     </svg>
 );
