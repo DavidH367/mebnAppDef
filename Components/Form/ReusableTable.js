@@ -1,0 +1,144 @@
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+} from '@nextui-org/react'; // Importa las librerías necesarias aquí
+import React, { useState, useEffect } from 'react';
+import {Pagination, PaginationItem, PaginationCursor} from "@nextui-org/react";
+
+
+const ITEMS_PER_PAGE = 15; // Cantidad de elementos por página
+
+const ReusableTable = ({ data, columns }) => {
+
+  const [currentPage, setCurrentPage] = useState(1);
+  // Calcula el índice de inicio y fin para mostrar los elementos en la página actual
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = currentPage * ITEMS_PER_PAGE;
+  const itemsToShow = data.slice(startIndex, endIndex);
+  const pages = Math.ceil(data.length / ITEMS_PER_PAGE);
+
+const [sorting, setSorting] = useState({
+  column: null,
+  direction: "asc", // Puedes establecer "asc" (ascendente) como valor predeterminado
+});
+
+const handleColumnClick = (field) => {
+  if (field === sorting.column) {
+    // Si se hizo clic en la misma columna, cambia la dirección de clasificación
+    setSorting({
+      ...sorting,
+      direction: sorting.direction === "asc" ? "desc" : "asc",
+    });
+  } else {
+    // Si se hizo clic en una columna diferente, cambia la columna y restablece la dirección de clasificación a "asc"
+    setSorting({
+      column: field,
+      direction: "asc",
+    });
+  }
+};
+
+const onNextPage = React.useCallback(() => {
+    if (currentPage < pages) {
+      setCurrentPage(currentPage + 1);
+    }
+  }, [currentPage, pages]);
+
+  const onPreviousPage = React.useCallback(() => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentPage]);
+    return (
+      <div>
+        <Table aria-label="Example table with custom cells, pagination and sorting"
+          isHeaderSticky
+          classNames={{
+            wrapper: "max-h-[382px]",
+          }}
+          topContentPlacement="outside"
+        >
+          <TableHeader>
+            {columns.map((column, index) => (
+              <TableColumn
+                align={index === "actions" ? "center" : "start"}
+                allowsSorting={index.sortable}
+                
+                key={index}
+                className={`font-bold text-sm w-${100 / columns.length}/10`}
+                onClick={() => handleColumnClick(column.field)}
+                  // Cambia el estilo para indicar la dirección de clasificación actual
+                style={{ cursor: "pointer", textDecoration: column.field === sorting.column ? "underline" : "none" }}
+    
+              >
+              {column.title}
+              </TableColumn>
+            ))}
+          </TableHeader>    
+          <TableBody>
+          {itemsToShow
+              .sort((a, b) => {
+                if (sorting.column) {
+                  const aValue = a[sorting.column];
+                  const bValue = b[sorting.column];
+
+                  // Verificar si los valores son cadenas antes de ordenar
+                  if (typeof aValue === 'string' && typeof bValue === 'string') {
+                    if (sorting.direction === "asc") {
+                      return aValue.localeCompare(bValue);
+                    } else {
+                      return bValue.localeCompare(aValue);
+                    }
+                  } else {
+                    // Si los valores no son cadenas, no los ordenes y devuelve 0
+                    return 0;
+                  }
+                }
+                return 0;
+              })
+            .map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((column, columnIndex) => {
+                  const cellValue =
+                  column.field === 'date' && row[column.field]
+                  ? row[column.field].toDate().toLocaleDateString()
+                  : row[column.field];
+                  return <TableCell key={columnIndex}>{cellValue}</TableCell>;
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+          <div className="py-2 px-2 flex justify-between items-center">
+          <span className="w-[30%] text-small text-default-400 "> 
+          </span>
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="primary"
+              total={pages} // Calcula el total de páginas
+              page={currentPage}
+              onChange ={(newPage) =>{
+                setCurrentPage(newPage);
+              }}
+            />
+            <div className="hidden sm:flex w-[30%] justify-end gap-2">
+              <Button isDisabled={startIndex === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                Previous
+              </Button>
+              <Button isDisabled={endIndex === 1} size="sm" variant="flat" onPress={onNextPage}>
+                Next
+              </Button>
+            </div>
+          </div>
+      </div>
+    );
+  };
+  
+  export default ReusableTable;
