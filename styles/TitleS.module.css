@@ -1,0 +1,18 @@
+.title {
+    font-family: 'Source Serif Pro', serif !important;
+    font-Size: 2.5vw;
+    text-shadow: 0.1px 0.5px 1px rgb(45, 62, 80) !important;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .title {
+      font-size: 1.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+        font-Size: 5.2vw;
+    }
+  }  

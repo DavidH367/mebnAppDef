@@ -4,6 +4,7 @@ import styles from "../../styles/Login.module.css";
 import Head from "next/head";
 import { Card, Link, Spinner, Image } from "@nextui-org/react";
 import { PrimaryButton } from "../../Components/Form/Buttons";
+import { useAuth } from "../../lib/context/AuthContext";
 import { EmailInput, PasswordInput } from "../../Components/Form/Inputs";
 import { ValidateEmail } from "../../lib/Validators";
 
@@ -11,14 +12,19 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false)
-    //const {login, errors, setErrors, user } = useAuth();
+    const {login, errors, setErrors, user } = useAuth();
     const router = useRouter();
+    useEffect(() => {
+        if (user) {
+            router.push("/index.js");
+        }
+    });
     const loginUser = async () =>{
         setErrors("")
         setLoading(true)
-        //validate email
+        //Validar email
         if (!ValidateEmail(email)){
-            setErrors("Correo electrónico no válido")
+            setErrors({ code: 1, message: "Correo electrónico no válido" });
             setLoading(false)
             return
         }
@@ -42,10 +48,9 @@ return (
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: "100vh",
+                minHeight: "90vh",
             }}>
             <Card 
-                isBlurred
                 style={{padding: "45px 45px 45px 45px"}}>
                 <div className={styles.loginLogo}>
                     <Image
@@ -57,13 +62,15 @@ return (
                 </div>
                 <h1 style={{ textAlign: "center", fontWeight: "bold", fontSize: "24px",padding: "10px"}}>Inicio de Sesión</h1>
                 <div className="w-60">
-                    <div>
+                    <div style={{marginBottom:"20px"}}>
                         <EmailInput
                             label="Correo Electrónico"
                             value={email}
                             type="email"
                             setValue={setEmail}
-                            className="login-input"/>
+                            className="login-input"
+                            errorMessage={errors.code === 1 ? errors.message : ""}
+                        />
                     </div>
                     <div>
                         <PasswordInput
@@ -71,18 +78,24 @@ return (
                             value={password}
                             type="password"
                             setValue={setPassword}
-                            className={"login-input"}/>
+                            className={"login-input"}
+                            errorMessage={errors.code === 2 ? errors.message : ""}
+                        />
                     </div>
                     
                     
                 </div>
             </Card>
             <div className={styles.loginButtonContainer}>
-                {/* {loading && <Spinner type="points-opacity" style={{ margin: "20px" }} />}
-                {errors && <span className="form-errors">{errors}</span>} */}
+                {loading && <Spinner label="Iniciando sesión..." color="primary" />}
+                {errors && (
+                    <span className="form-errors">
+                    {errors.code === 3 ? errors.message : ""}
+                    </span>
+                )}
                 <PrimaryButton
                     text="Iniciar Sesión"
-                    // onClick={loginUser}
+                    onClick={loginUser}
                     className={styles.btnLogin}/>
                 <p className={styles.passwordSubtitle}>
                     {/* ¿Olvidaste tu Contraseña? */}

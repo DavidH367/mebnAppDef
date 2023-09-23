@@ -174,65 +174,64 @@ export const SearchTextInput = ({
 
 export const EmailInput = ({
   label,
-  placeholder,
   type,
   value,
   setValue,
   isDisabled,
+  errorMessage,
+  isRequired,
   className: customClassName,
 }) => {
   return (
-    <>
-      <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-        {label}
-      </p>
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        variant="bordered"
         aria-label="Text input"
         type={type}
-        placeholder={placeholder}
-        initialValue={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        value={value}
+        onValueChange={setValue}
         disabled={isDisabled}
-        fullWidth
-        size="md"
+        variant="bordered"
+        className="form-inputs"
+        size="lg"
+        isRequired={isRequired !== null ? isRequired : false}
+        validationState={errorMessage ? "invalid" : "valid"}
+        errorMessage={errorMessage}
+        label={label}
         startContent={
           <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }
       />
-      <span className="form-errors"></span>
-    </>
+    </div>
   );
 };
 
 import { useState } from "react";
 export const PasswordInput = ({
   label,
-  placeholder,
+  errorMessage,
   value,
   setValue,
   isDisabled,
   className: customClassName,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   return (
-    <>
-      <p style={{ marginTop: "20px", fontWeight: "bold"  }}>
-        {label}
-      </p>
+    <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        variant="bordered"
         aria-label="Text input"
-        type={showPassword ? "text" : "password"}
-        placeholder={placeholder}
         value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
-        fullWidth
-        size="md"
+        onValueChange={setValue}
+        disabled={isDisabled}
+        variant="bordered"
+        className="form-inputs"
+        size="lg"
+        errorMessage={errorMessage}
+        validationState={errorMessage ? "invalid" : "valid"}
+        type={showPassword ? "text" : "password"}
+        label={label}
         startContent={
           <UserIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0"/>
         }
@@ -241,13 +240,10 @@ export const PasswordInput = ({
         aria-label="Text input"
         type="checkbox"
         size="xs"
-        style={{ marginTop: "10px" }}
-        onClick={() => {
-          setShowPassword(!showPassword);
-        }}
+        onClick={toggleShowPassword}
       >
-        Mostrar Contraseña
+        {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
       </Checkbox>
-    </>
+    </div>
   );
 };

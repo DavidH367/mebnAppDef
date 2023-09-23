@@ -1,4 +1,8 @@
+import { useRouter } from "next/router";
+import { useAuth } from "../../lib/context/AuthContext";
+import { useState } from "react";
 import React from "react";
+import Head from "next/head";
 import {
   Navbar, 
   NavbarBrand, 
@@ -13,9 +17,24 @@ import {
   Avatar, 
   NavbarMenu, 
   NavbarMenuItem,
-  Button} from "@nextui-org/react";
+  Divider,
+  Button,
+} from "@nextui-org/react";
 
 export default function App() {
+  const { logout, user } = useAuth();
+  const localUser = JSON.parse(localStorage.getItem("user"));
+  const router = useRouter();
+  const { pathname } = router;
+  //const routeSplit = pathname.split("/")[1];
+  const handleLogout = async () => {
+    localStorage.removeItem("user");
+    const logoutUser = await logout();
+    if (logoutUser) {
+      router.push("/auth/Login");
+      return;
+    }
+  };
   const menuItems = [
     "Profile",
     "Dashboard",
@@ -69,19 +88,41 @@ export default function App() {
               isBordered
               as="button"
               className="transition-transform"
-              color="secondary"
-              name="Jason Hughes"
-              size="xl"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+              color={"secondary"}
+              size="md"
+              name={
+                `${localUser.firstName}` ?? "USER"
+              }
             />
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+          <DropdownMenu aria-label="Profile Actions" variant="flat" css={{ alignTtems: "center"}}>
+            <DropdownItem 
+              key="team_settings" 
+              className="h-14 gap-2" 
+              css={{ height: "fit-content", alignTtems: "center" }}
+              color="primary">
+              {localUser && (
+                <>
+                  <p className="font-semibold">Conectado como: {localUser.role}</p>
+                  <p className="font-semibold">{`${localUser.firstName} ${localUser.lastName}` ?? "Usuario"}</p>
+                  <p className="font-semibold">{localUser.email}</p>
+                </>
+              )}
+              
             </DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="team_settings">Team Settings</DropdownItem>
+            <Divider></Divider>
+            <DropdownItem 
+                withDivider
+                css={{ marginBottom: "$8" }}
+                textValue="logout section"
+                key="logout" 
+                color="danger">
+                  <Button
+                    onPress={handleLogout}
+                    color="primary">
+                      Cerrar Sesión
+                  </Button>
+              </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
