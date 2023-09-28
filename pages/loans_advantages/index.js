@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import React, { useCallback } from 'react';
 
+import  NavBar  from '../../Components/Layout/NavBar';
 
 import {
   Table,

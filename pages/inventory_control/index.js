@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { addDoc, collection, query, getDocs, orderBy} from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, orderBy } from 'firebase/firestore';
 import ReusableTable from '../../Components/Form/ReusableTable';
 import FilterSection from '../../Components/Form/FilterSectionI';
 import { columns } from "./datas";
-import {Divider} from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
 import Estados from '@/Components/Form/stats';
+import  NavBar  from '../../Components/Layout/NavBar';
 
 const invRef = collection(db, 'inventories');
 
@@ -24,13 +25,13 @@ const IntakeControl = () => {
   //mostrar datos
   useEffect(() => {
     const fetchData = async () => {
-      const q = query(collection(db, "inventories"), orderBy('date','desc'));
+      const q = query(collection(db, "inventories"), orderBy('date', 'desc'));
       const querySnapshot = await getDocs(q);
 
       const inventoriesData = [];
       let indexs = 1;
       querySnapshot.forEach((doc) => {
-        inventoriesData.push({ ...doc.data(), Inventories_id: doc.id, indexs: indexs++});
+        inventoriesData.push({ ...doc.data(), Inventories_id: doc.id, indexs: indexs++ });
       });
       setData(inventoriesData);
       setFilteredData(inventoriesData); // Inicializa los datos filtrados con los datos originales
@@ -45,19 +46,25 @@ const IntakeControl = () => {
     );
     setFilteredData(filtered);
   };
-  
 
-  return( 
-  <div class="grid grid-cols-1 divide-y">
+
+  return (
+    
     <div>
-       <Estados />
+      <NavBar/>
+      <div className="grid grid-cols-1 divide-y" >
+      <div>
+        <Estados/>
+      </div>
+      <div >
+        <div className="container mx-auto p-4 justify-center items-center h-screen">
+          <h1>Control de Inventario de Cafe</h1>
+          <ReusableTable data={filteredData} columns={columns} />
+        </div>
+      </div>
     </div>
-    <div>
-      <h1 className=''>Control de Inventario de Cafe</h1>
-      <ReusableTable data={filteredData} columns={columns}/> 
     </div>
-  </div>
-  
+
   );
 };
 

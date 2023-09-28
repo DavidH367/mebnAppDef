@@ -11,13 +11,13 @@ export const zonas = [
 
 export const tipoC = [
     {label: "Café en Uva", value: "Café en Uva"},
-    {label: "Pergamino Seco", value: "Pergamino Seco"},
     {label: "Pergamino Humedo", value: "Pergamino Humedo"},
     {label: "Pergamino Mojado", value: "Pergamino Mojado"},
 ];
 
 export const columns = [
     { title: 'N° Transaccion', field: 'n_transaction' },
+    { title: 'RTN o ID', field: 'rtn' },
     { title: 'NOMBRE', field: 'name' },
     { title: 'APELLIDO', field: 'last_name' },
     { title: 'ZONA', field: 'zone' },

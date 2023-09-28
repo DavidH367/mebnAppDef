@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 import {Pagination, PaginationItem, PaginationCursor} from "@nextui-org/react";
 
 
-const ITEMS_PER_PAGE = 15; // Cantidad de elementos por página
+const ITEMS_PER_PAGE = 100; // Cantidad de elementos por página
 
 const ReusableTable = ({ data, columns }) => {
 
@@ -58,9 +58,9 @@ const onNextPage = React.useCallback(() => {
       <div>
         <Table aria-label="Example table with custom cells, pagination and sorting"
           isHeaderSticky
-          classNames={{
-            wrapper: "max-h-[382px]",
-          }}
+          // classNames={{
+          //   wrapper: "max-h-[382px]",
+          // }}
           topContentPlacement="outside"
         >
           <TableHeader>

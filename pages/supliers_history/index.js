@@ -5,7 +5,7 @@ export default function Providers() {
   
   return <div>
     <NavBar/>
-  <h1>Proveedores</h1>
+  <h1>Historial de Proveedores</h1>
   
 </div>
 }

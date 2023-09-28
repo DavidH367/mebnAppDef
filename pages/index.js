@@ -10,8 +10,6 @@ const NavBar = dynamic(
 
   const Home = () => (
     <div>
-      
-      {/* Esto no será pre-renderizado */}
       <NavBar />
     </div>
   );

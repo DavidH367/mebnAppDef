@@ -6,14 +6,20 @@ import ReusableTable from '../../Components/Form/ReusableTable';
 import FilterSection from '../../Components/Form/FilterSectionP.js'; // Asegúrate de ajustar la ruta correcta
 import { zonas, tipoC, columns } from './datas';
 import { Input, Select, SelectItem } from '@nextui-org/react';
+import  NavBar  from '../../Components/Layout/NavBar';
+import  VerPDFButton  from '../../Components/Form/PDFButton';
 
 const purchasesRef = collection(db, 'purchases');
 const invRef = collection(db, 'inventories');
 
+
+
 const Purchasing1 = () => {
-  
+  //datos para factura
+
   //usos de datos
   const [purchases, fetchPurchases] = useState([]);
+  const [rtn, setRTN] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [zona, setZona] = useState('');
@@ -30,30 +36,6 @@ const Purchasing1 = () => {
   const [formValid, setFormValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    const fetchPurchases = async () => {
-    const q = query(collection(db, "purchases"), orderBy('date','desc'));
-    const querySnapshot = await getDocs(q);
-
-    const purchaseData = [];
-      let indexs = 1;
-      querySnapshot.forEach((doc) => {
-        purchaseData.push({ ...doc.data(),indexs: indexs++ });
-    });
-      setData(purchaseData);
-      setFilteredData(purchaseData); // Inicializa los datos filtrados con los datos originales
-    };
-    fetchPurchases();
-  }, []);
-
-  
-  
-  const applyFilter = (value) => {
-    const filtered = data.filter(
-      item => item.name.toLowerCase().includes(value.toLowerCase()),
-    );
-    setFilteredData(filtered);
-  };
   //fin del filtro
 
   // Función para guardar datos
@@ -66,8 +48,6 @@ const Purchasing1 = () => {
       setErrorMessage('Por favor, complete todos los campos obligatorios.');
       return; // No enviar el formulario si falta algún campo obligatorio
     }
-    
-    
 
     try{
        // Obtener el último valor de "n_transaction"
@@ -96,10 +76,11 @@ const Purchasing1 = () => {
         } else {
           newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
         }
-
+        const rtnValue = rtn || "CF";
         // Incrementar el valor de "n_transaction" para el nuevo documento
 
       const newData = {
+            rtn: rtnValue,
             name: nombre,
             last_name: apellido,
             zone: zona,
@@ -112,6 +93,7 @@ const Purchasing1 = () => {
           };
 
           const newInvData = {
+            rtn: rtnValue,
             tran_type: 'COMPRA',  
             coffee_type: tipoCafe,
             value: parseFloat(precio),
@@ -122,11 +104,49 @@ const Purchasing1 = () => {
           };
 
       await addDoc(purchasesRef, newData)
+      await addDoc(invRef, newInvData)
+      
+      // Obtener los datos recién guardados desde Firestore
+        const querySnapshot = await getDocs(query(collection(db, "purchases"), orderBy('date', 'desc')));
+        const purchaseData4 = [];
+        let indexs = 1;
+        querySnapshot.forEach((doc) => {
+          purchaseData4.push({ ...doc.data(), indexs: indexs++ });
+        });
+
+      const pdfBlob = await PDFDocument({
+            nombre,
+            apellido,
+            zona,
+            tipoCafe,
+            precio,
+            quintales,
+            peso,
+            purchases: purchaseData4, // Pasa los datos de las compras al generador de PDF
+          });
+
+    // Guarda el PDF en una ubicación accesible (puedes cambiar la ruta según tus necesidades)
+    // Ejemplo usando FileSaver.js (asegúrate de importar FileSaver.js en tu proyecto)
+    saveAs(pdfBlob, 'factura.pdf');
 
       
-      await addDoc(invRef, newInvData)
-        
+
+      // Generar el PDF con los datos obtenidos
+    
+
+    saveAs(pdfBlob, 'factura.pdf');
+      //await fetchPurchases();
+
+      
+
+      
+
+      // Guarda el PDF en una ubicación accesible (puedes cambiar la ruta según tus necesidades)
+    // Ejemplo usando FileSaver.js (asegúrate de importar FileSaver.js en tu proyecto)
+    
+   
           // Limpiar los campos del formulario después de guardar
+          setRTN('');
           setNombre('');
           setApellido('');
           setZona('');
@@ -136,10 +156,17 @@ const Purchasing1 = () => {
           setPeso('');
           
           // Actualizar la lista de compras
-          fetchPurchases();
+          
+          // Actualizar la lista de compras
+        setData(purchaseData);
+        setFilteredData(purchaseData);
           // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
-          alert('Compra realizada');
-        
+          
+          
+            // Guarda el PDF en una ubicación accesible
+            
+          
+        alert('Compra realizada');
         }catch(error) {
           console.error('Error al guardar los datos:', error);
         };
@@ -148,8 +175,11 @@ const Purchasing1 = () => {
         setFormValid(true);
         setErrorMessage('');
   }
+
   return (
-    <div className="container mx-auto flex justify-center items-center h-screen">
+    <div>
+      <NavBar />
+      <div className="container mx-auto flex justify-center items-center h-screen">
       <div className=" container mx-auto p-6 justify-center items-center h-screen ">
         <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
           <h2 className="text-lg font-semibold mb-2 ">
@@ -160,6 +190,26 @@ const Purchasing1 = () => {
           <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
             <form onSubmit={handleSubmit} >
               <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
+                
+                <div className="sm:col-span-1">
+                <label htmlFor="rtn" className=" block text-sm font-medium leading-6 text-gray-900">
+                  <p className='font-bold text-lg'>
+                    RTN
+                  </p>
+                </label>
+                <div className="mt-2 pr-4">
+                  <Input
+
+                    type="text"
+                    label="RTN"
+                    id="rtn"
+                    value={rtn}
+                    onChange={(e) => setRTN(e.target.value)}
+                    className="max-w-xs"
+                  />
+                </div>
+               </div>
+                
                 <div className="sm:col-span-1">
                   <label htmlFor="nombre" className=" block text-sm font-medium leading-6 text-gray-900">
                     <p className='font-bold text-lg'>
@@ -335,21 +385,19 @@ const Purchasing1 = () => {
                     type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
                   > 
                     Guardar
-                  </button>            
+                    
+                  </button>
+                  <VerPDFButton />
+
+                             
               </div>
+              
             </form>
         </div> 
-          <div className="grid h-80 card bg-base-200 rounded-box place-items-top flex-grow">
-            <h1 className="text-2xl font-semibold mb-4 " >
-              <p className='text-center'>
-                INFORMACION DE COMPRAS
-              </p>
-            </h1>
-            <FilterSection onFilter={applyFilter} />
-            <ReusableTable data={filteredData} columns={columns}/>
-          </div>
+          
     </div>
   </div>
+    </div>
     
   );
 };

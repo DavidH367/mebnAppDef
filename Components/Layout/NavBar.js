@@ -1,30 +1,27 @@
 import React from "react";
-import {Link, Button} from "@nextui-org/react";
+import { Link, Button } from "@nextui-org/react";
 
 import {
-  Navbar, 
-  NavbarBrand, 
-  NavbarContent, 
-  NavbarItem, 
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem
 } from "@nextui-org/react";
 
-export default function App() {
+const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    { text: "Resumen", url: "../" },
+    { text: "Compras", url: "/purchasing" },
+    { text: "Ventas", url: "/sales" },
+    { text: "Proveedores", url: "/supliers" },
+    { text: "Consultas", url: "/searches" },
+    
+    
   ];
 
   return (
@@ -35,50 +32,58 @@ export default function App() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          
-          <p className="font-bold text-inherit">ACME</p>
+          <p className="font-bold text-inherit">BODEGA - GAD</p>
         </NavbarBrand>
+
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
+          <Link color="foreground" href="../">
+            Resumen
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
+        <NavbarItem >
+          <Link href="/purchasing" color="foreground" aria-current="page">
+            Compras
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
+          <Link color="foreground" href="/sales">
+            Ventas
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/supliers">
+            Proveedores
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/searches">
+          Consultas
+          </Link>
+        </NavbarItem>
+        
       </NavbarContent>
+
+
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
+
       </NavbarContent>
+
+
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem key={`${item.text}-${index}`}>
             <Link
               color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+                index === 0 ? "primary" : index === menuItems.length - 0 ? "normal" : "foreground"
               }
               className="w-full"
-              href="#"
+              href={item.url}
               size="lg"
             >
-              {item}
+              {item.text}
             </Link>
           </NavbarMenuItem>
         ))}
@@ -86,3 +91,5 @@ export default function App() {
     </Navbar>
   );
 }
+
+export default NavBar;
