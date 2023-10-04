@@ -71,7 +71,7 @@ const Purchasing1 = () => {
         let newBalance2;
         if (!querySnapshot2.empty) {
           querySnapshot2.forEach((doc) => {
-            newBalance2 = doc.data().balance + parseFloat(precio);
+            newBalance2 = doc.data().balance + parseFloat(precio).toFixed(2);
           });
         } else {
           newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
@@ -85,9 +85,9 @@ const Purchasing1 = () => {
             last_name: apellido,
             zone: zona,
             coffee_type: tipoCafe,
-            total: parseFloat(precio),
-            bags: parseFloat(quintales),
-            weight: parseFloat(peso),
+            total: parseFloat(precio).toFixed(2),
+            bags: parseFloat(quintales).toFixed(2),
+            weight: parseFloat(peso).toFixed(2),
             date: new Date(), // Guardar la fecha actual en Firebase
             n_transaction: numTrans,
           };
@@ -96,8 +96,8 @@ const Purchasing1 = () => {
             rtn: rtnValue,
             tran_type: 'COMPRA',  
             coffee_type: tipoCafe,
-            value: parseFloat(precio),
-            weight: parseFloat(peso),
+            value: parseFloat(precio).toFixed(2),
+            weight: parseFloat(peso).toFixed(2),
             date: new Date(), // Guardar la fecha actual en Firebase
             n_transaction: numTrans,
             balance: newBalance2,
@@ -114,34 +114,7 @@ const Purchasing1 = () => {
           purchaseData4.push({ ...doc.data(), indexs: indexs++ });
         });
 
-      const pdfBlob = await PDFDocument({
-            nombre,
-            apellido,
-            zona,
-            tipoCafe,
-            precio,
-            quintales,
-            peso,
-            purchases: purchaseData4, // Pasa los datos de las compras al generador de PDF
-          });
-
-    // Guarda el PDF en una ubicación accesible (puedes cambiar la ruta según tus necesidades)
-    // Ejemplo usando FileSaver.js (asegúrate de importar FileSaver.js en tu proyecto)
-    saveAs(pdfBlob, 'factura.pdf');
-
       
-
-      // Generar el PDF con los datos obtenidos
-    
-
-    saveAs(pdfBlob, 'factura.pdf');
-      //await fetchPurchases();
-
-      
-
-      
-
-      // Guarda el PDF en una ubicación accesible (puedes cambiar la ruta según tus necesidades)
     // Ejemplo usando FileSaver.js (asegúrate de importar FileSaver.js en tu proyecto)
     
    
@@ -155,16 +128,8 @@ const Purchasing1 = () => {
           setQuintales('');
           setPeso('');
           
-          // Actualizar la lista de compras
-          
-          // Actualizar la lista de compras
-        setData(purchaseData);
-        setFilteredData(purchaseData);
           // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
-          
-          
-            // Guarda el PDF en una ubicación accesible
-            
+        
           
         alert('Compra realizada');
         }catch(error) {
@@ -249,25 +214,6 @@ const Purchasing1 = () => {
                     />
                   </div>
                 </div>
-
-                  <div className="col-span-1">
-                    <label htmlFor="fecha" className="block text-sm font-medium leading-6 text-gray-900">
-                      <a className='font-bold text-lg'>
-                        Fecha
-                      </a>
-                    </label>
-                    <div className="mt-2 pr-4 ">
-                      <Input
-                        id="fecha"
-                        label="fecha"
-                        placeholder={Date()}
-                        type="text"
-                        autoComplete="email"
-                        disabled
-                        className="max-w-xs"
-                        />
-                    </div>
-                  </div>
 
                   <div className="sm:col-span-1">
                     <label htmlFor="zona" className="block text-sm font-medium leading-6 text-gray-900">
@@ -387,9 +333,8 @@ const Purchasing1 = () => {
                     Guardar
                     
                   </button>
-                  <VerPDFButton />
 
-                             
+                   
               </div>
               
             </form>

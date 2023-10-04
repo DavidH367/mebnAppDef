@@ -3,11 +3,14 @@ import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy } from 'firebase/firestore';
 import ReusableTable from '../../Components/Form/ReusableTable';
-import FilterSection from '../../Components/Form/FilterSectionI';
+import FilterSection from '../../Components/Form/FilterSectionP';
+
 import { columns } from "./datas";
 import { Divider } from "@nextui-org/react";
 import Estados from '@/Components/Form/stats';
 import  NavBar  from '../../Components/Layout/NavBar';
+import { startOfDay, endOfDay } from 'date-fns';
+import "react-datepicker/dist/react-datepicker.css";
 
 const invRef = collection(db, 'inventories');
 
@@ -40,10 +43,19 @@ const IntakeControl = () => {
     fetchData();
   }, []);
 
-  const applyFilter = (value) => {
-    const filtered = data.filter(item =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
+  const applyFilter = ({ rtn, startDate, endDate }) => {
+    const filtered = data.filter((item) => {
+      const itemDate = item.date.toDate();
+      const start = startOfDay(startDate);
+      const end = endOfDay(endDate);
+
+      return (
+        item.rtn.toLowerCase().includes(rtn.toLowerCase()) &&
+        (!startDate || itemDate >= start) &&
+        (!endDate || itemDate <= end)
+      );
+    });
+
     setFilteredData(filtered);
   };
 
@@ -59,6 +71,7 @@ const IntakeControl = () => {
       <div >
         <div className="container mx-auto p-4 justify-center items-center h-screen">
           <h1>Control de Inventario de Cafe</h1>
+          <FilterSection onFilter={applyFilter} />
           <ReusableTable data={filteredData} columns={columns} />
         </div>
       </div>

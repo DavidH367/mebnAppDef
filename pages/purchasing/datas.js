@@ -6,7 +6,7 @@ export const zonas = [
     {label: "El Matazano", value: "El Matazano"},
     {label: "Montañuelas", value: "Montañuelas"},
     {label: "Cantoral", value: "Cantoral"},
-    {label: "San José de Pane", value: "San José de Pane"},
+    
 ];
 
 export const tipoC = [

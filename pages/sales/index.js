@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
-import ReusableTable from '../../Components/Form/ReusableTable';
-import FilterSectionComponent from '../../Components/Form/FilterSectionS'; // Asegúrate de ajustar la ruta correcta
 import { columns, tipoC } from './datas';
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import  NavBar  from '../../Components/Layout/NavBar';
@@ -99,7 +97,7 @@ const MainComponent = () => {
 
       if (!querySnapshot2.empty) {
         querySnapshot2.forEach((doc) => {
-          newBalance2 = doc.data().balance + parseFloat(precio);
+          newBalance2 = doc.data().balance + parseFloat(precio).toFixed(2);
         });
       } else {
         newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
@@ -111,9 +109,9 @@ const MainComponent = () => {
         name: nombre,
         date: new Date(), // Guardar la fecha actual en Firebase
         type: tipoCafe,
-        bags_sold: parseFloat(quintales),
-        weight: parseFloat(peso),
-        total: parseFloat(precio),
+        bags_sold: parseFloat(quintales).toFixed(2),
+        weight: parseFloat(peso).toFixed(2),
+        total: parseFloat(precio).toFixed(2),
         n_transaction: numTrans,
       };
 
@@ -121,8 +119,8 @@ const MainComponent = () => {
         rtn: rtnValue,
         tran_type: 'VENTA',
         coffee_type: tipoCafe,
-        value: parseFloat(precio),
-        weight: parseFloat(peso),
+        value: parseFloat(precio).toFixed(2),
+        weight: parseFloat(peso).toFixed(2),
         date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
         balance: newBalance2,
@@ -141,7 +139,6 @@ const MainComponent = () => {
       setPrecio('');
       setPeso('');
 
-      fetchData();// Actualizar la lista de compras          
       alert('Venta realizada');// Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
 
     } catch (error) {
@@ -207,26 +204,6 @@ const MainComponent = () => {
                 />
               </div>
             </div>
-
-            <div className="col-span-1">
-              <label htmlFor="fecha" className="block text-sm font-medium leading-6 text-gray-900">
-                <a className='font-bold text-lg'>
-                  Fecha
-                </a>
-              </label>
-              <div className="mt-2 pr-4 ">
-                <Input
-                  id="fecha"
-                  label="fecha"
-                  placeholder={Date()}
-                  type="text"
-                  autoComplete="email"
-                  disabled
-                  className="max-w-xs"
-                />
-              </div>
-            </div>
-
 
             <div className="sm:col-span-1 ">
               <label className="block text-sm font-medium leading-6 text-gray-900">

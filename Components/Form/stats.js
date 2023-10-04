@@ -10,13 +10,6 @@ const Estados = () => {
     const [tsales, setTsales] = useState(0); // Definir tsales en el estado inicial
     const [tpurchases, setPurchases] = useState(0); // Definir tsales en el estado inicial
 
-
-    const stats = [
-        { id: 1, name: 'Transactions every 24 hours', value: '44 million' },
-        { id: 2, name: 'Assets under holding', value: '$119 trillion' },
-        { id: 3, name: 'New users annually', value: '46,000' },
-      ]
-
          // Usar async/await para esperar a que se resuelva la promesa
          useEffect(() => {
 

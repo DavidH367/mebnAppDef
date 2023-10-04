@@ -5,17 +5,25 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Input,
   Button,
-} from '@nextui-org/react'; // Importa las librerías necesarias aquí
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Chip,
+  User,
+} from "@nextui-org/react";
 import React, { useState, useEffect } from 'react';
 import {Pagination, PaginationItem, PaginationCursor} from "@nextui-org/react";
+import {useAsyncList} from "@react-stately/data";
 
 
-const ITEMS_PER_PAGE = 100; // Cantidad de elementos por página
+const ITEMS_PER_PAGE = 10; // Cantidad de elementos por página
 
 const ReusableTable = ({ data, columns }) => {
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = React.useState(1);
   // Calcula el índice de inicio y fin para mostrar los elementos en la página actual
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = currentPage * ITEMS_PER_PAGE;
@@ -106,7 +114,7 @@ const onNextPage = React.useCallback(() => {
                 {columns.map((column, columnIndex) => {
                   const cellValue =
                   column.field === 'date' && row[column.field]
-                  ? row[column.field].toDate().toLocaleDateString()
+                  ? row[column.field].toDate().toLocaleString()
                   : row[column.field];
                   return <TableCell key={columnIndex}>{cellValue}</TableCell>;
                 })}
@@ -122,8 +130,8 @@ const onNextPage = React.useCallback(() => {
               showControls
               showShadow
               color="primary"
-              total={pages} // Calcula el total de páginas
               page={currentPage}
+              total={pages} // Calcula el total de páginas
               onChange ={(newPage) =>{
                 setCurrentPage(newPage);
               }}
