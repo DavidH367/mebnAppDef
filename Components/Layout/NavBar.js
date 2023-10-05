@@ -25,6 +25,7 @@ export default function App() {
   const router = useRouter();
   const { pathname } = router;
   const routeSplit = pathname.split("/")[1];
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const handleLogout = async () => {
     localStorage.removeItem("user");
     const logoutUser = await logout();
@@ -35,16 +36,13 @@ export default function App() {
   };
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    { text: "Resumen", url: "../" },
+    { text: "Compras", url: "/purchasing" },
+    { text: "Ventas", url: "/sales" },
+    { text: "Proveedores", url: "/supliers" },
+    { text: "Consultas", url: "/searches" },
+    
+    
   ];
 
   return (
@@ -55,8 +53,9 @@ export default function App() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit">ACME</p>
+          <p className="font-bold text-inherit">BODEGA - GAD</p>
         </NavbarBrand>
+
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -64,20 +63,31 @@ export default function App() {
           <p className="font-bold text-inherit">ACME</p>
         </NavbarBrand>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
+          <Link color="foreground" href="../">
+            Resumen
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page" color="warning">
-            Customers
+        <NavbarItem >
+          <Link href="/purchasing" color="foreground" aria-current="page">
+            Compras
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="#" aria-current="page" color="warning">
-              Urbaby
+          <Link color="foreground" href="/sales">
+            Ventas
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/supliers">
+            Proveedores
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/searches">
+          Consultas
+          </Link>
+        </NavbarItem>
+        
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
@@ -122,21 +132,23 @@ export default function App() {
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
+
+
       <NavbarMenu>
-        {menuItems.map((item, index) => {
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {menuItems.map((item, index) => (
+          <NavbarMenuItem key={`${item.text}-${index}`}>
             <Link
-              className="w-full"
               color={
-                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
+                index === 0 ? "primary" : index === menuItems.length - 0 ? "normal" : "foreground"
               }
-              href="#"
+              className="w-full"
+              href={item.url}
               size="lg"
             >
-              {item}
+              {item.text}
             </Link>
           </NavbarMenuItem>
-        })}
+        ))}
       </NavbarMenu>
     </Navbar>
   );

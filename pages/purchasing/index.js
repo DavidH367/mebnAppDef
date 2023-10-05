@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { addDoc, collection, query, getDocs } from 'firebase/firestore';
-import PurchasesTable from '../../Components/Form/PurchasesTable';
-import { Input } from '@nextui-org/react';
+import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
+import ReusableTable from '../../Components/Form/ReusableTable';
+import FilterSection from '../../Components/Form/FilterSectionP.js'; // Asegúrate de ajustar la ruta correcta
+import { zonas, tipoC, columns } from './datas';
+import { Input, Select, SelectItem } from '@nextui-org/react';
+import NavBar from '../../Components/Layout/NavBar';
+import FacturaPDF from '../../Components/Form/FacturasPDF';
+import { jsPDF } from "jspdf";
+
 
 const purchasesRef = collection(db, 'purchases');
+const invRef = collection(db, 'inventories');
+
+
+
 const Purchasing1 = () => {
-    
-  const [purchases, setPurchases] = useState([]);
+  //datos para factura
+
+  //usos de datos
+  const [purchases, fetchPurchases] = useState([]);
+  const [rtn, setRTN] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [zona, setZona] = useState('');
@@ -17,259 +30,353 @@ const Purchasing1 = () => {
   const [quintales, setQuintales] = useState('');
   const [peso, setPeso] = useState('');
 
-  useEffect(() => {
-    fetchPurchases();
-  }, []);
-  
-    const fetchPurchases = async () => {
-      const q = query(collection(db, "purchases"));
-      const querySnapshot = await getDocs(q);
+  //inicio para el filtro de datos
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
 
-      const purchaseData = [];
-      querySnapshot.forEach((doc) => {
-        purchaseData.push({ ...doc.data() });
-      });
+  // Estado para manejar la validez del formulario
+  const [formValid, setFormValid] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
-      setPurchases(purchaseData);
-    };
+  //fin del filtro
 
+  // Función para guardar datos
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const newData = {
-      name: nombre,
-      last_name: apellido,
-      zone: zona,
-      coffee_type: tipoCafe,
-      total: precio,
-      bags: quintales,
-      weight: peso,
-      date: new Date() // Guardar la fecha actual en Firebase
+    // Verificar si los campos obligatorios están llenos
+    if (!nombre || !apellido || !zona || !tipoCafe || !quintales || !peso || !precio) {
+      setFormValid(false);
+      setErrorMessage('Por favor, complete todos los campos obligatorios.');
+      return; // No enviar el formulario si falta algún campo obligatorio
+    }
+
+    try {
+      // Obtener el último valor de "n_transaction"
+      const querySnapshot1 = await getDocs(
+        query(collection(db, 'inventories'), orderBy('n_transaction', 'desc'), limit(1)));
+      const querySnapshot2 = await getDocs(
+        query(collection(db, 'inventories'), orderBy('n_transaction', 'desc'), limit(1)));
+
+      let numTrans;
+
+
+      if (!querySnapshot1.empty) {
+        querySnapshot1.forEach((doc) => {
+          numTrans = doc.data().n_transaction + 1;
+        });
+      } else {
+        numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+      }
+
+
+      let newBalance2;
+      if (!querySnapshot2.empty) {
+        querySnapshot2.forEach((doc) => {
+          newBalance2 = doc.data().balance + parseFloat(precio).toFixed(2);
+        });
+      } else {
+        newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
+      }
+      const rtnValue = rtn || "CF";
+      // Incrementar el valor de "n_transaction" para el nuevo documento
+
+      const newData = {
+        rtn: rtnValue,
+        name: nombre,
+        last_name: apellido,
+        zone: zona,
+        coffee_type: tipoCafe,
+        total: parseFloat(precio).toFixed(2),
+        bags: parseFloat(quintales).toFixed(2),
+        weight: parseFloat(peso).toFixed(2),
+        date: new Date(), // Guardar la fecha actual en Firebase
+        n_transaction: numTrans,
+      };
+
+      const newInvData = {
+        rtn: rtnValue,
+        tran_type: 'COMPRA',
+        coffee_type: tipoCafe,
+        value: parseFloat(precio).toFixed(2),
+        weight: parseFloat(peso).toFixed(2),
+        date: new Date(), // Guardar la fecha actual en Firebase
+        n_transaction: numTrans,
+        balance: newBalance2,
+      };
+
+      await addDoc(purchasesRef, newData)
+      await addDoc(invRef, newInvData)
+
+      // Obtener los datos recién guardados desde Firestore
+      const querySnapshot = await getDocs(query(collection(db, "purchases"), orderBy('date', 'desc')));
+      const purchaseData4 = [];
+      let indexs = 1;
+      querySnapshot.forEach((doc) => {
+        purchaseData4.push({ ...doc.data(), indexs: indexs++ });
+      });
+      const fecha = new Date(newData.date);
+
+      // Obtener la fecha en formato dd/mm/aaaa
+      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+
+      // Obtener la hora en formato hh:mm:ss
+      const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+
+      const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
+
+      //PDF
+      const doc = new jsPDF({ unit: 'mm', format: [215, 140] });
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('BODEGA - GAD', 50, 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Compra Venta de Café', 53, 15);
+      doc.setFontSize(8);
+      doc.text('RTN: 0313198500469', 58, 19);
+      doc.setFontSize(10);
+      doc.text('Telefono: (504) 9541-9092', 50, 24);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Fecha: ${fechaYHora}`, 5, 35);
+      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 35);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`RTN: ${newData.rtn}`, 5, 45);
+      doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
+      doc.text(`Zona: ${newData.zone}`, 95, 52);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Quintales en Unidades: ${newData.bags}`, 5, 59);
+      doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
+      doc.text(`Peso Neto en Libras: ${newData.weight}`, 5, 73);
+      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 73);
+      doc.text('¡GRACIAS POR TU PREFERENCIA!', 40, 85);
+      //guardar el PDF con un identificador
+      // Set the document to automatically print via JS
+      doc.autoPrint();
+      doc.output('dataurlnewwindow');
+
+      // Limpiar los campos del formulario después de guardar
+      setRTN('');
+      setNombre('');
+      setApellido('');
+      setZona('');
+      setTipoCafe('');
+      setPrecio('');
+      setQuintales('');
+      setPeso('');
+
+    } catch (error) {
+      console.error('Error al guardar los datos:', error);
     };
 
-    await addDoc(purchasesRef, newData)
-      .then(() => {
-        // Limpiar los campos del formulario después de guardar
-        setNombre('');
-        setApellido('');
-        setZona('');
-        setTipoCafe('');
-        setPrecio('');
-        setQuintales('');
-        setPeso('');
-        
-        // Actualizar la lista de compras
-        fetchPurchases();
-      })
-      .catch((error) => {
-        console.error('Error al guardar los datos:', error);
-      });
-
+    // Reiniciar la validación y el mensaje de error
+    setFormValid(true);
+    setErrorMessage('');
   }
+
   return (
-    <div className="container mx-auto flex justify-center items-center h-screen">
-      <div className=" container mx-auto p-6 justify-center items-center h-screen ">
-      <h1 className="text-2xl font-semibold mb-4 " >
-        <p className='text-center'>
-          INFORMACION DE COMPRAS
-        </p>
-      </h1>
+    <div>
+      <NavBar />
+      <div className="container mx-auto flex justify-center items-center h-screen">
+        <div className=" container mx-auto p-6 justify-center items-center h-screen ">
+          <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
+            <h2 className="text-lg font-semibold mb-2 ">
+              <p className='text-center'>
+                Ingresar Compras:
+              </p>
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
+            <form onSubmit={handleSubmit} >
+              <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
 
-    <div className='px-8 '>
-      <div className="bg-white shadow rounded p-4 box-border h-400 w-800 p-2 border-4 ">
-          <h2 className="text-lg font-semibold mb-2 ">
-            <p className='text-center'>
-              Ingresar Compras:
-            </p>
-          </h2>
-          <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
+                <div className="sm:col-span-1">
+                  <label htmlFor="rtn" className=" block text-sm font-medium leading-6 text-gray-900">
+                    <p className='font-bold text-lg'>
+                      RTN
+                    </p>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
 
-        <form onSubmit={handleSubmit} >
-          <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
-              <div className="sm:col-span-1">
-                <label htmlFor="nombre" className=" block text-sm font-medium leading-6 text-gray-900">
-                  <p className='font-bold text-lg'>
-                    Nombre
-                  </p>
-                </label>
-                <div className="mt-2 pr-4">
-                  <input
-                    type="text"
-                    name="nombre"
-                    id="nombre"
-                    autoComplete="given-name"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                      type="text"
+                      label="RTN"
+                      id="rtn"
+                      value={rtn}
+                      onChange={(e) => setRTN(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="sm:col-span-1">
-                <label htmlFor="apellido" className="block text-sm font-medium leading-6 text-gray-900">
-                  <a className='font-bold text-lg'>
-                    Apellido
-                  </a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <input
-                    type="text"
-                    name="apellido"
-                    id="apellido"
-                    autoComplete="family-name"
-                    value={apellido}
-                    onChange={(e) => setApellido(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                <div className="sm:col-span-1">
+                  <label htmlFor="nombre" className=" block text-sm font-medium leading-6 text-gray-900">
+                    <p className='font-bold text-lg'>
+                      Nombre
+                    </p>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
+                      isRequired
+                      type="text"
+                      label="nombre"
+                      id="nombre"
+                      autoComplete="given-name"
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="col-span-1">
-                <label htmlFor="fecha" className="block text-sm font-medium leading-6 text-gray-900">
-                  <a className='font-bold text-lg'>
-                    Fecha
-                  </a>
-                </label>
-                <div className="mt-2 pr-4 ">
-                  <input
-                    id="fecha"
-                    name="fecha"
-                    placeholder={Date()}
-                    type="text"
-                    autoComplete="email"
-                    disabled
-                     
-                    className="cursor-not-allowed block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                <div className="sm:col-span-1">
+                  <label htmlFor="apellido" className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Apellido
+                    </a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
+                      isRequired
+                      type="text"
+                      label="apellido"
+                      id="apellido"
+                      autoComplete="family-name"
+                      value={apellido}
+                      onChange={(e) => setApellido(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="sm:col-span-1">
-                <label htmlFor="zona" className="block text-sm font-medium leading-6 text-gray-900">
-                  <a className='font-bold text-lg'>
-                    Zona
-                  </a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <select
-                    id="zona"
-                    name="zona"
-                    defaultValue={"Zona"}
-                    autoComplete="zona"
-                    value={zona}
-                    onChange={(e) => setZona(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option selected>Zona</option>
-                    <option>San Jose de Pane</option>
-                    <option>El Matazano</option>
-                    <option>Guachipilin</option>
-                    <option>Cantoral</option>
-                    <option>Montañuela</option>
-                  </select>
+                <div className="sm:col-span-1">
+                  <label htmlFor="zona" className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Zona
+                    </a>
+                  </label>
+                  <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                    <Select
+                      isRequired
+                      id="zona"
+                      label="Zona"
+                      placeholder="Seleccione una Zona"
+                      autoComplete="zona"
+                      className="max-w-xs"
+                      onChange={(e) => setZona(e.target.value)}
+                    >
+                      {zonas.map((zona) => (
+                        <SelectItem key={zona.value} value={zona.value}>
+                          {zona.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
-              </div>
 
-              <div className="sm:col-span-1 ">
-                <label htmlFor="tipoCafe" className="block text-sm font-medium leading-6 text-gray-900">
-                  <a className='font-bold text-lg'>
-                    Tipo de Café
-                  </a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <select
-                    id="tipoCafe"
-                    name="tipoCafe"
-                    defaultValue={"Tipo de Café"}
-                    autoComplete="tipoCafe"
-                    value={tipoCafe}
-                    onChange={(e) => setTipoCafe(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option selected >Tipo de Café</option>
-                    <option>Uva</option>
-                    <option>Pergamino Mojado</option>
-                    <option>Pergamino Seco</option>
-                    <option>Pergamino Humedo</option>
-                  </select>
-              </div>
-            </div>
+                <div className="sm:col-span-1 ">
+                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Tipo de Café
+                    </a>
+                  </label>
+                  <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                    <Select
+                      isRequired
+                      id="tipoCafe"
+                      label="Tipo Cafe"
+                      placeholder="Seleccione Tipo de Café"
+                      autoComplete="tipoCafe"
+                      onChange={(e) => setTipoCafe(e.target.value)}
+                      className="max-w-xs"
+                    >
+                      {tipoC.map((tipoCafe) => (
+                        <SelectItem key={tipoCafe.value} value={tipoCafe.value}>
+                          {tipoCafe.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
 
-            <div className="sm:col-span-1">
-              <label htmlFor="quintales" className="block text-sm font-medium leading-6 text-gray-900">
-                <a className='font-bold text-lg'>
-                  Quintales
-                </a>
-              </label>
-              <div className="mt-2 pr-4">
-                <input
-                  type="number"
-                  name="quintales"
-                  step="0.01"
-                  id="quintales"
-                  autoComplete="quintales"
-                  value={quintales}
-                  onChange={(e) => setQuintales(e.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+                <div className="sm:col-span-1">
+                  <label htmlFor="quintales" className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Quintales
+                    </a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
+                      isRequired
+                      type="number"
+                      label="Unidades"
+                      step="0.01"
+                      id="quintales"
+                      autoComplete="quintales"
+                      value={quintales}
+                      onChange={(e) => setQuintales(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
+                </div>
 
-            <div className="sm:col-span-1">
-              <label htmlFor="peso" className="block text-sm font-medium leading-6 text-gray-900">
-                <a className='font-bold text-lg'>
-                  Peso (Lbs)                  
-                </a>
-              </label>
-              <div className="mt-2 pr-4">
-                <input
-                  type="number"
-                  name="peso"
-                  step="0.01"
-                  id="peso"
-                  autoComplete="peso"
-                  value={peso}
-                  onChange={(e) => setPeso(e.target.value)}
+                <div className="sm:col-span-1">
+                  <label htmlFor="peso" className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Peso Total
+                    </a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
+                      isRequired
+                      type="number"
+                      label="Lbs"
+                      step="0.01"
+                      id="peso"
+                      autoComplete="peso"
+                      value={peso}
+                      onChange={(e) => setPeso(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
+                </div>
 
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label htmlFor="precio" className="block text-sm font-medium leading-6 text-gray-900">
-                <a className='font-bold text-lg'>
-                  Precio (Total)
-                </a>
-              </label>
-              <div className="mt-2 pr-4">
-                <input
-                  type="number"
-                  name="precio"
-                  step="0.01"
-                  id="precio"
-                  autoComplete="precio"
-                  value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-              <button 
-                onClick={() => {alert('Compra realizada')}} 
-                type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
+                <div className="sm:col-span-1">
+                  <label htmlFor="precio" className="block text-sm font-medium leading-6 text-gray-900">
+                    <a className='font-bold text-lg'>
+                      Precio (Total)
+                    </a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Input
+                      isRequired
+                      type="number"
+                      label="L"
+                      step="0.01"
+                      id="precio"
+                      autoComplete="precio"
+                      value={precio}
+                      onChange={(e) => setPrecio(e.target.value)}
+                      className="max-w-xs"
+                    />
+                  </div>
+                </div>
+                <button
+                  type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                >
                   Guardar
-              </button>            
+
+                </button>
+              </div>
+
+            </form>
           </div>
-        </form>
-      </div>
-    </div> 
-        <div className="grid h-80 card bg-base-200 rounded-box place-items-top flex-grow">
-          <PurchasesTable purchases={purchases} />
+
         </div>
+      </div>
     </div>
-  </div>
-    
+
   );
 };
 
