@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { addDoc, collection, query, getDocs } from 'firebase/firestore';
+import { addDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
+import addNewUser from "../../lib/firebase/firebaseNewUser";
+import {registrerWithEmail} from "../../lib/firebase/firebaseAuth";
 
 const UserRegister = () => {
   const [firstName, setFirstName] = useState("");
@@ -12,17 +14,19 @@ const UserRegister = () => {
   const [email, setEmail] = useState("");
   const [userRole, setUserRole] = useState("ADMINISTRADOR");
   const [userState, setUserState] = useState("ACTIVO");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const localUser = JSON.parse(localStorage.getItem("user"));
   const { user, errors, setErrors } = useAuth();
-  // useEffect(() => {
-  //   if (!user) {
-  //     setErrors("");
-  //     router.push("/auth/Login");
-  //   } else if (localUser.role != "ADMINISTRADOR") {
-  //     setErrors("");
-  //     router.push("/");
-  //   }
-  // }, []);
+// useEffect(() => {
+//    if (!user) {
+//      setErrors("");
+//     router.push("/auth/Login");
+//    } else if (localUser.role != "ADMINISTRADOR") {
+//      setErrors("");
+//      router.push("/");
+//    }
+//  }, []);
   
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,6 +38,7 @@ const UserRegister = () => {
         cellphone: phoneNumber,
         user_role: userRole,
         user_state: userState,
+        adminRegister: user.uid,
     };
     
     await addDoc(collection(db, 'users'), newData)
@@ -45,7 +50,6 @@ const UserRegister = () => {
         setEmail('');
         setUserRole('');
         setUserState('');
-        
         fetchUsers();
       })
       .catch((error) => {
@@ -64,7 +68,7 @@ const UserRegister = () => {
     <div className='px-8 '>
       <div className="bg-white shadow rounded p-4 box-border h-400 w-800 p-2 border-4 ">
 
-        <form onSubmit={handleSubmit} >
+        <div>
           <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
               <div className="sm:col-span-1">
                 <label htmlFor="nombre" className=" block text-sm font-medium leading-6 text-gray-900">
@@ -142,12 +146,21 @@ const UserRegister = () => {
                 </div>
               </div>
               <button 
-                onClick={() => {alert('Compra realizada')}} 
-                type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
+                onClick={async ()=> { 
+                      const password = "CAFE2023!";
+                      const {user, error} = await registrerWithEmail(email, password)                    
+                      if(error != null){
+                          console.log('error', error)
+                          alert('error: ', error)
+                      }else{  
+                          await addNewUser(user, firstName, lastName, phoneNumber, email, userRole, userState)
+                      } 
+                  }}
+                className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
                   Guardar
               </button>            
           </div>
-        </form>
+        </div>
       </div>
     </div> 
     </div>

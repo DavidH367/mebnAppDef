@@ -16,7 +16,7 @@ const Login = () => {
     const router = useRouter();
     useEffect(() => {
         if (user) {
-            router.push("/index.js");
+            router.push("/");
         }
     });
     const loginUser = async () =>{

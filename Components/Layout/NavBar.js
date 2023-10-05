@@ -1,32 +1,30 @@
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Dropdown,
+  DropdownItem,
+  NavbarMenuToggle,
+  DropdownMenu,
+  DropdownTrigger,
+  Avatar,
+  NavbarMenu,
+  NavbarMenuItem,
+  Button,
+} from "@nextui-org/react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useState } from "react";
 import React from "react";
-import Head from "next/head";
-import {
-  Navbar, 
-  NavbarBrand, 
-  NavbarContent, 
-  NavbarItem, 
-  Link, 
-  Dropdown, 
-  DropdownItem, 
-  NavbarMenuToggle, 
-  DropdownMenu, 
-  DropdownTrigger, 
-  Avatar, 
-  NavbarMenu, 
-  NavbarMenuItem,
-  Divider,
-  Button,
-} from "@nextui-org/react";
 
 export default function App() {
   const { logout, user } = useAuth();
   const localUser = JSON.parse(localStorage.getItem("user"));
   const router = useRouter();
   const { pathname } = router;
-  //const routeSplit = pathname.split("/")[1];
+  const routeSplit = pathname.split("/")[1];
   const handleLogout = async () => {
     localStorage.removeItem("user");
     const logoutUser = await logout();
@@ -35,6 +33,7 @@ export default function App() {
       return;
     }
   };
+
   const menuItems = [
     "Profile",
     "Dashboard",
@@ -75,8 +74,8 @@ export default function App() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
+          <Link href="#" aria-current="page" color="warning">
+              Urbaby
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -90,45 +89,41 @@ export default function App() {
               className="transition-transform"
               color={"secondary"}
               size="md"
-              name={
-                `${localUser.firstName}` ?? "USER"
-              }
+              name={`${user.displayName}`}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat" css={{ alignTtems: "center"}}>
-            <DropdownItem 
-              key="team_settings" 
-              className="h-14 gap-2" 
+            <DropdownItem
+              key="team_settings"
+              className="h-14 gap-2"
               css={{ height: "fit-content", alignTtems: "center" }}
               color="primary">
               {localUser && (
                 <>
                   <p className="font-semibold">Conectado como: {localUser.role}</p>
-                  <p className="font-semibold">{`${localUser.firstName} ${localUser.lastName}` ?? "Usuario"}</p>
+                  <p className="font-semibold">{`${user.displayName}` ?? "Usuario"}</p>
                   <p className="font-semibold">{localUser.email}</p>
                 </>
               )}
-              
+
             </DropdownItem>
-            <Divider></Divider>
-            <DropdownItem 
+            <DropdownItem
                 withDivider
-                css={{ marginBottom: "$8" }}
-                textValue="logout section"
-                key="logout" 
-                color="danger">
-                  <Button
-                    onPress={handleLogout}
-                    color="primary">
-                      Cerrar Sesión
-                  </Button>
+                color="danger"
+                key="logout">
+                  <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <Button
+                      onPress={handleLogout}
+                      color="danger">
+                        Cerrar Sesión
+                    </Button>
+                  </div>
               </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
-
       <NavbarMenu>
-        {menuItems.map((item, index) => (
+        {menuItems.map((item, index) => {
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
               className="w-full"
@@ -141,7 +136,7 @@ export default function App() {
               {item}
             </Link>
           </NavbarMenuItem>
-        ))}
+        })}
       </NavbarMenu>
     </Navbar>
   );

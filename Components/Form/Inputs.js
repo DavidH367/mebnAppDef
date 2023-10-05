@@ -1,174 +1,159 @@
 import { Checkbox, Input } from "@nextui-org/react";
 import {MailIcon} from '../Icons/MailIcon';
 import {UserIcon} from '../Icons/UserIcon';
+import { SearchIcon } from "../Icons/SearchIcon";
 
 export const TextInput = ({
   label,
-  placeholder,
   type,
   value,
   setValue,
   isDisabled,
+  errorMessage,
+  isRequired,
   className: customClassName,
 }) => {
   return (
-    <>
-      <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-        {label}
-      </p>
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        isClearable={!isDisabled}
-        variant="bordered"
         aria-label="Text input"
         type={type}
-        placeholder={placeholder}
-        initialValue={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        value={value}
+        onValueChange={setValue}
         disabled={isDisabled}
-        fullWidth
+        variant="bordered"
+        className="form-inputs"
         size="lg"
+        isRequired={isRequired !== null ? isRequired : false}
+        validationState={errorMessage ? "invalid" : "valid"}
+        errorMessage={errorMessage}
+        label={label}
       />
-      <span className="form-errors"></span>
-    </>
+    </div>
   );
 };
-
 export const AgeInput = ({
   label,
-  placeholder,
+  errorMessage,
   type,
   value,
   setValue,
   isDisabled,
+  isRequired,
   className: customClassName,
 }) => {
   return (
-    <>
-      <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-        {label}
-      </p>
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        isClearable={!isDisabled}
-        variant="bordered"
         aria-label="Text input"
+        label={label}
         type={type}
-        placeholder={placeholder}
         value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        onValueChange={setValue}
         disabled={isDisabled}
-        fullWidth
+        variant="bordered"
         size="lg"
+        className="form-inputs"
+        validationState={errorMessage ? "invalid" : "valid"}
+        isRequired={isRequired !== null ? isRequired : false}
+        errorMessage={errorMessage}
       />
       <span className="form-errors"></span>
-    </>
+    </div>
   );
 };
-
 export const TelephoneInput = ({
   label,
-  placeholder,
+  errorMessage,
   value,
   setValue,
   isDisabled,
+  isRequired,
   className: customClassName,
 }) => {
-  const handleTelephoneChange = (e) => {
-    const formattedPhoneNumber = e.target.value
-      .replace(/[^0-9]/g, "") // caracteres
-      .replace(/(\d{4})(\d{4})/, "$1-$2")
-      .slice(0, 9);
-    e.target.value = formattedPhoneNumber;
-    setValue(formattedPhoneNumber);
-  };
-
   return (
-    <>
-      <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-        {label}
-      </p>
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        isClearable
-        variant="bordered"
         aria-label="Text input"
+        label={label}
         type="tel"
-        placeholder={placeholder}
-        value={value}
-        onChange={handleTelephoneChange}
         disabled={isDisabled}
-        fullWidth
+        value={value
+          .replace(/[^0-9]/g, "")
+          .replace(/(\d{4})(\d{4})/, "$1-$2")
+          .slice(0, 9)}
+        onValueChange={setValue}
+        variant="bordered"
         size="lg"
+        errorMessage={errorMessage}
+        validationState={errorMessage ? "invalid" : "valid"}
+        isRequired={isRequired !== null ? isRequired : false}
+        className="form-inputs"
       />
-      <span className="form-errors"></span>
-    </>
+    </div>
   );
 };
 
 export const IDNumberInput = ({
   label,
-  placeholder,
+  isDisabled,
+  errorMessage,
   value,
   setValue,
-  isDisabled,
+  isRequired,
   className: customClassName,
 }) => {
-  const handleIDNumberChange = (e) => {
-    const formattedIdNumber = e.target.value
-      .replace(/[^0-9]/g, "") 
-      .replace(/(\d{4})(\d{4})(\d{5})/, "$1-$2-$3")
-      .slice(0, 15);
-    e.target.value = formattedIdNumber;
-    setValue(formattedIdNumber);
-  };
-
   return (
-    <>
-      <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-        {label}
-      </p>
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
-        isClearable
-        variant="bordered"
         aria-label="Text input"
+        label={label}
         type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={handleIDNumberChange}
-        disabled={isDisabled}
-        fullWidth
+        value={value
+          .replace(/[^0-9]/g, "") // Remove all non-numeric characters
+          .replace(/(\d{4})(\d{4})(\d{5})/, "$1-$2-$3")
+          .slice(0, 15)}
+        onValueChange={setValue}
+        variant="bordered"
         size="lg"
+        disabled={isDisabled}
+        errorMessage={errorMessage}
+        validationState={errorMessage ? "invalid" : "valid"}
+        isRequired={isRequired !== null ? isRequired : false}
+        className="form-inputs"
       />
-      <span className="form-errors"></span>
-    </>
+    </div>
   );
 };
 
 export const SearchTextInput = ({
-  placeholder,
   type,
   value,
   setValue,
   isDisabled,
+  label,
+  errorMessage,
   className: customClassName,
 }) => {
   return (
-    <Input
-      isClearable
-      variant="bordered"
-      aria-label="Text input"
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => {
-        setValue(e.target.value);
-      }}
-      disabled={isDisabled}
-      fullWidth
-      size="xl"
-    />
+    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+      <Input
+        aria-label="Text input"
+        type={type}
+        label={label}
+        initialValue={value}
+        onValueChange={setValue}
+        disabled={isDisabled}
+        validationState={errorMessage ? "invalid" : "valid"}
+        errorMessage={errorMessage}
+        variant="bordered"
+        className="form-inputs"
+        size="lg"
+        startContent={
+          <SearchIcon className="text-black/50 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
+        }
+      />
+    </div>
   );
 };
 

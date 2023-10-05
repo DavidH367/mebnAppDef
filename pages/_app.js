@@ -5,7 +5,8 @@ import Router from 'next/router'
 import { useState } from 'react'
 import nProgress from 'nprogress'
 import Loader from '../Components/Loader'
-import { Providers } from './provider'
+import { NextUIProvider } from "@nextui-org/react";
+
 export default function App({ Component, pageProps }) {
     //create a state for user
     const [loading, setLoading] = useState()
@@ -19,14 +20,16 @@ export default function App({ Component, pageProps }) {
       nProgress.done()
     })
     return (
-    
       <AuthContextProvider>
-        <Providers>
-          {loading? <Loader/>:
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>}
-        </Providers>
+        <NextUIProvider>
+          {loading ? (
+            <Loader />
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </NextUIProvider>
       </AuthContextProvider>
-    )
-}
+    );
+  }
