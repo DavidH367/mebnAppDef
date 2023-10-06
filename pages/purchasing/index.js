@@ -2,23 +2,14 @@ import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
-import ReusableTable from '../../Components/Form/ReusableTable';
-import FilterSection from '../../Components/Form/FilterSectionP.js'; // Asegúrate de ajustar la ruta correcta
 import { zonas, tipoC, columns } from './datas';
 import { Input, Select, SelectItem } from '@nextui-org/react';
-import NavBar from '../../Components/Layout/NavBar';
-import FacturaPDF from '../../Components/Form/FacturasPDF';
 import { jsPDF } from "jspdf";
-
-
 const purchasesRef = collection(db, 'purchases');
 const invRef = collection(db, 'inventories');
 
-
-
 const Purchasing1 = () => {
   //datos para factura
-
   //usos de datos
   const [purchases, fetchPurchases] = useState([]);
   const [rtn, setRTN] = useState('');
@@ -29,17 +20,13 @@ const Purchasing1 = () => {
   const [precio, setPrecio] = useState('');
   const [quintales, setQuintales] = useState('');
   const [peso, setPeso] = useState('');
-
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
   // Estado para manejar la validez del formulario
   const [formValid, setFormValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-
   //fin del filtro
-
   // Función para guardar datos
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -50,7 +37,6 @@ const Purchasing1 = () => {
       setErrorMessage('Por favor, complete todos los campos obligatorios.');
       return; // No enviar el formulario si falta algún campo obligatorio
     }
-
     try {
       // Obtener el último valor de "n_transaction"
       const querySnapshot1 = await getDocs(
@@ -59,8 +45,6 @@ const Purchasing1 = () => {
         query(collection(db, 'inventories'), orderBy('n_transaction', 'desc'), limit(1)));
 
       let numTrans;
-
-
       if (!querySnapshot1.empty) {
         querySnapshot1.forEach((doc) => {
           numTrans = doc.data().n_transaction + 1;
@@ -69,11 +53,10 @@ const Purchasing1 = () => {
         numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
       }
 
-
       let newBalance2;
       if (!querySnapshot2.empty) {
         querySnapshot2.forEach((doc) => {
-          newBalance2 = doc.data().balance + parseFloat(precio).toFixed(2);
+          newBalance2 = doc.data().balance + parseFloat(precio);
         });
       } else {
         newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
@@ -87,9 +70,9 @@ const Purchasing1 = () => {
         last_name: apellido,
         zone: zona,
         coffee_type: tipoCafe,
-        total: parseFloat(precio).toFixed(2),
-        bags: parseFloat(quintales).toFixed(2),
-        weight: parseFloat(peso).toFixed(2),
+        total: parseFloat(precio),
+        bags: parseFloat(quintales),
+        weight: parseFloat(peso),
         date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
       };
@@ -98,8 +81,8 @@ const Purchasing1 = () => {
         rtn: rtnValue,
         tran_type: 'COMPRA',
         coffee_type: tipoCafe,
-        value: parseFloat(precio).toFixed(2),
-        weight: parseFloat(peso).toFixed(2),
+        value: parseFloat(precio),
+        weight: parseFloat(peso),
         date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
         balance: newBalance2,
@@ -177,14 +160,13 @@ const Purchasing1 = () => {
   }
 
   return (
-    <div>
-      <NavBar />
+    <div className={"homeContainer"}>
       <div className="container mx-auto flex justify-center items-center h-screen">
         <div className=" container mx-auto p-6 justify-center items-center h-screen ">
           <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
             <h2 className="text-lg font-semibold mb-2 ">
               <p className='text-center'>
-                Ingresar Compras:
+                INGRESO DE COMPRAS
               </p>
             </h2>
             <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
@@ -193,13 +175,12 @@ const Purchasing1 = () => {
 
                 <div className="sm:col-span-1">
                   <label htmlFor="rtn" className=" block text-sm font-medium leading-6 text-gray-900">
-                    <p className='font-bold text-lg'>
+                    <p className='font-bold text-lg '>
                       RTN
                     </p>
                   </label>
                   <div className="mt-2 pr-4">
                     <Input
-
                       type="text"
                       label="RTN"
                       id="rtn"
@@ -220,7 +201,7 @@ const Purchasing1 = () => {
                     <Input
                       isRequired
                       type="text"
-                      label="nombre"
+                      label="Ej: David"
                       id="nombre"
                       autoComplete="given-name"
                       value={nombre}
@@ -240,7 +221,7 @@ const Purchasing1 = () => {
                     <Input
                       isRequired
                       type="text"
-                      label="apellido"
+                      label="Ej: Hernández"
                       id="apellido"
                       autoComplete="family-name"
                       value={apellido}
@@ -253,7 +234,7 @@ const Purchasing1 = () => {
                 <div className="sm:col-span-1">
                   <label htmlFor="zona" className="block text-sm font-medium leading-6 text-gray-900">
                     <a className='font-bold text-lg'>
-                      Zona
+                      Ubicación
                     </a>
                   </label>
                   <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
@@ -285,7 +266,7 @@ const Purchasing1 = () => {
                     <Select
                       isRequired
                       id="tipoCafe"
-                      label="Tipo Cafe"
+                      label="Tipo Cáfe"
                       placeholder="Seleccione Tipo de Café"
                       autoComplete="tipoCafe"
                       onChange={(e) => setTipoCafe(e.target.value)}
@@ -310,13 +291,14 @@ const Purchasing1 = () => {
                     <Input
                       isRequired
                       type="number"
-                      label="Unidades"
+                      label="Uds"
                       step="0.01"
                       id="quintales"
                       autoComplete="quintales"
                       value={quintales}
                       onChange={(e) => setQuintales(e.target.value)}
                       className="max-w-xs"
+                      min={0.01}
                     />
                   </div>
                 </div>
@@ -338,6 +320,7 @@ const Purchasing1 = () => {
                       value={peso}
                       onChange={(e) => setPeso(e.target.value)}
                       className="max-w-xs"
+                      min={0.01}
                     />
                   </div>
                 </div>
@@ -359,6 +342,7 @@ const Purchasing1 = () => {
                       value={precio}
                       onChange={(e) => setPrecio(e.target.value)}
                       className="max-w-xs"
+                      min={1}
                     />
                   </div>
                 </div>

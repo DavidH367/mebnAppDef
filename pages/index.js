@@ -4,6 +4,7 @@ import { db } from "../lib/firebase";
 import { doc, onSnapshot } from "@firebase/firestore";
 import { useAuth } from "../lib/context/AuthContext";
 import { useRouter } from "next/router";
+// import {IndicatorsExample} from "../Components/Tradingeconomics/index";
 
 export default function Home() {
   const { user, setErrors } = useAuth();
@@ -25,12 +26,7 @@ export default function Home() {
       if (doc.exists()) {
         const updatedUser = doc.data();
         const newUser = {
-          userDocID: doc.id,
-          firstName: updatedUser.firstName,
-          lastName: updatedUser.lastName,
-          cellphone: updatedUser.cellphone,
-          role: updatedUser.user_role,
-          state: updatedUser.user_state,
+          displayname: `${updatedUser.firstName} ${updatedUser.lastName}`,
           firstLogin: updatedUser.first_login,
         };
         localStorage.setItem("user", JSON.stringify(newUser));
@@ -42,8 +38,11 @@ export default function Home() {
     return () => unsubscribe();
   }, [loadedUser, router, setErrors, user]);
   return (
-    <div>
-      <h1>{localUser.firstName}</h1>
+    <div className={"homeContainer"}>
+      <h1 className="text-lg font-bold mb-4 p-4 text-center">
+        BIENVENIDO(A): {localUser.displayname}
+      </h1>
+      {/* <IndicatorsExample /> */}
     </div>
   );
 }

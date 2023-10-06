@@ -19,7 +19,7 @@ import {Pagination, PaginationItem, PaginationCursor} from "@nextui-org/react";
 import {useAsyncList} from "@react-stately/data";
 
 
-const ITEMS_PER_PAGE = 10; // Cantidad de elementos por página
+const ITEMS_PER_PAGE = 11; // Cantidad de elementos por página
 
 const ReusableTable = ({ data, columns }) => {
 

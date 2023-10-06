@@ -30,7 +30,7 @@ const UserRegister = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const newData = {
+    const DataNew = {
         email: email,
         displayName: `${firstName.toUpperCase()} ${lastName.toUpperCase()}`,
         firstName: firstName.toUpperCase(),
@@ -41,7 +41,7 @@ const UserRegister = () => {
         adminRegister: user.uid,
     };
     
-    await addDoc(collection(db, 'users'), newData)
+    await addDoc(collection(db, 'users'), DataNew)
       .then(() => {
         // Limpiar los campos del formulario después de guardar
         setFirstName('');

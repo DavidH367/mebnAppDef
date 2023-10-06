@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.homeContainer{
+    box-Sizing: content-box!important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    min-height: 85vh;
+    text-align: center;
+  }
+  .pointer {
+    cursor: pointer;
+  }

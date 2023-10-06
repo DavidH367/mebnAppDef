@@ -67,7 +67,7 @@ const SuppliersModal = () => {
 
     return (
         <>
-            <Button onPress={onOpen} color="primary">Agregar Inversionista</Button>
+            <Link className='pointer' onPress={onOpen} color="primary">(Agregar Nuevo)</Link>
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}

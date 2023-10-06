@@ -4,7 +4,6 @@ import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
 import { columns, tipoC } from './datas';
 import { Input, Select, SelectItem } from '@nextui-org/react';
-import  NavBar  from '../../Components/Layout/NavBar';
 
 const salesRef = collection(db, 'sales');
 const invRef = collection(db, 'inventories');
@@ -97,7 +96,7 @@ const MainComponent = () => {
 
       if (!querySnapshot2.empty) {
         querySnapshot2.forEach((doc) => {
-          newBalance2 = doc.data().balance + parseFloat(precio).toFixed(2);
+          newBalance2 = doc.data().balance + parseFloat(precio);
         });
       } else {
         newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
@@ -109,9 +108,9 @@ const MainComponent = () => {
         name: nombre,
         date: new Date(), // Guardar la fecha actual en Firebase
         type: tipoCafe,
-        bags_sold: parseFloat(quintales).toFixed(2),
-        weight: parseFloat(peso).toFixed(2),
-        total: parseFloat(precio).toFixed(2),
+        bags_sold: parseFloat(quintales),
+        weight: parseFloat(peso),
+        total: parseFloat(precio),
         n_transaction: numTrans,
       };
 
@@ -119,8 +118,8 @@ const MainComponent = () => {
         rtn: rtnValue,
         tran_type: 'VENTA',
         coffee_type: tipoCafe,
-        value: parseFloat(precio).toFixed(2),
-        weight: parseFloat(peso).toFixed(2),
+        value: parseFloat(precio),
+        weight: parseFloat(peso),
         date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
         balance: newBalance2,
@@ -154,12 +153,11 @@ const MainComponent = () => {
   //final para funcion de guardar datos
   return (
     <div>
-      <NavBar/>
       <div className=" container mx-auto p-6 justify-center items-center h-screen ">
       <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
         <h2 className="text-lg font-semibold mb-2 ">
           <p className='text-center'>
-            Ingresar VENTAS:
+            INGRESO DE VENTAS
           </p>
         </h2>
         <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
@@ -195,7 +193,7 @@ const MainComponent = () => {
                 <Input
                   isRequired
                   type="text"
-                  label="nombre"
+                  label="Empresa"
                   id="nombre"
                   autoComplete="given-name"
                   value={nombre}
@@ -248,6 +246,7 @@ const MainComponent = () => {
                   value={quintales}
                   onChange={(e) => setQuintales(e.target.value)}
                   className="max-w-xs"
+                  min={0.01}
                 />
               </div>
             </div>
@@ -269,6 +268,7 @@ const MainComponent = () => {
                   value={peso}
                   onChange={(e) => setPeso(e.target.value)}
                   className="max-w-xs"
+                  min={0.01}
                 />
               </div>
             </div>
@@ -292,6 +292,7 @@ const MainComponent = () => {
                   value={precio}
                   onChange={(e) => setPrecio(e.target.value)}
                   className="max-w-xs"
+                  min={1}
                 />
               </div>
             </div>

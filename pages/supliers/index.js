@@ -1,5 +1,3 @@
-import Link from "next/link";
-import NavBar from '../../Components/Layout/NavBar';
 import React, { useState, useEffect } from 'react';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -11,7 +9,6 @@ import FilterSection from '../../Components/Form/FilterSectionCO';
 import ReusableTable from '../../Components/Form/ReusableTable';
 import { startOfDay, endOfDay } from 'date-fns';
 import SuppliersModal from '../../Components/Form/SuppliersModal';
-
 
 const supliers_historyRef = collection(db, 'supliers_history');
 const supliersInfoRef = collection(db, "supliers_info");
@@ -262,12 +259,10 @@ const Providers = () => {
   }
   return (
     <div>
-      <NavBar />
-      <h1>Proveedores Recientes</h1>
-      <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
+      <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mt-10 mb-10'>
         <h2 className="text-lg font-semibold mb-2 ">
           <p className='text-center'>
-            INGRESAR CAPITAL:
+            INGRESAR CAPITAL
           </p>
         </h2>
         <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
@@ -275,13 +270,17 @@ const Providers = () => {
           <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="sm:col-span-1">
               <label htmlFor="n_cheque" className="block text-sm font-medium leading-6 text-gray-900">
-                <a className='font-bold text-lg'>
-                  PROVEEDOR
-                </a>
+                <div>
+                  <a className='font-bold text-lg'>
+                    PROVEEDOR {""}
+                  </a>
+                  <SuppliersModal />
+                </div>
               </label>
               <div className="mt-2 pr-4">
                 <Select
                   items={suppliers}
+                  isRequired
                   label="Actualizar a:"
                   placeholder="Selecciona un Proveedor"
                   className="max-w-xs"
@@ -294,7 +293,7 @@ const Providers = () => {
                         <div className="flex flex-col">
                           <span className="text-small">{user.name}</span>
                           <span className="text-tiny text-default-400">RTN: {user.rtn}</span>
-                          <span className="text-tiny text-default-400">Codigo: {user.code}</span>
+                          {/* <span className="text-tiny text-default-400">Codigo: {user.code}</span> */}
                         </div>
                       </div>
                     </SelectItem>
@@ -306,7 +305,7 @@ const Providers = () => {
             <div className="sm:col-span-1">
               <label htmlFor="n_cheque" className="block text-sm font-medium leading-6 text-gray-900">
                 <a className='font-bold text-lg'>
-                  N° CHEQUE
+                  CHEQUE
                 </a>
               </label>
 
@@ -314,7 +313,7 @@ const Providers = () => {
                 <Input
                   isRequired
                   type="text"
-                  label="N° de Cheque"
+                  label="N° Cheque"
                   id="n_cheque"
                   autoComplete="family-name"
                   value={n_cheque}
@@ -327,14 +326,14 @@ const Providers = () => {
             <div className="sm:col-span-1">
               <label htmlFor="n_documento" className="block text-sm font-medium leading-6 text-gray-900">
                 <a className='font-bold text-lg'>
-                  N° DOCUMENTO
+                  DOCUMENTO
                 </a>
               </label>
               <div className="mt-2 pr-4">
                 <Input
                   isRequired
                   type="text"
-                  label="N° Documento"
+                  label="N° Doc"
                   id="n_documento"
                   autoComplete="family-name"
                   value={n_documento}
@@ -361,6 +360,8 @@ const Providers = () => {
                   value={capital}
                   onChange={(e) => setCapital(e.target.value)}
                   className="max-w-xs"
+                  min={1}
+                  placeholder={100}
                 />
               </div>
             </div>
@@ -371,14 +372,11 @@ const Providers = () => {
             </button>
           </div>
         </form>
-        <div>
-          <SuppliersModal />
-        </div>
       </div>
       <div>
       <h2 className="text-lg font-semibold mb-2 ">
           <p className='text-center'>
-            PRESTAMOS RECIENTES:
+            PRESTAMOS RECIENTES
           </p>
         </h2>
         <FilterSection onFilter={(filterValues) => applyFilter(filterValues)} />

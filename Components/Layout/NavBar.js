@@ -14,18 +14,20 @@ import {
   NavbarMenuItem,
   Button,
 } from "@nextui-org/react";
+import { db } from "../../lib/firebase";
+import { doc, onSnapshot } from "@firebase/firestore";
 import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 
 export default function App() {
   const { logout, user } = useAuth();
-  const localUser = JSON.parse(localStorage.getItem("user"));
+  const [localUser, setLocalUser] = useState({});
+  const [loadedUser, setLoadedUser] = useState(false);
   const router = useRouter();
   const { pathname } = router;
   const routeSplit = pathname.split("/")[1];
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const handleLogout = async () => {
     localStorage.removeItem("user");
     const logoutUser = await logout();
@@ -34,6 +36,26 @@ export default function App() {
       return;
     }
   };
+  useEffect(() => {
+    //get rest of user information
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(userRef, (doc) => {
+      if (doc.exists()) {
+        const updatedUser = doc.data();
+        const newUser = {
+          displayname: `${updatedUser.firstName} ${updatedUser.lastName}`,
+          email: updatedUser.email,
+          role: updatedUser.role
+        };
+        localStorage.setItem("user", JSON.stringify(newUser));
+        //saving user data in local storage
+        setLocalUser(newUser);
+        setLoadedUser(true);
+      }
+    });
+    return () => unsubscribe();
+  }, [loadedUser, user]);
 
   const menuItems = [
     { text: "Resumen", url: "../" },
@@ -41,8 +63,6 @@ export default function App() {
     { text: "Ventas", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
     { text: "Consultas", url: "/searches" },
-    
-    
   ];
 
   return (
@@ -60,31 +80,41 @@ export default function App() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit">ACME</p>
+          <p className="font-bold text-large text-inherit">BODEGA - GAD</p>
         </NavbarBrand>
         <NavbarItem>
           <Link color="foreground" href="../">
-            Resumen
+            <p className="text-large">
+              RESUMEN
+            </p>
           </Link>
         </NavbarItem>
         <NavbarItem >
           <Link href="/purchasing" color="foreground" aria-current="page">
-            Compras
+          <p className="text-large">
+            COMPRAS
+          </p>
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/sales">
-            Ventas
+            <p className="text-large">
+              VENTAS
+            </p>
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/supliers">
-            Proveedores
+            <p className="text-large">
+              PROVEEDORES  
+            </p>
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/searches">
-          Consultas
+            <p className="text-large">
+              CONSULTAS
+            </p>
           </Link>
         </NavbarItem>
         
@@ -99,7 +129,7 @@ export default function App() {
               className="transition-transform"
               color={"secondary"}
               size="md"
-              name={`${user.displayName}`}
+              name={`${localUser.displayname}`}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat" css={{ alignTtems: "center"}}>
@@ -107,11 +137,11 @@ export default function App() {
               key="team_settings"
               className="h-14 gap-2"
               css={{ height: "fit-content", alignTtems: "center" }}
-              color="primary">
+              color="secondary">
               {localUser && (
                 <>
-                  <p className="font-semibold">Conectado como: {localUser.role}</p>
-                  <p className="font-semibold">{`${user.displayName}` ?? "Usuario"}</p>
+                  <p className="font-bold">{`${localUser.displayname}` ?? "Usuario"}</p>
+                  <p className="font-semibold">{localUser.role}</p>
                   <p className="font-semibold">{localUser.email}</p>
                 </>
               )}

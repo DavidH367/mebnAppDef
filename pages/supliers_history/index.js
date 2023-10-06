@@ -1,4 +1,3 @@
-import NavBar from '../../Components/Layout/NavBar';
 import { columns } from './datas';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -320,9 +319,7 @@ const Providers = () => {
 
   }
 
-  return <div>
-    <NavBar />
-    <h1>Aqui va a ir la hora actual</h1>
+  return <div>  
     <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
       <h2 className="text-lg font-semibold mb-2 ">
         <p className='text-center'>

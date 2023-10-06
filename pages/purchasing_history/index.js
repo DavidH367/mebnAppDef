@@ -1,5 +1,3 @@
-import Link from "next/link";
-import NavBar from '../../Components/Layout/NavBar';
 import { columns } from './datas';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -62,28 +60,17 @@ const ConsultasClientes = () => {
   }, []);
 
 
-  return <div className="justify-items-center px-12">
-    <NavBar />
-    <h2 className="text-lg font-semibold mb-2 p-12 items-center">
-      <p className='text-center'>
-        CONSULTAS DE CLIENTES
-      </p>
-    </h2>
-
-    <div className="grid h-80 card bg-base-200 rounded-box place-items-top flex-grow">
-      <h1 className="text-2xl font-semibold mb-4 " >
-        <p className='text-center'>
-          INFORMACION DE COMPRAS
-        </p>
+  return(
+    <div className="justify-items-center px-12">
+      <h1 className=" text-2xl font-semibold pt-10 text-center">
+      HISTORIAL DE CLIENTES
       </h1>
-      <FilterSection onFilter={applyFilter} />
-      <ReusableTable data={filteredData} columns={columns} />
+
+      <div className="container mx-auto p-4 justify-center items-center h-screen">
+        <FilterSection onFilter={applyFilter} />
+        <ReusableTable data={filteredData} columns={columns} />
+      </div>
     </div>
-
-
-
-
-  </div>
-}
+)}
 
 export default ConsultasClientes;

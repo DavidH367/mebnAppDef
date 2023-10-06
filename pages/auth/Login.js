@@ -48,7 +48,7 @@ return (
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: "90vh",
+                minHeight: "92.2vh",
             }}>
             <Card 
                 style={{padding: "45px 45px 45px 45px"}}>
