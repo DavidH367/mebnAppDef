@@ -181,12 +181,13 @@ const Purchasing1 = () => {
                   </label>
                   <div className="mt-2 pr-4">
                     <Input
-                      type="text"
+                      type="number"
                       label="RTN"
                       id="rtn"
                       value={rtn}
                       onChange={(e) => setRTN(e.target.value)}
                       className="max-w-xs"
+                      min={0}
                     />
                   </div>
                 </div>
