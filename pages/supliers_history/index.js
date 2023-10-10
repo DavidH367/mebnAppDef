@@ -124,180 +124,181 @@ const Providers = () => {
       return; // No enviar el formulario si falta algún campo obligatorio
     }
 
-    // Obtener el último valor de "n_transaction"
-    const querySnapshot1 = await getDocs(
-      query(collection(db, 'supliers_history'), orderBy('n_transaction', 'desc'), limit(1)));
-
-    const querySnapshot2 = await getDocs(
-      query(collection(db, 'supliers'), orderBy('code', 'desc'), limit(1)));
-
-    const querySnapshot3 = await getDocs(
-      query(
-        collection(db, 'supliers'),
-        where('n_check', '==', n_cheque), // Filtrar por n_cheque
-        where('n_document', '==', n_documento), // Filtrar por n_documento
-        orderBy('code', 'desc'),
-        limit(1)
-      )
-    );
-
-    const querySnapshot4 = await getDocs(
-      query(
-        collection(db, 'supliers_history'),
-        where('n_check', '==', n_cheque), // Filtrar por n_cheque
-        where('n_document', '==', n_documento), // Filtrar por n_documento
-        orderBy('date', 'desc'),
-        limit(1)
-      )
-    );
-
-
-    let auxRtn;
-    const docId2 = idDocumentos;
-    const docRef = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-    const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
-    //obtener RTN
-    if (docSnapshot.exists()) {
-      // El documento existe, puedes acceder al valor de rtn
-      auxRtn = docSnapshot.data().rtn;
-    } else {
-      // El documento no existe
-      console.log('El documento no existe.');
-    }
-
-    //obtener nombre
-    let auxName;
-    const docRef2 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-    const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
-    if (docSnapshot1.exists()) {
-      // El documento existe, puedes acceder al valor de rtn
-      auxName = docSnapshot1.data().name;
-    } else {
-      // El documento no existe
-      console.log('El documento no existe.');
-    }
-
-    //obbtener codigo
-    let auxCode;
-    const docRef3 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-    const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
-    if (docSnapshot2.exists()) {
-      // El documento existe, puedes acceder al valor de rtn
-      auxCode = docSnapshot2.data().code;
-    } else {
-      // El documento no existe
-      console.log('El documento no existe.');
-    }
-
-    let newCapital;
-    // Verificar si se encontraron documentos
-    if (!querySnapshot3.empty) {
-      // Obtener el primer documento encontrado
-      const doc = querySnapshot3.docs[0];
-      // Acceder al campo "capital" y asignarlo a la variable
-      newCapital = doc.data().capital;
-    } else {
-      console.log('No se encontraron resultados.');
-    }
-
-    let newPending;
-    // Verificar si se encontraron documentos
-    if (!querySnapshot4.empty) {
-      // Obtener el primer documento encontrado
-      const doc = querySnapshot4.docs[0];
-      // Acceder al campo "capital" y asignarlo a la variable
-      newPending = doc.data().pending;
-    } else {
-      console.log('No se encontraron resultados.');
-    }
-
-    let numTrans;
-    if (!querySnapshot1.empty) {
-      querySnapshot1.forEach((doc) => {
-        numTrans = doc.data().n_transaction + 1;
-      });
-    } else {
-      numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
-    }
-
-    let code1;
-    if (!querySnapshot2.empty) {
-      querySnapshot2.forEach((doc) => {
-        code1 = doc.data().code + 1;
-      });
-    } else {
-      code1 = 1; // Si no hay documentos anteriores, empezar desde 1
-    }
-    const rtnValue = rtn || "CF";
-
-    //validacion de datos antes de guardar:
-
-    // Verificar si se están ingresando más de lo que se debe
-    let auxStatus;
-    if (parseFloat(pagado) > parseFloat(newPending)) {
-      alert('Estás ingresando más de lo que se debe. Por favor, verifica los valores.');
-      return;
-    } else {
-      auxStatus = 'activo';
-    }
-
-    // Verificar si el campo 'pending' ya es igual a cero y actualizar el campo 'status'
-    if ((parseFloat(newPending) - parseFloat(pagado)) === 0) {
-      auxStatus = 'completado';
-
-    } else {
-      auxStatus = 'activo';
-    }
-
-
-    // Crear una consulta que busca documentos que coincidan con las condiciones
-    let docId;
-    const q = query(
-      collection(db, 'supliers'),
-      where('n_check', '==', n_cheque),
-      where('n_document', '==', n_documento)
-    );
+    
     try {
-      const querySnapshot = await getDocs(q);
-      // Verificar si se encontraron documentos que cumplan con las condiciones
-      if (!querySnapshot.empty) {
-        // Obtener el primer documento que cumple con las condiciones
-        const doc = querySnapshot.docs[0];
-    
-        // Obtener el docId del documento
-        docId = doc.id;
-    
-        console.log('DocId encontrado:', docId);
+      
+      // Obtener el último valor de "n_transaction"
+      const querySnapshot1 = await getDocs(
+        query(collection(db, 'supliers_history'), orderBy('n_transaction', 'desc'), limit(1)));
+  
+      const querySnapshot2 = await getDocs(
+        query(collection(db, 'supliers'), orderBy('code', 'desc'), limit(1)));
+  
+      const querySnapshot3 = await getDocs(
+        query(
+          collection(db, 'supliers'),
+          where('n_check', '==', n_cheque), // Filtrar por n_cheque
+          where('n_document', '==', n_documento), // Filtrar por n_documento
+          orderBy('code', 'desc'),
+          limit(1)
+        )
+      );
+  
+      const querySnapshot4 = await getDocs(
+        query(
+          collection(db, 'supliers_history'),
+          where('n_check', '==', n_cheque), // Filtrar por n_cheque
+          where('n_document', '==', n_documento), // Filtrar por n_documento
+          orderBy('date', 'desc'),
+          limit(1)
+        )
+      );
+  
+  
+      let auxRtn;
+      const docId2 = idDocumentos;
+      const docRef = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+      const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
+      //obtener RTN
+      if (docSnapshot.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxRtn = docSnapshot.data().rtn;
       } else {
-        console.log('No se encontraron documentos que cumplan con las condiciones.');
+        // El documento no existe
+        console.log('El documento no existe.');
       }
-    } catch (error) {
-      console.error('Error al realizar la consulta:', error);
-    }
-    
-    const supliersDocRef = doc(db, 'supliers', docId);
-    console.log('DocId encontrado lueego:', docId);
-    const newInvData = {
-      pending: parseFloat(newPending - pagado),
-      paid: parseFloat(pagado),
-      status: auxStatus,
-    };
-
-    const newData = {
-      capital: parseFloat(newCapital),
-      code: auxCode,
-      date: new Date(), // Guardar la fecha actual en Firebase
-      n_check: n_cheque,
-      n_document: n_documento,
-      name: auxName,
-      pending: parseFloat(newPending - pagado),
-      paid: parseFloat(pagado),
-      rtn: auxRtn,
-      status: auxStatus,
-    };
-
-    try {
-
+  
+      //obtener nombre
+      let auxName;
+      const docRef2 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+      const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
+      if (docSnapshot1.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxName = docSnapshot1.data().name;
+      } else {
+        // El documento no existe
+        console.log('El documento no existe.');
+      }
+  
+      //obbtener codigo
+      let auxCode;
+      const docRef3 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+      const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
+      if (docSnapshot2.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxCode = docSnapshot2.data().code;
+      } else {
+        // El documento no existe
+        console.log('El documento no existe.');
+      }
+  
+      let newCapital;
+      // Verificar si se encontraron documentos
+      if (!querySnapshot3.empty) {
+        // Obtener el primer documento encontrado
+        const doc = querySnapshot3.docs[0];
+        // Acceder al campo "capital" y asignarlo a la variable
+        newCapital = doc.data().capital;
+      } else {
+        console.log('No se encontraron resultados.');
+      }
+  
+      let newPending;
+      // Verificar si se encontraron documentos
+      if (!querySnapshot4.empty) {
+        // Obtener el primer documento encontrado
+        const doc = querySnapshot4.docs[0];
+        // Acceder al campo "capital" y asignarlo a la variable
+        newPending = doc.data().pending;
+      } else {
+        console.log('No se encontraron resultados.');
+      }
+  
+      let numTrans;
+      if (!querySnapshot1.empty) {
+        querySnapshot1.forEach((doc) => {
+          numTrans = doc.data().n_transaction + 1;
+        });
+      } else {
+        numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+      }
+  
+      let code1;
+      if (!querySnapshot2.empty) {
+        querySnapshot2.forEach((doc) => {
+          code1 = doc.data().code + 1;
+        });
+      } else {
+        code1 = 1; // Si no hay documentos anteriores, empezar desde 1
+      }
+      const rtnValue = rtn || "CF";
+  
+      //validacion de datos antes de guardar:
+  
+      // Verificar si se están ingresando más de lo que se debe
+      let auxStatus;
+      if (parseFloat(pagado) > parseFloat(newPending)) {
+        alert('Estás ingresando más de lo que se debe. Por favor, verifica los valores.');
+        return;
+      } else {
+        auxStatus = 'activo';
+      }
+  
+      // Verificar si el campo 'pending' ya es igual a cero y actualizar el campo 'status'
+      if ((parseFloat(newPending) - parseFloat(pagado)) === 0) {
+        auxStatus = 'completado';
+  
+      } else {
+        auxStatus = 'activo';
+      }
+  
+  
+      // Crear una consulta que busca documentos que coincidan con las condiciones
+      let docId;
+      const q = query(
+        collection(db, 'supliers'),
+        where('n_check', '==', n_cheque),
+        where('n_document', '==', n_documento)
+      );
+      try {
+        const querySnapshot = await getDocs(q);
+        // Verificar si se encontraron documentos que cumplan con las condiciones
+        if (!querySnapshot.empty) {
+          // Obtener el primer documento que cumple con las condiciones
+          const doc = querySnapshot.docs[0];
+      
+          // Obtener el docId del documento
+          docId = doc.id;
+      
+          console.log('DocId encontrado:', docId);
+        } else {
+          console.log('No se encontraron documentos que cumplan con las condiciones.');
+        }
+      } catch (error) {
+        console.error('Error al realizar la consulta:', error);
+      }
+      
+      const supliersDocRef = doc(db, 'supliers', docId);
+      console.log('DocId encontrado lueego:', docId);
+      const newInvData = {
+        pending: parseFloat(newPending - pagado),
+        paid: parseFloat(pagado),
+        status: auxStatus,
+      };
+  
+      const newData = {
+        capital: parseFloat(newCapital),
+        code: auxCode,
+        date: new Date(), // Guardar la fecha actual en Firebase
+        n_check: n_cheque,
+        n_document: n_documento,
+        name: auxName,
+        pending: parseFloat(newPending - pagado),
+        paid: parseFloat(pagado),
+        rtn: auxRtn,
+        status: auxStatus,
+      };
+      
       await updateDoc(supliersDocRef, newInvData);
       await addDoc(supliers_historyRef, newData);
 

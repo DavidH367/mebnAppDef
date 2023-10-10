@@ -122,8 +122,9 @@ const Purchasing1 = () => {
       doc.text('Telefono: (504) 9541-9092', 50, 24);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text(`Fecha: ${fechaYHora}`, 5, 35);
-      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 35);
+      doc.text('COMPROBANTE DE COMPRA', 46, 31);
+      doc.text(`Fecha: ${fechaYHora}`, 5, 38);
+      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
       doc.text(`RTN: ${newData.rtn}`, 5, 45);
@@ -152,6 +153,10 @@ const Purchasing1 = () => {
 
     } catch (error) {
       console.error('Error al guardar los datos:', error);
+      <div className="alert alert-error">
+        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span>Error! Task failed successfully.</span>
+      </div>
     };
 
     // Reiniciar la validación y el mensaje de error

@@ -31,8 +31,9 @@ const FacturaPDF = () => {
         doc.text('Telefono: (504) 9541-9092', 50, 24);
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
-        doc.text(`Fecha: ${newData.date}`, 3, 35);
-        doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 35);
+        doc.text('COMPROBANTE DE COMPRA', 46, 31);
+        doc.text(`Fecha: ${newData.date}`, 5, 38);
+        doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.text(`RTN: ${newData.rtn}`, 5, 45);

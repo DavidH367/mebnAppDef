@@ -14,8 +14,8 @@ export const columns = [
     { title: 'NOMBRE', field: 'name' },
     { title: 'FECHA', field: 'date' },
     { title: 'N° de CHEQUE', field: 'n_check' },
-    { title: 'CAPITAL', field: 'capital' },
     { title: 'N° de FACTURA', field: 'n_document' },
+    { title: 'CAPITAL', field: 'capital' },
     { title: 'ABONADO', field: 'paid' },
     { title: 'PENDIENTE', field: 'pending' },
 ];
