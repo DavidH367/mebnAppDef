@@ -12,50 +12,13 @@ import {
 } from "firebase/firestore";
 import { Card, CardHeader, CardBody, Divider, Chip } from "@nextui-org/react";
 
-const Estados = () => {
-  const [tsales, setTsales] = useState(0); // Definir tsales en el estado inicial
-  const [tpurchases, setPurchases] = useState(0); // Definir tsales en el estado inicial
+const Estados = (props) => {
+   // Puedes acceder a las props totalVentas y totalCompras
+  const { totalVentas, totalCompras } = props;
+
 
   // Usar async/await para esperar a que se resuelva la promesa
-  useEffect(() => {
-    //suma de total en ventas
-    const fetchData = async () => {
-      const querySnapshot1 = await getDocs(
-        query(collection(db, "inventories"), where("tran_type", "==", "VENTA"))
-      );
-
-      let latestTsales = 0;
-
-      querySnapshot1.forEach((doc) => {
-        const data = doc.data();
-        // Asegúrate de que la propiedad 'value' exista en el documento
-        if (data.hasOwnProperty("value")) {
-          latestTsales += data.value; // Suma el valor de 'value' al total
-        }
-      });
-
-      //suma total de compras
-
-      const querySnapshot2 = await getDocs(
-        query(collection(db, "inventories"), where("tran_type", "==", "COMPRA"))
-      );
-
-      let latestPurchases = 0;
-
-      querySnapshot2.forEach((doc) => {
-        const data = doc.data();
-        // Asegúrate de que la propiedad 'value' exista en el documento
-        if (data.hasOwnProperty("value")) {
-          latestPurchases += data.value; // Suma el valor de 'value' al total
-        }
-      });
-
-      setTsales(latestTsales);
-      setPurchases(latestPurchases); // Actualizar el estado de tsales con el valor obtenido
-    };
-
-    fetchData();
-  }, []); // El segundo argumento [] asegura que useEffect se ejecute solo una vez al montar el componente
+  
 
   return (
     <div className="bg-white py-12 sm:py-16 ">
@@ -76,7 +39,7 @@ const Estados = () => {
                 }}
               >
                 <h4 className="font-bold text-large">
-                  {tpurchases.toFixed(2)} L
+                  {totalCompras.toLocaleString('es-HN', { minimumFractionDigits: 2 })} L
                 </h4>
               </Chip>
             </CardHeader>
@@ -98,7 +61,7 @@ const Estados = () => {
                 }}
               >
                 <h4 className="font-bold text-large">
-                  {tsales.toFixed(2)} L
+                  {totalVentas.toLocaleString('es-HN', { minimumFractionDigits: 2 })} L
                 </h4>
               </Chip>
             </CardHeader>

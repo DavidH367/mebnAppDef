@@ -7,6 +7,7 @@ import {
   query,
   getDocs,
   orderBy,
+  where,
 } from "firebase/firestore";
 import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP";
@@ -25,6 +26,10 @@ const IntakeControl = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
 
+  //stados iniciales de stats
+  const [tsales, setTsales] = useState(0); // Definir tsales en el estado inicial
+  const [tpurchases, setPurchases] = useState(0); // Definir tsales en el estado inicial
+
   //paginado
   const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -37,6 +42,48 @@ const IntakeControl = () => {
       router.push("/auth/Login");
     }
   }, []);
+  //actualizar totales
+    const [totalVentas, setTotalVentas] = useState(0);
+    const [totalCompras, setTotalCompras] = useState(0);
+  //inicializar datos de stats
+  useEffect(() => {
+    //suma de total en ventas
+    const fetchData = async () => {
+      
+      const querySnapshot1 = await getDocs(
+        query(collection(db, "inventories"), where("tran_type", "==", "VENTA"))
+      );
+      let latestTsales = 0;
+      querySnapshot1.forEach((doc) => {
+        const data = doc.data();
+        // Asegúrate de que la propiedad 'value' exista en el documento
+        if (data.hasOwnProperty("value")) {
+          latestTsales += data.value; // Suma el valor de 'value' al total
+        }
+      });
+
+      //suma total de compras
+      const querySnapshot2 = await getDocs(
+        query(collection(db, "inventories"), where("tran_type", "==", "COMPRA"))
+      );
+      let latestPurchases = 0;
+      querySnapshot2.forEach((doc) => {
+        const data = doc.data();
+        // Asegúrate de que la propiedad 'value' exista en el documento
+        if (data.hasOwnProperty("value")) {
+          latestPurchases += data.value; // Suma el valor de 'value' al total
+        }
+      });
+
+      setTotalVentas(latestTsales);
+      setTotalCompras(latestPurchases); // Actualizar el estado de tsales con el valor obtenido
+    };
+
+    fetchData();
+  }, []); // El segundo argumento [] asegura que useEffect se ejecute solo una vez al montar el componente
+
+  
+
   //mostrar datos
   useEffect(() => {
     const fetchData = async () => {
@@ -65,12 +112,29 @@ const IntakeControl = () => {
       const start = startOfDay(startDate);
       const end = endOfDay(endDate);
 
+
+
       return (
         item.rtn.toLowerCase().includes(rtn.toLowerCase()) &&
         (!startDate || itemDate >= start) &&
         (!endDate || itemDate <= end)
       );
     });
+
+    // Calcular los totales de ventas y compras
+    let ventasTotal = 0;
+    let comprasTotal = 0;
+
+    filtered.forEach((item) => {
+      if (item.tran_type === 'VENTA') {
+        ventasTotal += item.value; // Asumiendo que el campo es "amount" para ventas
+      } else if (item.tran_type === 'COMPRA') {
+        comprasTotal += item.value; // Asumiendo que el campo es "amount" para compras
+      }
+    });
+    // Establecer los totales en los estados correspondientes
+    setTotalVentas(ventasTotal);
+    setTotalCompras(comprasTotal);
 
     setFilteredData(filtered);
   };
@@ -82,7 +146,7 @@ const IntakeControl = () => {
           CONTROL DE INGRESOS Y EGRESOS DE CAFÉ
         </h1>
         <div>
-          <Estados />
+          <Estados totalVentas={totalVentas} totalCompras={totalCompras} />
         </div>
         <div>
           <div className="container mx-auto p-4 justify-center items-center h-screen">

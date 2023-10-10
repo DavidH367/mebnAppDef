@@ -152,6 +152,46 @@ const MainComponent = () => {
 
       await addDoc(invRef, newInvData);
 
+      const fecha = new Date(newData.date);
+      // Obtener la fecha en formato dd/mm/aaaa
+      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
+      // Obtener la hora en formato hh:mm:ss
+      const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+      const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
+
+      //PDF
+      const doc = new jsPDF({ unit: 'mm', format: [215, 140] });
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('BODEGA - GAD', 50, 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Compra Venta de Café', 53, 15);
+      doc.setFontSize(8);
+      doc.text('RTN: 0313198500469', 58, 19);
+      doc.setFontSize(10);
+      doc.text('Telefono: (504) 9541-9092', 50, 24);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('COMPROBANTE DE VENTA', 46, 31);
+      doc.text(`Fecha: ${fechaYHora}`, 5, 38);
+      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`RTN: ${newData.rtn}`, 5, 45);
+      doc.text(`Nombre Cliente: ${newData.name}`, 5, 52);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Quintales en Unidades: ${newData.bags_sold}`, 5, 59);
+      doc.text(`Tipo de Café: ${newData.type}`, 5, 66);
+      doc.text(`Peso Neto en Libras: ${newData.weight}`, 5, 73);
+      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 73);
+      doc.text('¡GRACIAS POR TU PREFERENCIA!', 40, 85);
+      //guardar el PDF con un identificador
+      // Set the document to automatically print via JS
+      doc.autoPrint();
+      doc.output('dataurlnewwindow');
+
+
       // Limpiar los campos del formulario después de guardar
       setRTN("");
       setNombre("");
