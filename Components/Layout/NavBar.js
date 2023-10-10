@@ -42,11 +42,11 @@ export default function App() {
     const userRef = doc(db, "users", user.uid);
     const unsubscribe = onSnapshot(userRef, (doc) => {
       if (doc.exists()) {
-        const updatedUser = doc.data();
+        const UserLogin = doc.data();
         const newUser = {
-          displayname: `${updatedUser.firstName} ${updatedUser.lastName}`,
-          email: updatedUser.email,
-          role: updatedUser.role
+          displayname: `${UserLogin.firstName} ${UserLogin.lastName}`,
+          email: UserLogin.email,
+          role: UserLogin.role
         };
         localStorage.setItem("user", JSON.stringify(newUser));
         //saving user data in local storage
@@ -58,11 +58,12 @@ export default function App() {
   }, [loadedUser, user]);
 
   const menuItems = [
-    { text: "Resumen", url: "../" },
+    { text: "Inicio", url: "../" },
     { text: "Compras", url: "/purchasing" },
     { text: "Ventas", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
     { text: "Consultas", url: "/searches" },
+    { text: "Usuarios", url: "/users" },
   ];
 
   return (
@@ -73,22 +74,19 @@ export default function App() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit">BODEGA - GAD</p>
+          <Link color="foreground" href="../">
+            <p className="font-bold text-inherit">BODEGA - GAD</p>
+          </Link>
         </NavbarBrand>
 
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-large text-inherit">BODEGA - GAD</p>
-        </NavbarBrand>
-        <NavbarItem>
           <Link color="foreground" href="../">
-            <p className="text-large">
-              RESUMEN
-            </p>
+            <p className="font-bold text-large text-inherit">BODEGA - GAD</p>
           </Link>
-        </NavbarItem>
+        </NavbarBrand>
         <NavbarItem >
           <Link href="/purchasing" color="foreground" aria-current="page">
           <p className="text-large">
@@ -114,6 +112,13 @@ export default function App() {
           <Link color="foreground" href="/searches">
             <p className="text-large">
               CONSULTAS
+            </p>
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/users">
+            <p className="text-large">
+              USUARIOS
             </p>
           </Link>
         </NavbarItem>

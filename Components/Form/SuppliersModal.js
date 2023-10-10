@@ -78,8 +78,9 @@ const SuppliersModal = () => {
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">Ingrese Nuevos Datos</ModalHeader>
+                            <form onSubmit={handleSubmit} >
                             <ModalBody>
-                                <form onSubmit={handleSubmit} >
+                                
                                     <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
 
                                         <div className="sm:col-span-1">
@@ -121,20 +122,26 @@ const SuppliersModal = () => {
                                             </div>
                                         </div>
 
-                                        <Button
-                                            type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                                        >
-                                            Guardar
-                                        </Button>
+                                        
                                     </div>
-                                </form>
+                                
 
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="flat" onPress={onClose}>
-                                    Close
+                            <Button
+                                            type='submit' className='items-center w-40 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                                        >
+                                            Guardar
+                                        </Button>
+                                <Button 
+                                color="danger" 
+                                onPress={onClose}
+                                className='items-center w-40 hover:bg-red-400'
+                                >
+                                    Cerrar
                                 </Button>
                             </ModalFooter>
+                            </form>
                         </>
                     )}
                 </ModalContent>

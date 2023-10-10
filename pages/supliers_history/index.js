@@ -9,7 +9,8 @@ import React, { useState, useEffect } from 'react';
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import { startOfDay, endOfDay } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
-
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
 
 const supliers_historyRef = collection(db, 'supliers_history');
 const supliersInfoRef = collection(db, "supliers_info");
@@ -29,7 +30,16 @@ const Providers = () => {
   const [data, setData] = useState([]);
   const [filterApplied, setFilterApplied] = useState(false); // Estado para controlar si se ha aplicado el filtro
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
+  
+  //Valida acceso a la pagina
+  const router = useRouter();
+  const { user, errors, setErrors } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
 
   const applyFilter = ({ rtn, n_check, startDate, endDate }) => {
     const filtered = data.filter((item) => {
@@ -319,8 +329,8 @@ const Providers = () => {
 
   }
 
-  return <div>  
-    <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 '>
+  return <div className="container mx-auto p-10 justify-center items-center h-full">  
+    <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mb-10'>
       <h2 className="text-lg font-semibold mb-2 ">
         <p className='text-center'>
           Actualizar Prestamos o Anticipos:

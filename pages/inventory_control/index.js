@@ -12,15 +12,16 @@ import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP";
 
 import { columns } from "./datas";
-import { Divider } from "@nextui-org/react";
 import Estados from "@/Components/Form/stats";
 import { startOfDay, endOfDay } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
 
 const invRef = collection(db, "inventories");
-
 const IntakeControl = () => {
   //inicio para el filtro de datos
+  const router = useRouter();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
 
@@ -28,6 +29,14 @@ const IntakeControl = () => {
   const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  //Valida acceso a la pagina
+  const { user, errors, setErrors } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
   //mostrar datos
   useEffect(() => {
     const fetchData = async () => {
@@ -68,8 +77,8 @@ const IntakeControl = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 divide-y">
-        <h1 className=" text-2xl font-semibold pt-10 text-center mb-5">
+      <div className="container mx-auto p-10 justify-center items-center h-full">
+        <h1 className=" text-2xl font-semibold text-center mb-5">
           CONTROL DE INGRESOS Y EGRESOS DE CAFÉ
         </h1>
         <div>

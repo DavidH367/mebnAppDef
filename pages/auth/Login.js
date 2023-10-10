@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import {useEffect, useState } from "react";
 import styles from "../../styles/Login.module.css";
 import Head from "next/head";
-import { Card, Link, Spinner, Image } from "@nextui-org/react";
+import { Card, Link, Spinner, Image, Chip } from "@nextui-org/react";
 import { PrimaryButton } from "../../Components/Form/Buttons";
 import { useAuth } from "../../lib/context/AuthContext";
 import { EmailInput, PasswordInput } from "../../Components/Form/Inputs";
@@ -48,7 +48,7 @@ return (
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: "92.2vh",
+                minHeight: "95vh",
             }}>
             <Card 
                 style={{padding: "45px 45px 45px 45px"}}>
@@ -88,10 +88,12 @@ return (
             </Card>
             <div className={styles.loginButtonContainer}>
                 {loading && <Spinner label="Iniciando sesión..." color="primary" />}
-                {errors && (
-                    <span className="form-errors">
-                    {errors.code === 3 ? errors.message : ""}
-                    </span>
+                {errors.code === 3 && (
+                    <Chip color="danger" className="mb-3">
+                        <span className="form-errors">
+                        {errors.code === 3 ? errors.message : ""}
+                        </span>
+                    </Chip>
                 )}
                 <PrimaryButton
                     text="Iniciar Sesión"

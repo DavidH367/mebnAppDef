@@ -1,10 +1,21 @@
 import { jsPDF } from "jspdf";
 import React from "react";
 import { Button } from "@nextui-org/react";
-
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const FacturaPDF = () => {
-
+    //Valida acceso a la pagina
+    const router = useRouter();
+    const { user, errors, setErrors } = useAuth();
+    useEffect(() => {
+    if (!user) {
+        setErrors("");
+        router.push("/auth/Login");
+    }
+    }, []);
+    
     const newData = {
         n_transaction: 30,
         date: '21 de septiembre de 2023, 22:55:16',

@@ -9,6 +9,8 @@ import FilterSection from '../../Components/Form/FilterSectionCO';
 import ReusableTable from '../../Components/Form/ReusableTable';
 import { startOfDay, endOfDay } from 'date-fns';
 import SuppliersModal from '../../Components/Form/SuppliersModal';
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
 
 const supliers_historyRef = collection(db, 'supliers_history');
 const supliersInfoRef = collection(db, "supliers_info");
@@ -27,7 +29,16 @@ const Providers = () => {
   const [data, setData] = useState([]);
   const [filterApplied, setFilterApplied] = useState(false); // Estado para controlar si se ha aplicado el filtro
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
+  
+  //Valida acceso a la pagina
+  const router = useRouter();
+  const { user, errors, setErrors } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
 
   const applyFilter = ({ rtn, n_check, startDate, endDate }) => {
     const filtered = data.filter((item) => {
@@ -258,8 +269,9 @@ const Providers = () => {
 
   }
   return (
-    <div>
-      <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mt-10 mb-10'>
+    <div class="">
+    <div className="container mx-auto p-10 justify-center items-center">
+      <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mb-10'>
         <h2 className="text-lg font-semibold mb-2 ">
           <p className='text-center'>
             INGRESAR CAPITAL
@@ -293,7 +305,6 @@ const Providers = () => {
                         <div className="flex flex-col">
                           <span className="text-small">{user.name}</span>
                           <span className="text-tiny text-default-400">RTN: {user.rtn}</span>
-                          {/* <span className="text-tiny text-default-400">Codigo: {user.code}</span> */}
                         </div>
                       </div>
                     </SelectItem>
@@ -366,7 +377,7 @@ const Providers = () => {
               </div>
             </div>
             <button
-              type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+              type='submit' className='h-9 w-40 mt-11 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
             >
               Guardar
             </button>
@@ -383,6 +394,7 @@ const Providers = () => {
         <ReusableTable data={filteredData} columns={columns} />
       </div>
 
+    </div>
     </div>
   );
 }

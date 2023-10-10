@@ -9,6 +9,8 @@ import DatePicker from "react-datepicker";
 import { parse, isAfter, isBefore } from "date-fns";
 import { startOfDay, endOfDay } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
 
 const purchasesRef = collection(db, 'purchases');
 
@@ -19,6 +21,15 @@ const ConsultasClientes = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
   
+  //Valida acceso a la pagina
+  const router = useRouter();
+  const { user, errors, setErrors } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
   const applyFilter = ({ rtn, startDate, endDate }) => {
     const filtered = data.filter((item) => {
       const itemDate = item.date.toDate();
@@ -61,8 +72,8 @@ const ConsultasClientes = () => {
 
 
   return(
-    <div className="justify-items-center px-12">
-      <h1 className=" text-2xl font-semibold pt-10 text-center">
+    <div className="container mx-auto p-10 justify-center items-center h-full">
+      <h1 className=" text-2xl font-semibold text-center">
       HISTORIAL DE CLIENTES
       </h1>
 

@@ -12,7 +12,7 @@ export default function Home() {
   const [loadedUser, setLoadedUser] = useState(false);
   const router = useRouter();
   useEffect(() => {
-    //verifying
+    //entrar a la pagina
     if (!user) {
       setErrors("");
       router.push("/auth/Login");
