@@ -293,7 +293,7 @@ const Providers = () => {
                 <Select
                   items={suppliers}
                   isRequired
-                  label="Actualizar a:"
+                  label="Agregar Capital de:"
                   placeholder="Selecciona un Proveedor"
                   className="max-w-xs"
                   value={selectedSupplier}

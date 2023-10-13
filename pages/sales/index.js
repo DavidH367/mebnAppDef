@@ -9,6 +9,7 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
+import { jsPDF } from "jspdf";
 import { columns, tipoC } from "./datas";
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import { useAuth } from "../../lib/context/AuthContext";
