@@ -212,7 +212,7 @@ const MainComponent = () => {
 
   //final para funcion de guardar datos
   return (
-    <div class="espacio">
+    <div className="espacio">
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
           <h2 className="text-lg font-semibold mb-2 ">
