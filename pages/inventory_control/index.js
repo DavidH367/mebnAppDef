@@ -10,7 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import ReusableTable from "../../Components/Form/ReusableTable";
-import FilterSection from "../../Components/Form/FilterSectionP";
+import FilterSection from "../../Components/Form/FilterSectionInv";
 
 import { columns } from "../../Data/inventory_control/datas";
 import Estados from "@/Components/Form/stats";
@@ -106,16 +106,15 @@ const IntakeControl = () => {
     fetchData();
   }, []);
 
-  const applyFilter = ({ rtn, startDate, endDate }) => {
+  const applyFilter = ({ rtn, coffee_type, startDate, endDate }) => {
     const filtered = data.filter((item) => {
       const itemDate = item.date.toDate();
       const start = startOfDay(startDate);
       const end = endOfDay(endDate);
 
-
-
       return (
         item.rtn.toLowerCase().includes(rtn.toLowerCase()) &&
+        item.coffee_type.toLowerCase().includes(coffee_type.toLowerCase()) &&
         (!startDate || itemDate >= start) &&
         (!endDate || itemDate <= end)
       );
@@ -143,14 +142,14 @@ const IntakeControl = () => {
     <div>
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <h1 className=" text-2xl font-semibold text-center mb-5">
-          CONTROL DE INGRESOS Y EGRESOS DE CAFÉ
+          CONTROL DE INVENTARIO Y GASTOS DE CAFÉ
         </h1>
         <div>
           <Estados totalVentas={totalVentas} totalCompras={totalCompras} />
         </div>
         <div>
           <div className="container mx-auto p-4 justify-center items-center h-screen">
-            <FilterSection onFilter={applyFilter} />
+            <FilterSection onFilter={(filterValues) => applyFilter(filterValues)} />
             <ReusableTable data={filteredData} columns={columns} />
           </div>
         </div>

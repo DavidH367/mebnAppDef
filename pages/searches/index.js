@@ -89,10 +89,10 @@ export default function Searches() {
                 onPress={() => console.log("item pressed")}
               >
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">INGRESOS Y EGRESOS</h4>
+                  <h4 className="font-bold text-large">CONTROL DE INVENTARIO</h4>
                   <Divider />
                   <small className="text-default-500 font-bold">
-                    Control de Inventario de café
+                    Transacciones y Gastos
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
