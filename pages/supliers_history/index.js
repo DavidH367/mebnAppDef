@@ -1,4 +1,4 @@
-import { columns } from './datas';
+import { columns } from '../../Data/supliers_history/datas';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit, where, from } from 'firebase/firestore';
@@ -361,7 +361,6 @@ const Providers = () => {
                       <div className="flex flex-col">
                         <span className="text-small">{user.name}</span>
                         <span className="text-tiny text-default-400">RTN: {user.rtn}</span>
-                        <span className="text-tiny text-default-400">Codigo: {user.code}</span>
                       </div>
                     </div>
                   </SelectItem>

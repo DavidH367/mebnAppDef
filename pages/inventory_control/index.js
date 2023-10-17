@@ -12,7 +12,7 @@ import {
 import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP";
 
-import { columns } from "./datas";
+import { columns } from "../../Data/inventory_control/datas";
 import Estados from "@/Components/Form/stats";
 import { startOfDay, endOfDay } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";

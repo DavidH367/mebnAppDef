@@ -1,4 +1,4 @@
-import { columns } from './datas';
+import { columns } from '../../Data/purchasing_history/datas';
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';

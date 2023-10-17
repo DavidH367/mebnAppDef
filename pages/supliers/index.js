@@ -3,7 +3,7 @@ import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit , where} from 'firebase/firestore';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { zonas, tipoC, columns } from './datas';
+import { zonas, tipoC, columns } from '../../Data/supliers/datas';
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import FilterSection from '../../Components/Form/FilterSectionCO';
 import ReusableTable from '../../Components/Form/ReusableTable';
@@ -269,7 +269,7 @@ const Providers = () => {
 
   }
   return (
-    <div className="">
+    <div>
     <div className="container mx-auto p-10 justify-center items-center">
       <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mb-10'>
         <h2 className="text-lg font-semibold mb-2 ">

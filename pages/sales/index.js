@@ -9,7 +9,7 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { columns, tipoC } from "./datas";
+import { columns, tipoC } from "../../Data/sales/datas";
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";

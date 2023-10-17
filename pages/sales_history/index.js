@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP"; // Asegúrate de ajustar la ruta correcta
-import { columns, tipoC } from "./datas";
+import { columns, tipoC } from "../../Data/sales_history/datas";
 import { startOfDay, endOfDay } from "date-fns";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
