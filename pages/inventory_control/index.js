@@ -139,7 +139,7 @@ const IntakeControl = () => {
   };
 
   return (
-    <div>
+    <div className="espacio">
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <h1 className=" text-2xl font-semibold text-center mb-5">
           CONTROL DE INVENTARIO Y GASTOS DE CAFÉ

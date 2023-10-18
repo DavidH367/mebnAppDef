@@ -81,7 +81,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div class="espacioD">
+    <div className="espacioD">
       <div className="container mx-auto p-10 justify-center items-center h-full">
         {!isUpdatedPassword ? (
           <>

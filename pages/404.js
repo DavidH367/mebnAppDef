@@ -51,7 +51,7 @@ const Custom404 = () => {
             La página que estás buscando podría haber sido eliminada o estar
             temporalmente no disponible.
           </p>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: '10px'}}>
             <Button
               ghost
               color={"primary"}

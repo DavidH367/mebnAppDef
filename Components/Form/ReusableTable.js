@@ -125,6 +125,7 @@ const onNextPage = React.useCallback(() => {
           <div className="py-2 px-2 flex justify-between items-center">
           <span className="w-[30%] text-small text-default-400 "> 
           </span>
+          <div className="flex w-full justify-center">
             <Pagination
               isCompact
               showControls
@@ -136,6 +137,7 @@ const onNextPage = React.useCallback(() => {
                 setCurrentPage(newPage);
               }}
             />
+            </div>
             <div className="hidden sm:flex w-[30%] justify-end gap-2">
               <Button isDisabled={startIndex === 1} size="sm" variant="flat" onPress={onPreviousPage}>
                 Previous

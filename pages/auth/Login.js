@@ -101,7 +101,7 @@ return (
                     className={styles.btnLogin}/>
                 <p className={styles.passwordSubtitle}>
                     {/* ¿Olvidaste tu Contraseña? */}
-                    <Link href="#" className={styles.lblRecoverPassword}>
+                    <Link href="/auth/recovery/RequestRecovery" className={styles.lblRecoverPassword}>
                         Recupérar Contraseña
                     </Link>
                 </p>
