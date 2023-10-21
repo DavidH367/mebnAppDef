@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
 import { Input, Chip } from "@nextui-org/react";
 import { useRouter } from "next/router";
@@ -48,7 +49,7 @@ const UserRegister = () => {
       setErrors("El apellido no puede estar vacío");
       return;
     }
-    if (!validateString(lastName )) {
+    if (!validateString(lastName)) {
       setErrors("Apellido incorrecto");
       return;
     }
@@ -87,10 +88,16 @@ const UserRegister = () => {
   };
   return (
     <div className="espacioU">
+      <Head>
+        <title>REGISTRO DE USUARIOS</title>
+        <meta name="description" content="REGISTRO DE USUARIOS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
           <h2 className="text-lg font-semibold mb-2 ">
-            <p className="text-center">USUARIOS</p>
+            <p className="text-center">REGISTRO DE USUARIOS</p>
           </h2>
           <p className="text-sm text-gray-600 mb-6">
             POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS

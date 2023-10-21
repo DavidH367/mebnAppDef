@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { PasswordInput } from "../../Components/Form/Inputs";
 import { useState, useEffect } from "react";
@@ -82,6 +83,12 @@ const ResetPassword = () => {
 
   return (
     <div className="espacioD">
+      <Head>
+        <title>ACTUALIZAR CONTRASEÑA</title>
+        <meta name="description" content="ACTUALIZAR CONTRASEÑA" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <div className="container mx-auto p-10 justify-center items-center h-full">
         {!isUpdatedPassword ? (
           <>

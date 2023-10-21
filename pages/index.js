@@ -8,7 +8,6 @@ import { Card, CardBody, Image, Button, Progress } from "@nextui-org/react";
 
 import CafePerformance from "../Components/Form/coffee_performance";
 
-
 export default function Home() {
   const { user, setErrors } = useAuth();
   const [localUser, setLocalUser] = useState({});
@@ -43,17 +42,21 @@ export default function Home() {
   return (
     <>
       <div className={"homeContainer"}>
-        <h1 className="text-lg font-bold mb-4 p-4 text-center">
+        <Head>
+          <title>INICIO</title>
+          <meta name="description" content="INICIO" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/img/logo_paginas.png" />
+        </Head>
+        <h1 className="text-lg font-bold p-4 text-center">
           BIENVENIDO(A): {localUser.displayname}
         </h1>
 
-        { }
-        <div>
+        {}
+        <div className="container mx-auto p-10 justify-center items-center h-full">
           <CafePerformance />
         </div>
       </div>
-
-
     </>
   );
 }

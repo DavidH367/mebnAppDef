@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Head from "next/head";
 import { Card, Image, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { useAuth } from "../../lib/context/AuthContext";
@@ -16,8 +17,13 @@ export default function Users() {
   }, []);
   return (
     <div className={"homeSearches"}>
+      <Head>
+        <title>USUARIOS</title>
+        <meta name="description" content="USUARIOS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <h2 className="text-lg font-semibold mb-2 p-4 text-center">USUARIOS</h2>
-
       <div className="justify-center">
         <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
           <div>
@@ -50,7 +56,9 @@ export default function Users() {
                 onPress={() => console.log("item pressed")}
               >
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">Actualizar Contraseña</h4>
+                  <h4 className="font-bold text-large">
+                    Actualizar Contraseña
+                  </h4>
                   <Divider />
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
 import { db } from "../../lib/firebase";
 import {
@@ -130,8 +131,9 @@ const Purchasing1 = () => {
       const fecha = new Date(newData.date);
 
       // Obtener la fecha en formato dd/mm/aaaa
-      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1
-        }/${fecha.getFullYear()}`;
+      const fechaFormateada = `${fecha.getDate()}/${
+        fecha.getMonth() + 1
+      }/${fecha.getFullYear()}`;
 
       // Obtener la hora en formato hh:mm:ss
       const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
@@ -160,11 +162,11 @@ const Purchasing1 = () => {
       doc.setFontSize(10);
       doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
       doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('COMPROBANTE DE COMPRA', 46, 31);
+      doc.setFont("helvetica", "bold");
+      doc.text("COMPROBANTE DE COMPRA", 46, 31);
       doc.text(`Fecha: ${fechaYHora}`, 5, 38);
       doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       doc.text(`RTN: ${newData.rtn}`, 5, 45);
       doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
@@ -190,11 +192,11 @@ const Purchasing1 = () => {
       doc.setFontSize(10);
       doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
       doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('COMPROBANTE DE COMPRA (Copia de Cliente)', 28, 31);
+      doc.setFont("helvetica", "bold");
+      doc.text("COMPROBANTE DE COMPRA (Copia de Cliente)", 28, 31);
       doc.text(`Fecha: ${fechaYHora}`, 5, 38);
       doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       doc.text(`RTN: ${newData.rtn}`, 5, 45);
       doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
@@ -215,9 +217,8 @@ const Purchasing1 = () => {
       // Recargar la página
       window.location.reload();
     } catch (error) {
-      console.error('Error al guardar los datos:', error);
-
-    };
+      console.error("Error al guardar los datos:", error);
+    }
 
     // Reiniciar la validación y el mensaje de error
     setFormValid(true);
@@ -226,6 +227,12 @@ const Purchasing1 = () => {
 
   return (
     <div className="espacio">
+      <Head>
+        <title>INGRESO DE COMPRAS</title>
+        <meta name="description" content="INGRESO DE COMPRAS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <div className="container mx-auto p-10 justify-center items-center">
         <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
           <h2 className="text-lg font-semibold mb-2 ">

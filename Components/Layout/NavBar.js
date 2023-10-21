@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useState, useEffect } from "react";
 import React from "react";
+import Logo from "../../Components/Home/logo";
 
 export default function App() {
   const { logout, user } = useAuth();
@@ -75,8 +76,10 @@ export default function App() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
+          
           <Link color="foreground" href="../">
-            <p className="font-bold text-inherit">BODEGA - GAD</p>
+            <Logo/>
+            {/* <p className="font-bold text-inherit">BODEGA - GAD</p> */}
           </Link>
         </NavbarBrand>
 
@@ -84,8 +87,10 @@ export default function App() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
+          
           <Link color="foreground" href="../">
-            <p className="font-bold text-large text-inherit">BODEGA - GAD</p>
+            <Logo/>
+            {/* <p className="font-bold text-large text-inherit">BODEGA - GAD</p> */}
           </Link>
         </NavbarBrand>
         <NavbarItem >

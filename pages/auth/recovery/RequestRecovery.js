@@ -46,7 +46,7 @@ const RequestRecovery = () => {
         <title>Recuperacion de Contraseña</title>
         <meta name="description" content="recuperacion de contrasena" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/" />
+        <link rel="icon" href="/img/logo_paginas.png" />
       </Head>
       <div className={styles.recoverMainContainer}>
         {/* request password */}

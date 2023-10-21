@@ -1,20 +1,28 @@
-import 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import { addDoc, collection, query, getDocs, orderBy, limit, where, from } from 'firebase/firestore';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import ReusableTable from '../../Components/Form/ReusableTable';
-import FilterSection from '../../Components/Form/FilterSectionCO';
-import React, { useState, useEffect } from 'react';
-import { Input, Select, SelectItem } from '@nextui-org/react';
-import { startOfDay, endOfDay } from 'date-fns';
+import "firebase/firestore";
+import Head from "next/head";
+import { db } from "../../lib/firebase";
+import {
+  addDoc,
+  collection,
+  query,
+  getDocs,
+  orderBy,
+  limit,
+  where,
+  from,
+} from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import ReusableTable from "../../Components/Form/ReusableTable";
+import FilterSection from "../../Components/Form/FilterSectionCO";
+import React, { useState, useEffect } from "react";
+import { Input, Select, SelectItem } from "@nextui-org/react";
+import { startOfDay, endOfDay } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
 import { columns, tipoC } from "../../Data/supliers_history/datas";
 
-
 const Providers = () => {
-
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
@@ -49,7 +57,10 @@ const Providers = () => {
   //traer datos de FireStore
   useEffect(() => {
     const fetchSupliers = async () => {
-      const q = query(collection(db, "supliers_history"), orderBy('date', 'desc'));
+      const q = query(
+        collection(db, "supliers_history"),
+        orderBy("date", "desc")
+      );
       const querySnapshot = await getDocs(q);
 
       const supliersData = [];
@@ -59,19 +70,29 @@ const Providers = () => {
       });
       setData(supliersData);
       setFilteredData(supliersData); // Inicializa los datos filtrados con los datos originales
-
     };
     fetchSupliers();
-
   }, []);
 
-
-  return <div className="container mx-auto p-10 justify-center items-center h-full">
-    <div>
-      <FilterSection onFilter={(filterValues) => applyFilter(filterValues)} />
-      <ReusableTable data={filteredData} columns={columns} />
+  return (
+    <div className="container mx-auto p-10 justify-center items-center h-full">
+      <div>
+        <Head>
+          <title>INGRESOS Y ABONOS</title>
+          <meta name="description" content="INGRESOS Y ABONOS" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/img/logo_paginas.png" />
+        </Head>
+        <h2 className="text-lg font-semibold mb-2 ">
+            <p className='text-center'>
+            INGRESOS Y ABONOS 
+            </p>
+          </h2>
+        <FilterSection onFilter={(filterValues) => applyFilter(filterValues)} />
+        <ReusableTable data={filteredData} columns={columns} />
+      </div>
     </div>
-  </div>
-}
+  );
+};
 
 export default Providers;

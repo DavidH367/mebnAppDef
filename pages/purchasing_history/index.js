@@ -1,4 +1,5 @@
 import { columns } from '../../Data/purchasing_history/datas';
+import Head from "next/head";
 import 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { addDoc, collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
@@ -99,6 +100,12 @@ const ConsultasClientes = () => {
 
   return (
     <div className="container mx-auto p-10 justify-center items-center h-full">
+      <Head>
+        <title>HISTORIAL DE CLIENTES</title>
+        <meta name="description" content="HISTORIAL DE CLIENTES" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <h1 className=" text-2xl font-semibold text-center">
         HISTORIAL DE CLIENTES
       </h1>

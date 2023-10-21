@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
 import { db } from "../../lib/firebase";
 import {
@@ -284,6 +285,12 @@ const Gastos = () => {
   return (
     <>
       <div className="espacio">
+        <Head>
+          <title>INGRESO DE GASTOS</title>
+          <meta name="description" content="INGRESO DE GASTOS" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/img/logo_paginas.png" />
+        </Head>
         <div className="container mx-auto p-10 justify-center items-center h-full">
           <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
             <h2 className="text-lg font-semibold mb-2 ">
