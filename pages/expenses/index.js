@@ -166,6 +166,8 @@ const Gastos = () => {
                     currency: "HNL",
                     minimumFractionDigits: 2,
                 })}`, 145, 15);
+                let pagina = 1;
+                doc1.text(`${pagina}`, 280, 210);
                 // Definir las columnas, ancho de columna y posición inicial
                 const columns = ["Fecha", "Tipo", "Denominación", "Descripción", "N° Factura", "Valor"];
                 const columnWidth = 45;
@@ -198,6 +200,8 @@ const Gastos = () => {
                     doc1.setFont("helvetica", "normal");
                     y = 30;
                     recordCount = 0; // Reinicia el contador de registros en cada nueva página
+                    pagina++;
+                    doc1.text(`${pagina}`, 280, 210);
                 }
 
                 // Inicializar un contador para realizar un seguimiento de los registros
