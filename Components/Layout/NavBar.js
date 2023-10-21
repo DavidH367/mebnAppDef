@@ -63,7 +63,7 @@ export default function App() {
     { text: "Compras", url: "/purchasing" },
     { text: "Ventas", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
-    { text: "Gastis", url: "/expenses" },
+    { text: "Gastos", url: "/expenses" },
     { text: "Consultas", url: "/searches" },
     { text: "Usuarios", url: "/users" },
   ];
@@ -85,7 +85,7 @@ export default function App() {
 
       </NavbarContent>
 
-      <NavbarContent className="hidden md:flex gap-4" justify="center">
+      <NavbarContent className="hidden xs:flex gap-4" justify="center">
         <NavbarBrand>
           <Link color="foreground" href="../">
             <Logo/>
