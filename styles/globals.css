@@ -20,15 +20,17 @@
   cursor: pointer;
 }
 
-.espacio, .espacioD{
-  margin-bottom: 155px;
+.espacio, .espacioD {
+  margin-bottom: 160px;
 }
-
+.espacioU {
+  margin-bottom: 200px;
+}
 @media (max-width: 480px) {
   .espacio {
     margin-bottom: 70px;
   }
-  .espacioD {
+  .espacioD, .espacioU {
     margin-bottom: 240px;
   }
 }  

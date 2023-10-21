@@ -61,10 +61,12 @@ const RequestRecovery = () => {
               height={120}
               alt="icono para recuperacion de contrasena"
             />
-            <span className="text-default-500 font-bold my-5">
-              Para recuperar tu contraseña ingresa el correo electrónico
-              asociado con tu cuenta.{" "}
-            </span>
+            <div className="text-center my-5">
+              <span className="text-default-500 font-bold my-5">
+                Para recuperar tu contraseña ingresa el correo electrónico
+                asociado con tu cuenta.{" "}
+              </span>
+            </div>
             <div className="w-[80%]">
               <TextInput
                 label="Correo Electrónico"
@@ -105,7 +107,7 @@ const RequestRecovery = () => {
             />
             <div className="text-center my-5">
               <span className="text-default-500 font-bold"> 
-                Sigue las instrucciones enviadas al correo <b>{email}</b> para
+                Revisar en SPAM y seguir las instrucciones enviadas al correo <b>{email}</b> para
                 reiniciar tu contraseña. Al terminar, intenta iniciar sesion
                 nuevamente.
               </span>
