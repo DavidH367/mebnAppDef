@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Image, Chip } from "@nextui-org/react";
+import { Card, CardBody, Image, Chip} from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { PrimaryButton, SecondaryButton } from './Buttons';
 
@@ -47,7 +47,7 @@ const CafePerformance = () => {
                                     height={150}
                                     shadow="md"
                                     src="../../img/rendimiento.jpg"
-                                    width="100%"
+                                    //width="100%"
                                 />
                             </div>
                             <div className="flex flex-col col-span-6 md:col-span-8">
@@ -85,15 +85,16 @@ const CafePerformance = () => {
                                             value={pesoUvaLbs}
                                             onChange={(e) => setPesoUvaLbs(e.target.value)}
                                         />
-                                        <div className="flex justify-center items-center my-2">
+                                        <div className="flex justify-center items-center mt-3 mb-2">
                                             <Chip>
                                                 <b><h1> {rendimiento} %</h1></b>
                                             </Chip>
                                         </div>
                                         <div className='flex justify-center items-center'>
-                                            <PrimaryButton onClick={calcularRendimiento} text="Calcular"/>
+                                            
                                         </div>
-                                        <div className="flex justify-center items-center mt-2">
+                                        <div className="flex justify-center items-center mt-1 space-x-4">
+                                            <PrimaryButton onClick={calcularRendimiento} text="Calcular"/>
                                             <SecondaryButton onClick={clear} text="Limpiar"/>
                                         </div>
                                         
