@@ -11,9 +11,8 @@ import {
 } from "firebase/firestore";
 import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP";
-
 import { columns } from "./datas";
-import Estados from "@/Components/Form/stats";
+import Estados from "@/Components/Form/statsC";
 import { startOfDay, endOfDay } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../../lib/context/AuthContext";
@@ -25,14 +24,6 @@ const IntakeControl = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
-  //stados iniciales de stats
-  const [tsales, setTsales] = useState(0); // Definir tsales en el estado inicial
-  const [tpurchases, setPurchases] = useState(0); // Definir tsales en el estado inicial
-
-  //paginado
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   //Valida acceso a la pagina
   const { user, errors, setErrors } = useAuth();

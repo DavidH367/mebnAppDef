@@ -8,33 +8,34 @@ import {
   getDocs,
   orderBy,
   limit,
+  where
 } from "firebase/firestore";
-import { jsPDF } from "jspdf";
-import { columns, tipoC } from "./datas";
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { tipoC } from "./datas";
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
 
 const salesRef = collection(db, "sales");
-const invRef = collection(db, "inventories");
+const supliers_historyRef = collection(db, 'supliers_history');
+const supliersInfoRef = collection(db, "supliers_info");
+
 
 const MainComponent = () => {
   //usos de datos
-  const [sales, fetchSales] = useState([]);
-  const [transaccion, setTransaccion] = useState("");
-  const [rtn, setRTN] = useState("");
-  const [nombre, setNombre] = useState("");
   const [tipoCafe, setTipoCafe] = useState("");
   const [quintales, setQuintales] = useState("");
   const [peso, setPeso] = useState("");
-  const [precio, setPrecio] = useState("");
+  const [pagado, setPagado] = useState('');
+  const [n_documento, setN_documento] = useState('');
+
+  //select con proveedores
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
 
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Estado para manejar la validez del formulario
   const [formValid, setFormValid] = useState(true);
@@ -49,7 +50,7 @@ const MainComponent = () => {
       router.push("/auth/Login");
     }
   }, []);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const q = query(collection(db, "sales"), orderBy("date", "desc"));
@@ -67,6 +68,37 @@ const MainComponent = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const querySnapshot = await getDocs(supliersInfoRef);
+
+        const supplierData = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          supplierData.push({
+            id: doc.id,
+            code: data.code,
+            name: data.name,
+            rtn: data.rtn,
+          });
+        });
+
+        setSuppliers(supplierData);
+      } catch (error) {
+        console.error("Error fetching suppliers from Firestore:", error);
+      }
+    };
+    fetchSuppliers();
+  }, []);
+
+  function handleSupplierChange(event) {
+    const selectedSupplierValue = event.target.value;
+
+    // Actualiza el estado con el nuevo valor seleccionado
+    setSelectedSupplier(selectedSupplierValue);
+  }
+
   // Función para aplicar el filtro
   const applyFilter = (value) => {
     const filtered = data.filter((item) =>
@@ -77,10 +109,11 @@ const MainComponent = () => {
 
   //Funcion para guardar datos
   const handleSubmit = async (event) => {
+    const idDocumentos = selectedSupplier;
     event.preventDefault();
 
     // Verificar si los campos obligatorios están llenos
-    if (!nombre || !tipoCafe || !quintales || !precio || !peso) {
+    if (!tipoCafe || !quintales || !peso) {
       setFormValid(false);
       setErrorMessage("Por favor, complete todos los campos obligatorios.");
       return; // No enviar el formulario si falta algún campo obligatorio
@@ -103,6 +136,21 @@ const MainComponent = () => {
           limit(1)
         )
       );
+      let auxCode;
+      const docId2 = idDocumentos;
+      //obbtener codigo
+      const docRef3 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+
+      const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
+      if (docSnapshot2.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxCode = docSnapshot2.data().code;
+      } else {
+        // El documento no existe
+        console.log('El documento no existe.');
+      }
+
+
 
       //asignar el nuevo valor de numero transaccion
       let numTrans;
@@ -115,91 +163,155 @@ const MainComponent = () => {
         numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
       }
 
-      //asignar el nuevo valor de balance
-      let newBalance2;
+      //obtener nombre
+      let auxName;
+      const docRef2 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+      const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
+      if (docSnapshot1.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxName = docSnapshot1.data().name;
+      } else {
+        // El documento no existe
+        console.log('El documento no existe.');
+      }
 
-      if (!querySnapshot2.empty) {
-        querySnapshot2.forEach((doc) => {
-          newBalance2 = doc.data().balance + parseFloat(precio);
+      
+
+      //obtener RTN
+      let auxRtn;
+      const docRef = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+      const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
+      if (docSnapshot.exists()) {
+        // El documento existe, puedes acceder al valor de rtn
+        auxRtn = docSnapshot.data().rtn;
+      } else {
+        // El documento no existe
+        console.log('El documento no existe.');
+        auxRtn = "Consumidor Final";
+      }
+
+      const querySnapshot4 = await getDocs(
+        query(
+          collection(db, 'supliers'),
+          where('code', '==', auxCode), // Filtrar por n_cheque
+          orderBy('code', 'desc'),
+          limit(1)
+        )
+      );
+
+      //traer capital anterior
+      let sCap;
+      if (!querySnapshot4.empty) {
+        querySnapshot4.forEach((doc) => {
+          sCap = doc.data().capital;
         });
       } else {
-        newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
+        sCap = 0; // Si no hay documentos anteriores, empezar desde 1
       }
-      const rtnValue = rtn || "CF";
+
+      //traer pendiente anterior
+      let newPending;
+      // Verificar si se encontraron documentos
+      if (!querySnapshot4.empty) {
+        // Obtener el primer documento encontrado
+        const doc = querySnapshot4.docs[0];
+        // Acceder al campo "capital" y asignarlo a la variable
+        newPending = doc.data().pending;
+      } else {
+        newPending = 0;
+      }
+
+      //traer ultimo pagado 
+      let newPaid;
+      // Verificar si se encontraron documentos
+      if (!querySnapshot4.empty) {
+        // Obtener el primer documento encontrado
+        const doc = querySnapshot4.docs[0];
+        // Acceder al campo "paid" y asignarlo a la variable
+        newPaid = doc.data().paid;
+      } else {
+        newPaid = 0;
+      }
+
+
+      // Verificar si se están ingresando más de lo que se debe
+      if (parseFloat(pagado) > parseFloat(newPending)) {
+        alert('Estás ingresando más de lo que se debe. Por favor, verifica los valores.');
+        return;
+      }
+
+      // Crear una consulta que busca documentos que coincidan con las condiciones
+      let docId;
+      const q = query(
+        collection(db, 'supliers'),
+        where('code', '==', auxCode), 
+        orderBy('code', 'desc'),
+        limit(1)
+      );
+      try {
+        const querySnapshot = await getDocs(q);
+        // Verificar si se encontraron documentos que cumplan con las condiciones
+        if (!querySnapshot.empty) {
+          // Obtener el primer documento que cumple con las condiciones
+          const doc = querySnapshot.docs[0];
+          // Obtener el docId del documento
+          docId = doc.id;
+          console.log('DocId encontrado:', docId);
+        } else {
+          console.log('No se encontraron documentos que cumplan con las condiciones.');
+        }
+      } catch (error) {
+        console.error('Error al realizar la consulta:', error);
+      }
+
+      const supliersDocRef = doc(db, 'supliers', docId);
+      //obtener peso neto:
+      let pNeto;
+      pNeto = peso - quintales;
 
       const newData = {
-        rtn: rtnValue,
-        name: nombre,
-        date: new Date(), // Guardar la fecha actual en Firebase
+        rtn: auxRtn,
+        name: auxName,
         type: tipoCafe,
         bags_sold: parseFloat(quintales),
         weight: parseFloat(peso),
-        total: parseFloat(precio),
+        weightN: parseFloat(pNeto),
+        total: parseFloat(pagado),
+        date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
       };
 
-      const newInvData = {
-        rtn: rtnValue,
-        tran_type: "VENTA",
-        coffee_type: tipoCafe,
-        value: parseFloat(precio),
-        weight: parseFloat(peso),
+
+      const newsupData = {
+        capital: parseFloat(pagado),
+        code: auxCode,
         date: new Date(), // Guardar la fecha actual en Firebase
-        n_transaction: numTrans,
-        balance: newBalance2,
+        n_check: 'N/A',
+        n_document: n_documento,
+        name: auxName,
+        rtn: auxRtn,
+        status: 'Abono a Capital',
+      };
+
+      const newUpdateDataSupliers = {
+        capital: parseFloat(sCap - parseFloat(pagado)),
+        date: new Date(), // Guardar la fecha actual en Firebase
+        paid: parseFloat(newPaid + parseFloat(pagado)),
+        pending: parseFloat(newPending - parseFloat(pagado)),
+        rtn: auxRtn,
       };
 
       await addDoc(salesRef, newData);
-
-      await addDoc(invRef, newInvData);
-
-      const fecha = new Date(newData.date);
-      // Obtener la fecha en formato dd/mm/aaaa
-      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`;
-      // Obtener la hora en formato hh:mm:ss
-      const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
-      const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
-
-      //PDF
-      const doc = new jsPDF({ unit: 'mm', format: [215, 140] });
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text('BODEGA - GAD', 50, 10);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.text('Compra Venta de Café', 53, 15);
-      doc.setFontSize(8);
-      doc.text('RTN: 0313198500469', 58, 19);
-      doc.setFontSize(10);
-      doc.text('Telefono: (504) 9541-9092', 50, 24);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('COMPROBANTE DE VENTA', 46, 31);
-      doc.text(`Fecha: ${fechaYHora}`, 5, 38);
-      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.text(`RTN: ${newData.rtn}`, 5, 45);
-      doc.text(`Nombre Cliente: ${newData.name}`, 5, 52);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Quintales en Unidades: ${newData.bags_sold}`, 5, 59);
-      doc.text(`Tipo de Café: ${newData.type}`, 5, 66);
-      doc.text(`Peso Neto en Libras: ${newData.weight}`, 5, 73);
-      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 73);
-      doc.text('¡GRACIAS POR TU PREFERENCIA!', 40, 85);
-      //guardar el PDF con un identificador
-      // Set the document to automatically print via JS
-      doc.autoPrint();
-      doc.output('dataurlnewwindow');
-
+      await addDoc(supliers_historyRef, newsupData);
+      await updateDoc(supliersDocRef, newUpdateDataSupliers);
 
       // Limpiar los campos del formulario después de guardar
-      setRTN("");
-      setNombre("");
-      setQuintales("");
+      setSelectedSupplier('');
+      setN_documento("");
       setTipoCafe("");
-      setPrecio("");
+      setQuintales("");
       setPeso("");
+      setPagado("");
 
       alert("Venta realizada"); // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
     } catch (error) {
@@ -213,52 +325,62 @@ const MainComponent = () => {
 
   //final para funcion de guardar datos
   return (
-    <div class="espacio">
+    <div className="espacio">
       <div className="container mx-auto p-10 justify-center items-center h-full">
-        <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
+        <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mb-10'>
           <h2 className="text-lg font-semibold mb-2 ">
-            <p className="text-center">INGRESO DE VENTAS</p>
+            <p className='text-center'>
+              DEPOSITO O VENTA DE CAFÉ:
+            </p>
           </h2>
-          <p className="text-sm text-gray-600 mb-6">
-            POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS
-          </p>
-          <form onSubmit={handleSubmit}>
+          <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
+          <form onSubmit={handleSubmit} >
             <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
               <div className="sm:col-span-1">
-                <label
-                  htmlFor="rtn"
-                  className=" block text-sm font-medium leading-6 text-gray-900"
-                >
-                  <p className="font-bold text-lg">RTN</p>
+                <label htmlFor="n_cheque" className="block text-sm font-medium leading-6 text-gray-900">
+                  <a className='font-bold text-lg'>
+                    PROVEEDOR
+                  </a>
                 </label>
                 <div className="mt-2 pr-4">
-                  <Input
-                    type="text"
-                    label="RTN"
-                    id="rtn"
-                    value={rtn}
-                    onChange={(e) => setRTN(e.target.value)}
+                  <Select
+                    items={suppliers}
+                    label="Actualizar a:"
+                    placeholder="Selecciona un Proveedor"
                     className="max-w-xs"
-                  />
+                    value={selectedSupplier}
+                    onChange={handleSupplierChange}
+                  >
+                    {(user) => (
+                      <SelectItem key={user.id} textValue={user.name}>
+                        <div className="flex gap-2 items-center">
+                          <div className="flex flex-col">
+                            <span className="text-small">{user.name}</span>
+                            <span className="text-tiny text-default-400">RTN: {user.rtn}</span>
+                            <span className="text-tiny text-default-400">Codigo: {user.code}</span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    )}
+                  </Select>
                 </div>
               </div>
 
               <div className="sm:col-span-1">
-                <label
-                  htmlFor="nombre"
-                  className=" block text-sm font-medium leading-6 text-gray-900"
-                >
-                  <p className="font-bold text-lg">Nombre</p>
+                <label htmlFor="n_documento" className="block text-sm font-medium leading-6 text-gray-900">
+                  <a className='font-bold text-lg'>
+                    FACTURA
+                  </a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input
                     isRequired
                     type="text"
-                    label="Empresa"
-                    id="nombre"
-                    autoComplete="given-name"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    label="N° Factura"
+                    id="n_documento"
+                    autoComplete="family-name"
+                    value={n_documento}
+                    onChange={(e) => setN_documento(e.target.value)}
                     className="max-w-xs"
                   />
                 </div>
@@ -292,7 +414,7 @@ const MainComponent = () => {
                   htmlFor="quintales"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  <a className="font-bold text-lg">Quintales</a>
+                  <a className="font-bold text-lg">Sacos</a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input
@@ -333,12 +455,12 @@ const MainComponent = () => {
                 </div>
               </div>
 
+
               <div className="sm:col-span-1">
-                <label
-                  htmlFor="precio"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  <a className="font-bold text-lg">Precio (Total)</a>
+                <label htmlFor="pagado" className="block text-sm font-medium leading-6 text-gray-900">
+                  <a className='font-bold text-lg'>
+                    ABONO
+                  </a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input
@@ -346,18 +468,16 @@ const MainComponent = () => {
                     type="number"
                     label="L"
                     step="0.01"
-                    id="precio"
-                    autoComplete="precio"
-                    value={precio}
-                    onChange={(e) => setPrecio(e.target.value)}
+                    id="pagado"
+                    autoComplete="pagado"
+                    value={pagado}
+                    onChange={(e) => setPagado(e.target.value)}
                     className="max-w-xs"
-                    min={1}
                   />
                 </div>
               </div>
               <button
-                type="submit"
-                className="h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
               >
                 Guardar
               </button>

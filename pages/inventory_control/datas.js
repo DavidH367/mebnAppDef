@@ -7,6 +7,5 @@ export const columns = [
     { title: 'TIPO DE CAFE', field: 'coffee_type' },
     { title: 'PESO', field: 'weight' },
     { title: 'FECHA', field: 'date' },
-    { title: 'TOTAL en Lempiras', field: 'value' },
-    { title: 'Saldo a la Fecha', field: 'balance' },
+    { title: 'VALOR', field: 'value' },
 ];

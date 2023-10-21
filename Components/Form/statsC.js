@@ -14,7 +14,7 @@ import { Card, CardHeader, CardBody, Divider, Chip } from "@nextui-org/react";
 
 const Estados = (props) => {
    // Puedes acceder a las props totalVentas y totalCompras
-  const { totalVentas, totalCompras } = props;
+  const {totalCompras } = props;
 
 
   // Usar async/await para esperar a que se resuelva la promesa
@@ -39,29 +39,11 @@ const Estados = (props) => {
                 }}
               >
                 <h4 className="font-bold text-large">
-                  {totalCompras.toLocaleString('es-HN', { minimumFractionDigits: 2 })} L
-                </h4>
-              </Chip>
-            </CardHeader>
-          </Card>
-        </div>
-        <div>
-          <Card className="py-4">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col text-center">
-              <p className="uppercase font-bold text-large">TOTAL EN VENTAS</p>
-              <small className="text-default-500 text-medium">
-                Valor en Lempiras
-              </small>
-              <Divider />
-              <Chip
-                variant="shadow"
-                classNames={{
-                  base: " mt-2 bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30",
-                  content: "drop-shadow shadow-black text-white",
-                }}
-              >
-                <h4 className="font-bold text-large">
-                  {totalVentas.toLocaleString('es-HN', { minimumFractionDigits: 2 })} L
+                {parseFloat(totalCompras).toLocaleString("es-ES", {
+                                style: "currency",
+                                currency: "HNL",
+                                minimumFractionDigits: 2,
+                            })} 
                 </h4>
               </Chip>
             </CardHeader>

@@ -62,6 +62,7 @@ export default function App() {
     { text: "Compras", url: "/purchasing" },
     { text: "Ventas", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
+    { text: "Gastis", url: "/expenses" },
     { text: "Consultas", url: "/searches" },
     { text: "Usuarios", url: "/users" },
   ];
@@ -105,6 +106,13 @@ export default function App() {
           <Link color="foreground" href="/supliers">
             <p className="text-large">
               PROVEEDORES  
+            </p>
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/expenses">
+            <p className="text-large">
+              GASTOS  
             </p>
           </Link>
         </NavbarItem>

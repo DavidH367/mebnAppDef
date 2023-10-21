@@ -109,14 +109,26 @@ const onNextPage = React.useCallback(() => {
                 }
                 return 0;
               })
-            .map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {columns.map((column, columnIndex) => {
-                  const cellValue =
-                  column.field === 'date' && row[column.field]
-                  ? row[column.field].toDate().toLocaleString()
-                  : row[column.field];
-                  return <TableCell key={columnIndex}>{cellValue}</TableCell>;
+              .map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {columns.map((column, columnIndex) => {
+                    let cellValue = row[column.field];
+                    
+                    if (column.field === 'total') {
+                      // Formatea la columna 'value' como moneda
+                      cellValue = parseFloat(data.capital).toLocaleString("es-ES", {
+                        style: "currency",
+                        currency: "HNL",
+                        minimumFractionDigits: 2,
+                    })
+                    }
+                    
+        
+                    return <TableCell key={columnIndex}>
+                    {column.field === 'date' && row[column.field]
+                      ? row[column.field].toDate().toLocaleString() // Convierte la marca de tiempo en una cadena formateada
+                      : row[column.field]}
+                  </TableCell>
                 })}
               </TableRow>
             ))}
