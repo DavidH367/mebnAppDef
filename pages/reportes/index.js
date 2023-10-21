@@ -194,17 +194,21 @@ const Reportes = () => {
                     console.log("No se pudo traer los datos de esta consulta"); // Si no hay documentos anteriores.
                 }
 
+                const imagePath = '../img/logo_principal.png'; // Ruta a tu imagen
+
                 const doc1 = new jsPDF({ orientation: "landscape" });
-                doc1.text(`Pendiente: ${parseFloat(latestIngresos).toLocaleString("es-ES", {
+                doc1.text(`PENDIENTE: ${parseFloat(latestIngresos).toLocaleString("es-ES", {
                     style: "currency",
                     currency: "HNL",
                     minimumFractionDigits: 2,
-                })}`, 220, 25);
-                doc1.text(`Abonado: ${parseFloat(latestEgresos).toLocaleString("es-ES", {
+                })}`, 195, 11);
+                doc1.text(`ABONADO: ${parseFloat(latestEgresos).toLocaleString("es-ES", {
                     style: "currency",
                     currency: "HNL",
                     minimumFractionDigits: 2,
-                })}`, 220, 35);
+                })}`, 195, 20);
+                let pagina = 1;
+                doc1.text(`${pagina}`, 280, 210);
                 // Definir las columnas, ancho de columna y posición inicial
                 const columns = ["Fecha", "Capital", "Cheque/$", "N° Documento", "Transacción"];
                 const columnWidth = 40;
@@ -216,9 +220,9 @@ const Reportes = () => {
                 function addPageHeader() {
                     doc1.setFontSize(14);
                     doc1.setFont("helvetica", "bold");
-                    doc1.text("REPORTE DE TRANSACCIONES:", 15, 15);
-                    doc1.text(`${auxName}`, 110, 15);
-                    doc1.text(`RTN: ${auxRtn}`, 220, 15);
+                    doc1.text("REPORTE DE TRANSACCIONES:", 11, 11);
+                    doc1.text(`${auxName}`, 95, 11);
+                    doc1.text(`RTN: ${auxRtn}`, 95, 20);
 
                 }
                 function addColumnHeaders() {
@@ -238,6 +242,8 @@ const Reportes = () => {
                     doc1.setFont("helvetica", "normal");
                     y = 30;
                     recordCount = 0; // Reinicia el contador de registros en cada nueva página
+                    pagina++;
+                    doc1.text(`${pagina}`, 280, 210);
                 }
 
                 // Inicializar un contador para realizar un seguimiento de los registros
@@ -299,6 +305,8 @@ const Reportes = () => {
                     startDate: null,
                     endDate: null,
                 });
+                // Recargar la página
+                window.location.reload();
 
             } catch (error) {
                 console.error("Error al traer los datos:", error);
