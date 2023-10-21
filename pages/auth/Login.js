@@ -38,9 +38,9 @@ return (
     <div>
         <Head>
             <title>Café</title>
-            <meta name="description" content="inicio de sesión" />
+            <meta name="description" content="inicio de sesión"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            {/* <link rel="icon" href="" /> */}
+            <link rel="icon" href="/img/logo_paginas.png"/>
         </Head>
         <div
             style={{
@@ -54,10 +54,10 @@ return (
                 style={{padding: "45px 45px 45px 45px"}}>
                 <div className={styles.loginLogo}>
                     <Image
-                        width={110}
-                        height={100}
+                        width={180}
+                        height={180}
                         alt="NextUI hero Image with delay"
-                        src="/img/perfil.jpg"
+                        src="/img/logo_principal.png"
                     />
                 </div>
                 <h1 style={{ textAlign: "center", fontWeight: "bold", fontSize: "24px",padding: "10px"}}>Inicio de Sesión</h1>
