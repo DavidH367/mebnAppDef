@@ -95,6 +95,9 @@ const Reportes = () => {
     const idDocumentos = selectedSupplier;
     event.preventDefault();
 
+    if (valorFechas.startDate === null || valorFechas.endDate === null) {
+      return;
+    }
     // Verificar si los campos obligatorios están llenos
     if ({}) {
       try {
@@ -337,114 +340,118 @@ const Reportes = () => {
 
   return (
     <>
-      <div className="bg-white py-24 sm:py-32">
-        <Head>
-          <title>INFORMES GENERALES</title>
-          <meta name="description" content="INFORMES GENERALES" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/img/logo_paginas.png" />
-        </Head>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 sm:text-center md:text-center lg:text-center">
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            INFORMES GENERALES
-          </p>
-        </div>
-        <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
-          <p className="text-sm text-gray-600 mb-6">
-            MODULO DE INFORMES - POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS
-          </p>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
-              <div className="sm:col-span-1">
-                <label
-                  htmlFor="proveedor"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  <a className="font-bold text-lg">PROVEEDOR</a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <Select
-                    items={suppliers}
-                    isRequired
-                    label="INFORME DE:"
-                    placeholder="Selecciona un Proveedor"
-                    className="max-w-xs"
-                    value={selectedSupplier}
-                    onChange={handleProvidier}
+      <div className="espacioU">
+        <div className="container mx-auto p-10 justify-center items-center h-full">
+          <Head>
+            <title>INFORMES GENERALES</title>
+            <meta name="description" content="INFORMES GENERALES" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1"
+            />
+            <link rel="icon" href="/img/logo_paginas.png" />
+          </Head>
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 sm:text-center md:text-center lg:text-center">
+            <h2 className="text-lg font-semibold mb-2 ">
+              <p className="text-center">INFORMES GENERALES</p>
+            </h2>
+          </div>
+          <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
+            <p className="text-sm text-gray-600 mb-6">
+              LLENAR TODOS LOS CAMPOS NECESARIOS
+            </p>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 gap-y-4 mb-5 sm:grid-cols-2 md:grid-cols-3">
+                <div className="sm:col-span-1">
+                  <label
+                    htmlFor="proveedor"
+                    className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    {(user) => (
-                      <SelectItem key={user.id} textValue={user.name}>
-                        <div className="flex gap-2 items-center">
-                          <div className="flex flex-col">
-                            <span className="text-small">{user.name}</span>
-                            <span className="text-tiny text-default-400">
-                              RTN: {user.rtn}
-                            </span>
-                            <span className="text-tiny text-default-400">
-                              Codigo: {user.code}
-                            </span>
+                    <a className="font-bold text-lg">PROVEEDOR</a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <Select
+                      items={suppliers}
+                      isRequired
+                      label="INFORME DE:"
+                      placeholder="Selecciona un Proveedor"
+                      className="max-w-xs"
+                      value={selectedSupplier}
+                      onChange={handleProvidier}
+                    >
+                      {(user) => (
+                        <SelectItem key={user.id} textValue={user.name}>
+                          <div className="flex gap-2 items-center">
+                            <div className="flex flex-col">
+                              <span className="text-small">{user.name}</span>
+                              <span className="text-tiny text-default-400">
+                                RTN: {user.rtn}
+                              </span>
+                              <span className="text-tiny text-default-400">
+                                Codigo: {user.code}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </SelectItem>
-                    )}
-                  </Select>
+                        </SelectItem>
+                      )}
+                    </Select>
+                  </div>
                 </div>
-              </div>
 
-              <div className="sm:col-span-1">
-                <label
-                  htmlFor="fecha_inicial"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                <div className="sm:col-span-1">
+                  <label
+                    htmlFor="fecha_inicial"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    <a className="font-bold text-lg">Fecha Inicial</a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <DatePicker
+                      selected={valorFechas.startDate}
+                      onChange={(date) => handleCambioFechas("startDate", date)}
+                      placeholderText="Fecha de inicio"
+                      dateFormat="dd/MM/yyyy"
+                      className="border rounded px-4 py-4 mr-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-1">
+                  <label
+                    htmlFor="fecha_final"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    <a className="font-bold text-lg">Fecha Final</a>
+                  </label>
+                  <div className="mt-2 pr-4">
+                    <DatePicker
+                      selected={valorFechas.endDate}
+                      onChange={(date) => handleCambioFechas("endDate", date)}
+                      placeholderText="Fecha de fin"
+                      dateFormat="dd/MM/yyyy"
+                      className="border rounded px-4 py-4 mr-2"
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="shadow"
+                  className="btn btn-secondary ml-2"
                 >
-                  <a className="font-bold text-lg">Fecha Inicial</a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <DatePicker
-                    selected={valorFechas.startDate}
-                    onChange={(date) => handleCambioFechas("startDate", date)}
-                    placeholderText="Fecha de inicio"
-                    dateFormat="dd/MM/yyyy"
-                    className="border rounded px-4 py-4 mr-2"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-1">
-                <label
-                  htmlFor="fecha_final"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  GENERAR
+                </Button>
+                <Button
+                  color="primary"
+                  variant="shadow"
+                  onClick={clearData}
+                  className="btn btn-secondary ml-2"
                 >
-                  <a className="font-bold text-lg">Fecha Final</a>
-                </label>
-                <div className="mt-2 pr-4">
-                  <DatePicker
-                    selected={valorFechas.endDate}
-                    onChange={(date) => handleCambioFechas("endDate", date)}
-                    placeholderText="Fecha de fin"
-                    dateFormat="dd/MM/yyyy"
-                    className="border rounded px-4 py-4 mr-2"
-                  />
-                </div>
+                  LIMPIAR
+                </Button>
               </div>
-
-              <Button
-                type="submit"
-                color="primary"
-                variant="shadow"
-                className="btn btn-secondary ml-2"
-              >
-                GENERAR
-              </Button>
-              <Button
-                color="primary"
-                variant="shadow"
-                onClick={clearData}
-                className="btn btn-secondary ml-2"
-              >
-                LIMPIAR
-              </Button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </>

@@ -95,7 +95,7 @@ const CafePerformance = () => {
                                         </div>
                                         <div className="flex justify-center items-center mt-1">
                                             <PrimaryButton onClick={calcularRendimiento} text="Calcular"/>
-                                            <span className="w-[7%]"> 
+                                            <span className="m-2"> 
                                             </span>
                                             <SecondaryButton onClick={clear} text="Limpiar"/>
                                         </div>
