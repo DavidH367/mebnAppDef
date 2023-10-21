@@ -85,9 +85,8 @@ export default function App() {
 
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden md:flex gap-4" justify="center">
         <NavbarBrand>
-          
           <Link color="foreground" href="../">
             <Logo/>
             {/* <p className="font-bold text-large text-inherit">BODEGA - GAD</p> */}

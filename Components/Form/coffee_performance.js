@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Image, Chip} from "@nextui-org/react";
+import { Card, CardBody, Image, Chip, Divider} from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { PrimaryButton, SecondaryButton } from './Buttons';
 
@@ -95,8 +95,7 @@ const CafePerformance = () => {
                                         </div>
                                         <div className="flex justify-center items-center mt-1">
                                             <PrimaryButton onClick={calcularRendimiento} text="Calcular"/>
-                                            <span className="m-2"> 
-                                            </span>
+                                            <Divider orientation="vertical" />
                                             <SecondaryButton onClick={clear} text="Limpiar"/>
                                         </div>
                                         
