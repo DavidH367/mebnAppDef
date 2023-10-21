@@ -321,7 +321,7 @@ const Gastos = () => {
                     htmlFor="denomination"
                     className=" block text-sm font-medium leading-6 text-gray-900"
                   >
-                    <p className="font-bold text-lg">DENOMINACION</p>
+                    <p className="font-bold text-lg">DENOMINACIÓN</p>
                   </label>
                   <div className="mt-2 pr-4">
                     <Input
@@ -342,7 +342,7 @@ const Gastos = () => {
                     htmlFor="description"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    <a className="font-bold text-lg">DESCRIPCION</a>
+                    <a className="font-bold text-lg">DESCRIPCIÓN</a>
                   </label>
                   <div className="mt-2 pr-4">
                     <Input
@@ -418,6 +418,7 @@ const Gastos = () => {
                       value={coments}
                       onChange={(e) => setComents(e.target.value)}
                       className="max-w-xs"
+                      maxLength={60}
                     />
                   </div>
                 </div>
