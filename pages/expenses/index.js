@@ -256,7 +256,8 @@ const Gastos = () => {
                 });
 
                 // Guardar o mostrar el documento PDF, por ejemplo, descargarlo
-                doc1.save("reporte.pdf");
+                doc1.autoPrint();
+                doc1.output("dataurlnewwindow");
                 setValorFechas({
                     startDate: null,
                     endDate: null,
