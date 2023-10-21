@@ -10,7 +10,7 @@ import { startOfDay, endOfDay } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
-import { columns, tipoC } from "./datas";
+import { columns, tipoC } from "../../Data/supliers_history/datas";
 
 
 const Providers = () => {
