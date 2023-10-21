@@ -16,12 +16,10 @@ import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
 
 const purchasesRef = collection(db, "purchases");
-const invRef = collection(db, "inventories");
 
 const Purchasing1 = () => {
   //datos para factura
   //usos de datos
-  const [purchases, fetchPurchases] = useState([]);
   const [rtn, setRTN] = useState("");
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
@@ -31,8 +29,7 @@ const Purchasing1 = () => {
   const [quintales, setQuintales] = useState("");
   const [peso, setPeso] = useState("");
   //inicio para el filtro de datos
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
+
   // Estado para manejar la validez del formulario
   const [formValid, setFormValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -98,8 +95,12 @@ const Purchasing1 = () => {
       } else {
         newBalance2 = 1; // Si no hay documentos anteriores, empezar desde 1
       }
-      const rtnValue = rtn || "CF";
+      const rtnValue = rtn || "Consumidor Final";
       // Incrementar el valor de "n_transaction" para el nuevo documento
+
+      //obtener peso neto:
+      let pNeto;
+      pNeto = peso - quintales;
 
       const newData = {
         rtn: rtnValue,
@@ -107,26 +108,15 @@ const Purchasing1 = () => {
         last_name: apellido,
         zone: zona,
         coffee_type: tipoCafe,
-        total: parseFloat(precio),
         bags: parseFloat(quintales),
         weight: parseFloat(peso),
+        weightN: parseFloat(pNeto),
+        total: parseFloat(precio),
         date: new Date(), // Guardar la fecha actual en Firebase
         n_transaction: numTrans,
-      };
-
-      const newInvData = {
-        rtn: rtnValue,
-        tran_type: "COMPRA",
-        coffee_type: tipoCafe,
-        value: parseFloat(precio),
-        weight: parseFloat(peso),
-        date: new Date(), // Guardar la fecha actual en Firebase
-        n_transaction: numTrans,
-        balance: newBalance2,
       };
 
       await addDoc(purchasesRef, newData);
-      await addDoc(invRef, newInvData);
 
       // Obtener los datos recién guardados desde Firestore
       const querySnapshot = await getDocs(
@@ -140,14 +130,22 @@ const Purchasing1 = () => {
       const fecha = new Date(newData.date);
 
       // Obtener la fecha en formato dd/mm/aaaa
-      const fechaFormateada = `${fecha.getDate()}/${
-        fecha.getMonth() + 1
-      }/${fecha.getFullYear()}`;
+      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1
+        }/${fecha.getFullYear()}`;
 
       // Obtener la hora en formato hh:mm:ss
       const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
 
       const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
+      // Limpiar los campos del formulario después de guardar
+      setRTN("");
+      setNombre("");
+      setApellido("");
+      setZona("");
+      setTipoCafe("");
+      setPrecio("");
+      setQuintales("");
+      setPeso("");
 
       //PDF
       const doc = new jsPDF({ unit: "mm", format: [215, 140] });
@@ -158,9 +156,9 @@ const Purchasing1 = () => {
       doc.setFontSize(10);
       doc.text("Compra Venta de Café", 53, 15);
       doc.setFontSize(8);
-      doc.text("RTN: 0313198500469", 58, 19);
+      doc.text("RTN: 03131985004693", 56, 19);
       doc.setFontSize(10);
-      doc.text("Telefono: (504) 9541-9092", 50, 24);
+      doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.text('COMPROBANTE DE COMPRA', 46, 31);
@@ -172,31 +170,53 @@ const Purchasing1 = () => {
       doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
       doc.text(`Zona: ${newData.zone}`, 95, 52);
       doc.setFont("helvetica", "bold");
-      doc.text(`Quintales en Unidades: ${newData.bags}`, 5, 59);
+      doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
       doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
-      doc.text(`Peso Neto en Libras: ${newData.weight}`, 5, 73);
-      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 73);
-      doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 85);
+      doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
+      doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
+      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 80);
+      doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+      // Agregar una nueva página
+      doc.addPage();
+      //PDF
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("BODEGA - GAD", 50, 10);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Compra Venta de Café", 53, 15);
+      doc.setFontSize(8);
+      doc.text("RTN: 03131985004693", 56, 19);
+      doc.setFontSize(10);
+      doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('COMPROBANTE DE COMPRA (Copia de Cliente)', 28, 31);
+      doc.text(`Fecha: ${fechaYHora}`, 5, 38);
+      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`RTN: ${newData.rtn}`, 5, 45);
+      doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
+      doc.text(`Zona: ${newData.zone}`, 95, 52);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
+      doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
+      doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
+      doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
+      doc.text(`TOTAL FACTURADO: ${newData.total} L`, 80, 80);
+      doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+
       //guardar el PDF con un identificador
       // Set the document to automatically print via JS
       doc.autoPrint();
       doc.output("dataurlnewwindow");
 
-      // Limpiar los campos del formulario después de guardar
-      setRTN("");
-      setNombre("");
-      setApellido("");
-      setZona("");
-      setTipoCafe("");
-      setPrecio("");
-      setQuintales("");
-      setPeso("");
+      // Recargar la página
+      window.location.reload();
     } catch (error) {
       console.error('Error al guardar los datos:', error);
-      <div className="alert alert-error">
-        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        <span>Error! Task failed successfully.</span>
-      </div>
+
     };
 
     // Reiniciar la validación y el mensaje de error
@@ -331,7 +351,7 @@ const Purchasing1 = () => {
                   htmlFor="quintales"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  <a className="font-bold text-lg">Quintales</a>
+                  <a className="font-bold text-lg">Sacos</a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input
@@ -377,7 +397,7 @@ const Purchasing1 = () => {
                   htmlFor="precio"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  <a className="font-bold text-lg">Precio (Total)</a>
+                  <a className="font-bold text-lg">Valor en (Lempiras)</a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input

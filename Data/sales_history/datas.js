@@ -10,9 +10,10 @@ export const columns = [
     { title: '#', field: 'indexs' },
     { title: 'RTN', field: 'rtn' },
     { title: 'NOMBRE', field: 'name' },
-    { title: 'QUINTALES', field: 'bags_sold' },
+    { title: 'SACOS', field: 'bags_sold' },
     { title: 'TIPO DE CAFE', field: 'type' },
-    { title: 'PESO', field: 'weight' },
+    { title: 'PESO BRUTO', field: 'weight' },
+    { title: 'PESO NETO', field: 'weightN' },
     { title: 'FECHA', field: 'date' },
-    { title: 'TOTAL en Lempiras', field: 'total' },
+    { title: 'TOTAL/Lempiras', field: 'total' },
 ];

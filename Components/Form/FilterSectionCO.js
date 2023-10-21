@@ -66,20 +66,7 @@ const FilterSection = ({ onFilter }) => {
             onChange={(e) => handleFilterChange("rtn", e.target.value)}
           />
         </AccordionItem>
-        <AccordionItem
-          key="2"
-          aria-label="Filtrar por N° Cheque"
-          title="Filtrar por N° Cheque"
-        >
-          <Input
-            className="w-full sm:max-w-[44%]"
-            startContent={<SearchIcon />}
-            type="text"
-            placeholder="N° Cheque"
-            value={filterValues.n_check}
-            onChange={(e) => handleFilterChange("n_check", e.target.value)}
-          />
-        </AccordionItem>
+        
       </Accordion>
 
       <div className="mt-2 mb-2">

@@ -4,7 +4,10 @@ import { db } from "../lib/firebase";
 import { doc, onSnapshot } from "@firebase/firestore";
 import { useAuth } from "../lib/context/AuthContext";
 import { useRouter } from "next/router";
-// import {IndicatorsExample} from "../Components/Tradingeconomics/index";
+import { Card, CardBody, Image, Button, Progress } from "@nextui-org/react";
+
+import CafePerformance from "../Components/Form/coffee_performance";
+
 
 export default function Home() {
   const { user, setErrors } = useAuth();
@@ -17,7 +20,7 @@ export default function Home() {
       setErrors("");
       router.push("/auth/Login");
     } else if (user.first_login) {
-        router.push("/auth/ResetPassword");
+      router.push("/auth/ResetPassword");
     }
     //get rest of user information
     if (!user) return;
@@ -38,11 +41,19 @@ export default function Home() {
     return () => unsubscribe();
   }, [loadedUser, router, setErrors, user]);
   return (
-    <div className={"homeContainer"}>
-      <h1 className="text-lg font-bold mb-4 p-4 text-center">
-        BIENVENIDO(A): {localUser.displayname}
-      </h1>
-      {/* <IndicatorsExample /> */}
-    </div>
+    <>
+      <div className={"homeContainer"}>
+        <h1 className="text-lg font-bold mb-4 p-4 text-center">
+          BIENVENIDO(A): {localUser.displayname}
+        </h1>
+
+        { }
+        <div>
+          <CafePerformance />
+        </div>
+      </div>
+
+
+    </>
   );
 }

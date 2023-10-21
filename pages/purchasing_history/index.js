@@ -11,16 +11,15 @@ import { startOfDay, endOfDay } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
-
-const purchasesRef = collection(db, 'purchases');
+import Estados from "@/Components/Form/statsC";
 
 const ConsultasClientes = () => {
 
-
+  const [totalCompras, setTotalCompras] = useState(0);
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-  
+
   //Valida acceso a la pagina
   const router = useRouter();
   const { user, errors, setErrors } = useAuth();
@@ -30,30 +29,33 @@ const ConsultasClientes = () => {
       router.push("/auth/Login");
     }
   }, []);
-  const applyFilter = ({ rtn, startDate, endDate }) => {
-    const filtered = data.filter((item) => {
-      const itemDate = item.date.toDate();
 
-      // Verifica si las fechas de inicio y fin están definidas
-      const start = startDate ? startOfDay(startDate) : null;
-      const end = endDate ? endOfDay(endDate) : null;
-
-      // Comprueba si la fecha del elemento está dentro del rango (si se proporcionan fechas)
-      const isWithinDateRange =
-      (!start || isAfter(itemDate, start)) && (!end || isBefore(itemDate, end));
-
-      return (
-        item.rtn.toLowerCase().includes(rtn.toLowerCase()) && isWithinDateRange
+  //inicializar datos de stats
+  useEffect(() => {
+    //suma de total en ventas
+    const fetchData = async () => {
+      const querySnapshot1 = await getDocs(
+        query(collection(db, "purchases"), orderBy("date", "desc"))
       );
-    });
 
-    setFilteredData(filtered);
-  };
-  
+      let latestPurchases = 0;
+      querySnapshot1.forEach((doc) => {
+        const data = doc.data();
+        // Asegúrate de que la propiedad 'value' exista en el documento
+        if (data.hasOwnProperty("total")) {
+          latestPurchases += data.total; // Suma el valor de 'total' al total
+        }
+      });
+      setTotalCompras(latestPurchases); // Actualizar el estado de tsales con el valor obtenido
+    };
+
+    fetchData();
+  }, []);
+
   useEffect(() => {
     const fetchPurchases = async () => {
       const q = query(
-        collection(db, "purchases"), 
+        collection(db, "purchases"),
         orderBy('date', 'desc'));
 
       const querySnapshot = await getDocs(q);
@@ -66,22 +68,49 @@ const ConsultasClientes = () => {
       setData(purchaseData);
       setFilteredData(purchaseData); // Inicializa los datos filtrados con los datos originales
     };
-    fetchPurchases();    
-    
+    fetchPurchases();
+
   }, []);
 
+  const applyFilter = ({ rtn, startDate, endDate }) => {
+    const filtered = data.filter((item) => {
+      const itemDate = item.date.toDate();
+      const start = startOfDay(startDate);
+      const end = endOfDay(endDate);
 
-  return(
+      return (
+        item.rtn.toLowerCase().includes(rtn.toLowerCase()) &&
+        (!startDate || itemDate >= start) &&
+        (!endDate || itemDate <= end)
+      );
+    });
+
+    // Calcular los totales de compras
+    let comprasTotal = 0;
+
+    filtered.forEach((item) => {
+      comprasTotal += item.total; // Asumiendo que el campo es "total" para compras
+    });
+    // Establecer los totales en los estados correspondientes
+    setTotalCompras(comprasTotal);
+
+    setFilteredData(filtered);
+  };
+
+  return (
     <div className="container mx-auto p-10 justify-center items-center h-full">
       <h1 className=" text-2xl font-semibold text-center">
-      HISTORIAL DE CLIENTES
+        HISTORIAL DE CLIENTES
       </h1>
-
+      <div>
+        <Estados totalCompras={totalCompras} />
+      </div>
       <div className="container mx-auto p-4 justify-center items-center h-screen">
         <FilterSection onFilter={applyFilter} />
         <ReusableTable data={filteredData} columns={columns} />
       </div>
     </div>
-)}
+  )
+}
 
 export default ConsultasClientes;

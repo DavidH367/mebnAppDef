@@ -27,7 +27,7 @@ export default function Searches() {
       <h2 className="text-lg font-semibold mb-2 p-4 text-center">CONSULTAS</h2>
 
       <div className="justify-center">
-        <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
+        <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  justify-items-center">
           <div>
             <Link href="../../purchasing_history">
               <Card
@@ -78,34 +78,7 @@ export default function Searches() {
               </Card>
             </Link>
           </div>
-        </div>
-
-        <div className="p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 justify-items-center">
-          <div>
-            <Link href="../../inventory_control">
-              <Card
-                className="py-4 "
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">CONTROL DE INVENTARIO</h4>
-                  <Divider />
-                  <small className="text-default-500 font-bold">
-                    Transacciones y Gastos
-                  </small>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-full"
-                    src="../img/control.jpg"
-                    width={270}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
+          
           <div>
             <Link href="../../supliers_history">
               <Card
@@ -132,7 +105,65 @@ export default function Searches() {
             </Link>
           </div>
         </div>
+
+        <div className="p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 justify-items-center">
+          
+          <div>
+            <Link href="../../expenses_history">
+              <Card
+                className="py-4 "
+                isPressable
+                onPress={() => console.log("item pressed")}
+              >
+                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
+                  <h4 className="font-bold text-large">REPORTE DE GASTOS</h4>
+                  <Divider />
+                  <small className="text-default-500 font-bold">
+                    Historial de pagos, gastos, etc.
+                  </small>
+                </CardHeader>
+                <CardBody className="overflow-visible py-2">
+                  <Image
+                    alt="Card background"
+                    className="object-cover rounded-xl h-40 w-full"
+                    src="../img/reporte.jpg"
+                    width={270}
+                  />
+                </CardBody>
+              </Card>
+            </Link>
+          </div>
+          <div>
+            <Link href="../../reportes">
+              <Card
+                className="py-4 "
+                isPressable
+                onPress={() => console.log("item pressed")}
+              >
+                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
+                  <h4 className="font-bold text-large">INFORMES DE TRANSACCIONES</h4>
+                  <Divider />
+                  <small className="text-default-500 font-bold">
+                    Informes General
+                  </small>
+                </CardHeader>
+                <CardBody className="overflow-visible py-2">
+                  <Image
+                    alt="Card background"
+                    className="object-cover rounded-xl h-40 w-full"
+                    src="../img/informe.png"
+                    width={270}
+                  />
+                </CardBody>
+              </Card>
+            </Link>
+          </div>
+          
+        </div>
       </div>
+    <div>
+    </div>  
     </div>
+    
   );
 }
