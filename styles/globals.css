@@ -34,3 +34,13 @@
     margin-bottom: 240px;
   }
 }  
+
+/* navbar */
+@media (min-width: 640px) {
+  .flexin {
+    display: flex;
+  }
+}
+.g {
+  gap: 1rem;
+}

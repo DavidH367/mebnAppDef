@@ -85,7 +85,7 @@ export default function App() {
 
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden flexin g" justify="center">
         <NavbarBrand>
           <Link color="foreground" href="../">
             <Logo/>
