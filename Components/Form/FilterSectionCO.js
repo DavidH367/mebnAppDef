@@ -50,25 +50,16 @@ const FilterSection = ({ onFilter }) => {
 
   return (
     <div>
-      <Accordion isCompact className="mt-2 mb-2" selectionMode="multiple">
-        <AccordionItem
-          key="1"
-          aria-label="Filtrar por RTN"
-          title="Filtrar por RTN"
-          className="mb-2"
-        >
-          <Input
-            className="w-full sm:max-w-[44%]"
-            startContent={<SearchIcon />}
-            type="text"
-            placeholder="RTN"
-            value={filterValues.rtn}
-            onChange={(e) => handleFilterChange("rtn", e.target.value)}
-          />
-        </AccordionItem>
-        
-      </Accordion>
-
+      <div className="mt-2 mb-2 w-80">
+        <Input
+          className="w-full sm:max-w-[100%]"
+          startContent={<SearchIcon />}
+          type="text"
+          placeholder="RTN"
+          value={filterValues.rtn}
+          onChange={(e) => handleFilterChange("rtn", e.target.value)}
+        />
+      </div>
       <div className="mt-2 mb-2">
         <DatePicker
           selected={filterValues.startDate}

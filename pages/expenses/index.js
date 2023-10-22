@@ -111,6 +111,10 @@ const Gastos = () => {
     if (valorFechas.startDate === null || valorFechas.endDate === null) {
         return;
     }
+    
+    if (valorFechas.startDate > valorFechas.endDate) {
+      return;
+    }
 
     // Verificar si los campos obligatorios están llenos
     if ({}) {
@@ -264,7 +268,8 @@ const Gastos = () => {
         });
 
         // Guardar o mostrar el documento PDF, por ejemplo, descargarlo
-        doc1.save("reporte.pdf");
+        doc1.autoPrint();
+        doc1.output("dataurlnewwindow");
         setValorFechas({
           startDate: null,
           endDate: null,

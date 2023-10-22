@@ -3,18 +3,16 @@ import Head from "next/head";
 import "firebase/firestore";
 import { db } from "../../lib/firebase";
 import {
-  addDoc,
   collection,
   query,
   getDocs,
   orderBy,
-  limit,
   where,
 } from "firebase/firestore";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { useAuth } from "../../lib/context/AuthContext";
+import { doc, getDoc} from "firebase/firestore";
+import { useAuth } from "../../lib/context/AuthContext"; 
 import { useRouter } from "next/router";
-import { Input, Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from "@nextui-org/react";
@@ -97,6 +95,9 @@ const Reportes = () => {
 
     if (valorFechas.startDate === null || valorFechas.endDate === null) {
       return;
+    }
+    if (valorFechas.startDate > valorFechas.endDate) {
+      return;  
     }
     // Verificar si los campos obligatorios están llenos
     if ({}) {
@@ -387,9 +388,6 @@ const Reportes = () => {
                               <span className="text-tiny text-default-400">
                                 RTN: {user.rtn}
                               </span>
-                              <span className="text-tiny text-default-400">
-                                Codigo: {user.code}
-                              </span>
                             </div>
                           </div>
                         </SelectItem>
@@ -433,23 +431,27 @@ const Reportes = () => {
                     />
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="shadow"
-                  className="btn btn-secondary ml-2"
-                >
-                  GENERAR
-                </Button>
-                <Button
-                  color="primary"
-                  variant="shadow"
-                  onClick={clearData}
-                  className="btn btn-secondary ml-2"
-                >
-                  LIMPIAR
-                </Button>
               </div>
+              <div className="flex items-center justify-center mt-4">
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="shadow"
+                    className="btn btn-secondary ml-2"
+                    size="lg"
+                  >
+                    GENERAR
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="shadow"
+                    onClick={clearData}
+                    className="btn btn-secondary ml-2"
+                    size="lg"
+                  >
+                    LIMPIAR
+                  </Button>
+                </div>
             </form>
           </div>
         </div>

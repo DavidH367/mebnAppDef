@@ -53,7 +53,6 @@ const FilterSection = ({ onFilter }) => {
     <div >
       <div className="mt-2 mb-2 w-80">
         <Input
-          isClearable
           className="w-full sm:max-w-[100%]"
           startContent={<SearchIcon />}
           type="text"

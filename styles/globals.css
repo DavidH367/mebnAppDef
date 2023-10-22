@@ -21,14 +21,14 @@
 }
 
 .espacio, .espacioD {
-  margin-bottom: 160px;
+  margin-bottom: 170px;
 }
 .espacioU {
-  margin-bottom: 200px;
+  margin-bottom: 240px;
 }
 @media (max-width: 480px) {
   .espacio {
-    margin-bottom: 70px;
+    margin-bottom: 80px;
   }
   .espacioD, .espacioU {
     margin-bottom: 240px;

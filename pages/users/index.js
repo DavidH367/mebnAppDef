@@ -41,7 +41,7 @@ export default function Users() {
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
-                    src="../img/newUser.svg"
+                    src="../img/newUser.png"
                     width={270}
                   />
                 </CardBody>
@@ -65,7 +65,7 @@ export default function Users() {
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
-                    src="../img/pas.svg"
+                    src="../img/pas.png"
                     width={270}
                   />
                 </CardBody>
