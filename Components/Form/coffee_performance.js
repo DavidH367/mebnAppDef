@@ -44,7 +44,8 @@ const CafePerformance = () => {
                                 <Image
                                     alt="Album cover"
                                     className="object-cover"
-                                    height={150}
+                                    width={150}
+                                    height={180}
                                     shadow="md"
                                     src="../../img/rendimiento.jpg"
                                     //width="100%"
