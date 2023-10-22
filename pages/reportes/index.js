@@ -341,7 +341,7 @@ const Reportes = () => {
 
   return (
     <>
-      <div className="espacioU">
+      <div className="espacioU mt-10">
         <div className="container mx-auto p-10 justify-center items-center h-full">
           <Head>
             <title>INFORMES GENERALES</title>
@@ -432,7 +432,7 @@ const Reportes = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center mt-4">
+              <div className="flex items-center justify-center mt-6 mb-2">
                   <Button
                     type="submit"
                     color="primary"

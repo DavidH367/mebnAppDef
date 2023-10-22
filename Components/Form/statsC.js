@@ -3,15 +3,13 @@ import "firebase/firestore";
 import { Card, CardHeader, Divider, Chip } from "@nextui-org/react";
 
 const Estados = (props) => {
-   // Puedes acceder a las props totalVentas y totalCompras
-  const {totalCompras } = props;
-
+  // Puedes acceder a las props totalVentas y totalCompras
+  const { totalCompras } = props;
 
   // Usar async/await para esperar a que se resuelva la promesa
-  
 
   return (
-    <div className="bg-white py-12 sm:py-16">
+    <div className="bg-white">
       <div className="mx-auto max-w-sm grid grid-rows-1 grid-flow-col gap-4">
         <div>
           <Card className="pt-4 pb-4">
@@ -23,17 +21,17 @@ const Estados = (props) => {
               <Divider />
               <Chip
                 classNames={{
-                  base: "mt-3 mb-3"
+                  base: "mt-5 mb-3",
                 }}
                 variant="flat"
                 color="secondary"
               >
-                <h4 className="font-bold text-large">
-                {parseFloat(totalCompras).toLocaleString("es-ES", {
-                                style: "currency",
-                                currency: "HNL",
-                                minimumFractionDigits: 2,
-                            })} 
+                <h4 className="font-bold text-large text-lg">
+                  {parseFloat(totalCompras).toLocaleString("es-ES", {
+                    style: "currency",
+                    currency: "HNL",
+                    minimumFractionDigits: 2,
+                  })}
                 </h4>
               </Chip>
             </CardHeader>

@@ -113,7 +113,7 @@ const ConsultasClientes = () => {
         <h1 className=" text-2xl font-semibold text-center">
           HISTORIAL DE CLIENTES
         </h1>
-        <div>
+        <div className="mt-5"> 
           <Estados totalCompras={totalCompras} />
         </div>
         <div className="container mx-auto p-4 justify-center items-center h-screen">

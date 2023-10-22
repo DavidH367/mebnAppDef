@@ -75,8 +75,8 @@ const Providers = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-10 justify-center items-center h-full">
-      <div>
+    <div className="espacio">
+      <div className="container mx-auto p-10 justify-center items-center h-full">
         <Head>
           <title>INGRESOS Y ABONOS</title>
           <meta name="description" content="INGRESOS Y ABONOS" />

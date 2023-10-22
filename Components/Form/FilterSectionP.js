@@ -50,17 +50,7 @@ const FilterSection = ({ onFilter }) => {
   ];
 
   return (
-    <div >
-      <div className="mt-2 mb-2 width80">
-        <Input
-          className="w-full sm:max-w-[100%]"
-          startContent={<SearchIcon />}
-          type="text"
-          placeholder="Filtrar por RTN"
-          value={filterValues.rtn}
-          onChange={(e) => handleFilterChange("rtn", e.target.value)}
-        />
-      </div>
+    <div>
       <div className="mt-2 mb-2">
         <Select
           isRequired
@@ -80,6 +70,16 @@ const FilterSection = ({ onFilter }) => {
           ))}
         </Select>
       </div>
+      <div className="mt-2 mb-2 width80">
+        <Input
+          className="w-full sm:max-w-[100%]"
+          startContent={<SearchIcon />}
+          type="text"
+          placeholder="Filtrar por RTN"
+          value={filterValues.rtn}
+          onChange={(e) => handleFilterChange("rtn", e.target.value)}
+        />
+      </div>
       <div className="mt-2 mb-2">
         <DatePicker
           selected={filterValues.startDate}
@@ -95,8 +95,9 @@ const FilterSection = ({ onFilter }) => {
           dateFormat="dd/MM/yyyy"
           className="border rounded px-2 py-1"
         />
-
-        <Button
+      </div>
+      <div className="mt-2 mb-2">
+      <Button
           color="primary"
           variant="shadow"
           onClick={applyFilter}

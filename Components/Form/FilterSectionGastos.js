@@ -63,6 +63,8 @@ const FilterSection = ({ onFilter }) => {
           dateFormat="dd/MM/yyyy"
           className="border rounded px-2 py-1"
         />
+      </div>
+      <div className="mt-2 mb-2">
         <Button
           color="primary"
           variant="shadow"
