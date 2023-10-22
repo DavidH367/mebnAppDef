@@ -11,7 +11,7 @@ export const columns = [
     { title: 'RTN', field: 'rtn' },
     { title: 'NOMBRE', field: 'name' },
     { title: 'SACOS', field: 'bags_sold' },
-    { title: 'TIPO DE CAFE', field: 'type' },
+    { title: 'TIPO DE CAFE', field: 'coffee_type' },
     { title: 'PESO BRUTO', field: 'weight' },
     { title: 'PESO NETO', field: 'weightN' },
     { title: 'FECHA', field: 'date' },

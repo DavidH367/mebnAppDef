@@ -40,10 +40,10 @@ const ConsultasClientes = () => {
 
       let latestPurchases = 0;
       querySnapshot1.forEach((doc) => {
-        const data = doc.data();
+        const data1 = doc.data();
         // Asegúrate de que la propiedad 'value' exista en el documento
-        if (data.hasOwnProperty("total")) {
-          latestPurchases += data.total; // Suma el valor de 'total' al total
+        if (data1.hasOwnProperty("total")) {
+          latestPurchases += data1.total; // Suma el valor de 'total' al total
         }
       });
       setTotalCompras(latestPurchases); // Actualizar el estado de tsales con el valor obtenido
@@ -72,7 +72,7 @@ const ConsultasClientes = () => {
 
   }, []);
 
-  const applyFilter = ({ rtn, startDate, endDate }) => {
+  const applyFilter = ({ rtn, startDate, endDate, coffee_type }) => {
     const filtered = data.filter((item) => {
       const itemDate = item.date.toDate();
       const start = startOfDay(startDate);
@@ -80,8 +80,9 @@ const ConsultasClientes = () => {
 
       return (
         item.rtn.toLowerCase().includes(rtn.toLowerCase()) &&
+        item.coffee_type.toLowerCase().includes(coffee_type.toLowerCase()) &&
         (!startDate || itemDate >= start) &&
-        (!endDate || itemDate <= end)
+        (!endDate || itemDate <= end)  
       );
     });
 
@@ -93,7 +94,6 @@ const ConsultasClientes = () => {
     });
     // Establecer los totales en los estados correspondientes
     setTotalCompras(comprasTotal);
-
     setFilteredData(filtered);
   };
 
