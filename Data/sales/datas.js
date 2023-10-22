@@ -11,7 +11,7 @@ export const columns = [
     { title: 'RTN', field: 'rtn' },
     { title: 'NOMBRE', field: 'name' },
     { title: 'QUINTALES', field: 'bags_sold' },
-    { title: 'TIPO DE CAFE', field: 'type' },
+    { title: 'TIPO DE CAFE', field: 'coffee_type' },
     { title: 'PESO', field: 'weight' },
     { title: 'FECHA', field: 'date' },
     { title: 'TOTAL en Lempiras', field: 'total' },

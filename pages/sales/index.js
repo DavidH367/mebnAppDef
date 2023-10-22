@@ -273,7 +273,7 @@ const MainComponent = () => {
       const newData = {
         rtn: auxRtn,
         name: auxName,
-        type: tipoCafe,
+        coffee_type: tipoCafe,
         bags_sold: parseFloat(quintales),
         weight: parseFloat(peso),
         weightN: parseFloat(pNeto),
