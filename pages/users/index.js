@@ -36,13 +36,14 @@ export default function Users() {
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
                   <h4 className="font-bold text-large">Registrar Usuario</h4>
                   <Divider />
+                  <small className="text-default-500 font-bold"/>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
                     src="../img/newUser.png"
-                    width={270}
+                    width={280}
                   />
                 </CardBody>
               </Card>
@@ -60,13 +61,14 @@ export default function Users() {
                     Actualizar Contraseña
                   </h4>
                   <Divider />
+                  <small className="text-default-500 font-bold"/>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
                     src="../img/pas.png"
-                    width={270}
+                    width={280}
                   />
                 </CardBody>
               </Card>

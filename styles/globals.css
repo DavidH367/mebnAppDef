@@ -47,3 +47,13 @@
 .g {
   gap: 1rem;
 }
+
+/* Ancho del elemento del 80% del contenedor */
+.width80{
+  width: 40%;
+}
+@media (max-width: 690px) {
+  .width80{
+    width: 100%;
+  }
+}

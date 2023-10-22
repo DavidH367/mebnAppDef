@@ -50,7 +50,7 @@ const FilterSection = ({ onFilter }) => {
 
   return (
     <div>
-      <div className="mt-2 mb-2 w-80">
+      <div className="mt-2 mb-2 width80">
         <Input
           className="w-full sm:max-w-[100%]"
           startContent={<SearchIcon />}

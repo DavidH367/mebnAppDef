@@ -23,7 +23,7 @@ const Estados = (props) => {
               <Divider />
               <Chip
                 classNames={{
-                  base: "mt-3"
+                  base: "mt-3 mb-3"
                 }}
                 variant="flat"
                 color="secondary"

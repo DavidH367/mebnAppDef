@@ -326,7 +326,7 @@ const MainComponent = () => {
 
   //final para funcion de guardar datos
   return (
-    <div className="espacio">
+    <div className="espacioU">
       <Head>
         <title>DEPOSITO O VENTA DE CAFÉ</title>
         <meta name="description" content="DEPOSITO O VENTA DE CAFÉ" />

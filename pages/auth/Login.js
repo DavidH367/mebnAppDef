@@ -102,7 +102,7 @@ return (
                 <p className={styles.passwordSubtitle}>
                     {/* ¿Olvidaste tu Contraseña? */}
                     <Link href="/auth/recovery/RequestRecovery" className={styles.lblRecoverPassword}>
-                        Recupérar Contraseña
+                        Recuperar Contraseña
                     </Link>
                 </p>
             </div>

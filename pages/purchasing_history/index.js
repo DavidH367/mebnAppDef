@@ -102,7 +102,7 @@ const ConsultasClientes = () => {
   };
 
   return (
-    <div className="espacio">
+    <div className="espacioU">
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <Head>
           <title>HISTORIAL DE CLIENTES</title>
