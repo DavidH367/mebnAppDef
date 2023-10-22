@@ -25,24 +25,27 @@ export default function Users() {
       </Head>
       <h2 className="text-lg font-semibold mb-2 p-4 text-center">USUARIOS</h2>
       <div className="justify-center">
-        <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
+        <div className="p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 justify-items-center">
           <div>
             <Link href="../users/RegisterUser">
               <Card
-                className="py-4"
+                className="py-4 "
                 isPressable
                 onPress={() => console.log("item pressed")}
               >
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
                   <h4 className="font-bold text-large">Registrar Usuario</h4>
                   <Divider />
+                  <small className="text-default-500 font-bold">
+                    Ingresar Datos de Usuarios
+                  </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
                     src="../img/newUser.png"
-                    width={280}
+                    width={270}
                   />
                 </CardBody>
               </Card>
@@ -60,60 +63,8 @@ export default function Users() {
                     Actualizar Contraseña
                   </h4>
                   <Divider />
-                  <small className="text-default-500 font-bold"/>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-full"
-                    src="../img/pas.png"
-                    width={280}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
-        </div>
-        <div className="p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 justify-items-center">
-          <div>
-            <Link href="../../expenses_history">
-              <Card
-                className="py-4 "
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">REPORTE DE GASTOS</h4>
-                  <Divider />
                   <small className="text-default-500 font-bold">
-                    Historial de pagos, gastos, etc.
-                  </small>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-full"
-                    src="../img/reporte.jpg"
-                    width={270}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
-          <div>
-            <Link href="../../reportes">
-              <Card
-                className="py-4 "
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">
-                    INFORMES DE TRANSACCIONES
-                  </h4>
-                  <Divider />
-                  <small className="text-default-500 font-bold">
-                    Informes General
+                    Nueva Contraseña
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
