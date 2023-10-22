@@ -44,8 +44,8 @@ export default function Users() {
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
-                    src="../img/newUser.png"
-                    width={270}
+                    src="../img/NewUser.png"
+                    width={300}
                   />
                 </CardBody>
               </Card>
@@ -71,8 +71,8 @@ export default function Users() {
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-full"
-                    src="../img/informe.png"
-                    width={270}
+                    src="../img/Pas.png"
+                    width={300}
                   />
                 </CardBody>
               </Card>
