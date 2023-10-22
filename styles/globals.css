@@ -40,6 +40,9 @@
   .flexin {
     display: flex;
   }
+  .movil {
+    display: none;
+  }
 }
 .g {
   gap: 1rem;

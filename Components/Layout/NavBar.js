@@ -70,11 +70,11 @@ export default function App() {
 
   return (
     <Navbar isBordered>
-      <NavbarContent className="sm:hidden" justify="start">
+      <NavbarContent className="movil" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden pr-3" justify="center">
+      <NavbarContent className="movil pr-3" justify="center">
         <NavbarBrand>
           
           <Link color="foreground" href="../">
