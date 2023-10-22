@@ -25,7 +25,7 @@ export default function Users() {
       </Head>
       <h2 className="text-lg font-semibold mb-2 p-4 text-center">USUARIOS</h2>
       <div className="justify-center">
-        <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
+        <div className=" p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  justify-items-center">
           <div>
             <Link href="../users/RegisterUser">
               <Card
@@ -36,9 +36,6 @@ export default function Users() {
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
                   <h4 className="font-bold text-large">Registrar Usuario</h4>
                   <Divider />
-                  <small className="text-default-500 font-bold">
-                    Historial de Clientes
-                  </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
