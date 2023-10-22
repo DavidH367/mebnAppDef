@@ -36,7 +36,9 @@ export default function Users() {
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
                   <h4 className="font-bold text-large">Registrar Usuario</h4>
                   <Divider />
-                  <small className="text-default-500 font-bold"/>
+                  <small className="text-default-500 font-bold">
+                    Historial de Clientes
+                  </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
