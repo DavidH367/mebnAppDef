@@ -37,7 +37,7 @@ const Login = () => {
 return (
     <div>
         <Head>
-            <title>Café</title>
+            <title>Bodega-Gad</title>
             <meta name="description" content="inicio de sesión"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <link rel="icon" href="/img/logo_paginas.png"/>
