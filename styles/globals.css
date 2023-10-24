@@ -20,15 +20,40 @@
   cursor: pointer;
 }
 
-.espacio, .espacioD{
-  margin-bottom: 120px;
+.espacio, .espacioD {
+  margin-bottom: 170px;
 }
-
+.espacioU {
+  margin-bottom: 240px;
+}
 @media (max-width: 480px) {
   .espacio {
-    margin-bottom: 60px;
+    margin-bottom: 80px;
   }
-  .espacioD {
+  .espacioD, .espacioU {
     margin-bottom: 240px;
   }
 }  
+
+/* navbar */
+@media (min-width: 640px) {
+  .flexin {
+    display: flex;
+  }
+  .movil {
+    display: none;
+  }
+}
+.g {
+  gap: 1rem;
+}
+
+/* Ancho del elemento del 80% del contenedor */
+.width80{
+  width: 40%;
+}
+@media (max-width: 690px) {
+  .width80{
+    width: 100%;
+  }
+}

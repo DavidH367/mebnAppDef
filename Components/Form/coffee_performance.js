@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Image, Button, Progress } from "@nextui-org/react";
+import { Card, CardBody, Image, Chip, Divider} from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-
+import { PrimaryButton, SecondaryButton } from './Buttons';
 
 const CafePerformance = () => {
     const [pesoPergaminoLbs, setPesoPergaminoLbs] = useState(0);
     const [pesoUvaLbs, setPesoUvaLbs] = useState(0);
     const [rendimiento, setRendimiento] = useState(0);
 
+    const clear = () => {
+        setPesoPergaminoLbs(0);
+        setPesoUvaLbs(0);
+        setRendimiento(0);
+    }
     // Función para calcular el rendimiento en kilogramos
     const calcularRendimiento = () => {
+        if (pesoPergaminoLbs === 0 || pesoUvaLbs === 0) {
+            return;
+        }
         // Convertir pesos de libras a kilogramos
         const pesoPergaminoKg = pesoPergaminoLbs * 0.453592;
         const pesoUvaKg = pesoUvaLbs * 0.453592;
@@ -36,10 +44,10 @@ const CafePerformance = () => {
                                 <Image
                                     alt="Album cover"
                                     className="object-cover"
-                                    height={200}
-                                    shadow="md"
+                                    height={100}
+                                    shadow="sm"
                                     src="../../img/rendimiento.jpg"
-                                    width="100%"
+                                    //width="100%"
                                 />
                             </div>
                             <div className="flex flex-col col-span-6 md:col-span-8">
@@ -62,6 +70,7 @@ const CafePerformance = () => {
                                             onChange={(e) => setPesoPergaminoLbs(e.target.value)}
                                         />
                                         <Input
+                                            className='mt-2'
                                             type="number"
                                             label="Peso en Uva:"
                                             placeholder="0.00"
@@ -76,12 +85,20 @@ const CafePerformance = () => {
                                             value={pesoUvaLbs}
                                             onChange={(e) => setPesoUvaLbs(e.target.value)}
                                         />
-                                        <Card>
-                                            <CardBody>
-                                                <p> {rendimiento} %</p>
-                                            </CardBody>
-                                        </Card>
-                                        <button onClick={calcularRendimiento}>Calcular Rendimiento</button>
+                                        <div className="flex justify-center items-center mt-3 mb-2">
+                                            <Chip>
+                                                <b><h1> {rendimiento} %</h1></b>
+                                            </Chip>
+                                        </div>
+                                        <div className='flex justify-center items-center'>
+                                            
+                                        </div>
+                                        <div className="flex justify-center items-center mt-1">
+                                            <PrimaryButton onClick={calcularRendimiento} text="Calcular"/>
+                                            <Divider orientation="vertical" />
+                                            <SecondaryButton onClick={clear} text="Limpiar"/>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>

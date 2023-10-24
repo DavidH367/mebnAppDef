@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useState, useEffect } from "react";
 import React from "react";
+import Logo from "../../Components/Home/logo";
 
 export default function App() {
   const { logout, user } = useAuth();
@@ -62,30 +63,33 @@ export default function App() {
     { text: "Compras", url: "/purchasing" },
     { text: "Ventas", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
-    { text: "Gastis", url: "/expenses" },
+    { text: "Gastos", url: "/expenses" },
     { text: "Consultas", url: "/searches" },
     { text: "Usuarios", url: "/users" },
   ];
 
   return (
-    <Navbar disableAnimation isBordered>
-      <NavbarContent className="sm:hidden" justify="start">
+    <Navbar isBordered>
+      <NavbarContent className="movil" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden pr-3" justify="center">
+      <NavbarContent className="movil pr-3" justify="center">
         <NavbarBrand>
+          
           <Link color="foreground" href="../">
-            <p className="font-bold text-inherit">BODEGA - GAD</p>
+            <Logo/>
+            {/* <p className="font-bold text-inherit">BODEGA - GAD</p> */}
           </Link>
         </NavbarBrand>
 
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden flexin g" justify="center">
         <NavbarBrand>
           <Link color="foreground" href="../">
-            <p className="font-bold text-large text-inherit">BODEGA - GAD</p>
+            <Logo/>
+            {/* <p className="font-bold text-large text-inherit">BODEGA - GAD</p> */}
           </Link>
         </NavbarBrand>
         <NavbarItem >

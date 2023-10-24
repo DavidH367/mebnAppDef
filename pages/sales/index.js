@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
 import { db } from "../../lib/firebase";
 import {
@@ -11,7 +12,7 @@ import {
   where
 } from "firebase/firestore";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { tipoC } from "./datas";
+import { tipoC } from "../../Data/sales/datas";
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
@@ -324,12 +325,18 @@ const MainComponent = () => {
 
   //final para funcion de guardar datos
   return (
-    <div className="espacio">
+    <div className="espacioU">
+      <Head>
+        <title>DEPOSITO O VENTA DE CAFÉ</title>
+        <meta name="description" content="DEPOSITO O VENTA DE CAFÉ" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
       <div className="container mx-auto p-10 justify-center items-center h-full">
         <div className='px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 mb-10'>
           <h2 className="text-lg font-semibold mb-2 ">
             <p className='text-center'>
-              DEPOSITO O VENTA DE CAFÉ:
+              DEPOSITO O VENTA DE CAFÉ
             </p>
           </h2>
           <p className="text-sm text-gray-600 mb-6">POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS</p>
@@ -476,7 +483,8 @@ const MainComponent = () => {
                 </div>
               </div>
               <button
-                type='submit' className='h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                type="submit"
+                className="h-9 w-40 mt-11 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Guardar
               </button>

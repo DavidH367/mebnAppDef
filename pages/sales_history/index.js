@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
 import { db } from "../../lib/firebase";
 import {
@@ -8,11 +9,11 @@ import {
   getDocs,
   orderBy,
   limit,
-  where
+  where,
 } from "firebase/firestore";
 import ReusableTable from "../../Components/Form/ReusableTable";
 import FilterSection from "../../Components/Form/FilterSectionP"; // Asegúrate de ajustar la ruta correcta
-import { columns, tipoC } from "./datas";
+import { columns, tipoC } from "../../Data/sales_history/datas";
 import { startOfDay, endOfDay } from "date-fns";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
@@ -23,7 +24,6 @@ const ConsultaVentas = () => {
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
-
 
   //Valida acceso a la pagina
   const router = useRouter();
@@ -36,7 +36,7 @@ const ConsultaVentas = () => {
   }, []);
 
   //actualizar totales
-  
+
   useEffect(() => {
     //suma de total en ventas
     const fetchData = async () => {
@@ -74,8 +74,6 @@ const ConsultaVentas = () => {
     fetchData();
   }, []);
 
-
-
   const applyFilter = ({ rtn, startDate, endDate }) => {
     const filtered = data.filter((item) => {
       const itemDate = item.date.toDate();
@@ -93,7 +91,7 @@ const ConsultaVentas = () => {
     let ventasTotal = 0;
 
     filtered.forEach((item) => {
-        ventasTotal += item.total; // Asumiendo que el campo es "total" para ventas
+      ventasTotal += item.total; // Asumiendo que el campo es "total" para ventas
     });
     // Establecer los totales en los estados correspondientes
     setTotalVentas(ventasTotal);
@@ -102,17 +100,25 @@ const ConsultaVentas = () => {
   };
 
   return (
-    <div className="container mx-auto p-10 justify-center items-center h-full">
-      <h1 className=" text-2xl font-semibold text-center">
-        HISTORIAL DE VENTAS
-      </h1>
-      <div>
-        <Estados totalVentas={totalVentas} />
-      </div>
+    <div className="espacio">
+      <div className="container mx-auto p-10 justify-center items-center h-full">
+        <Head>
+          <title>HISTORIAL DE VENTAS</title>
+          <meta name="description" content="HISTORIAL DE VENTAS" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/img/logo_paginas.png" />
+        </Head>
+        <h1 className=" text-2xl font-semibold text-center">
+          HISTORIAL DE VENTAS
+        </h1>
+        <div className="mt-5">
+          <Estados totalVentas={totalVentas} />
+        </div>
 
-      <div className="container mx-auto p-4 justify-center items-center h-screen">
-        <FilterSection onFilter={applyFilter} />
-        <ReusableTable data={filteredData} columns={columns} />
+        <div className="container mx-auto p-4 justify-center items-center h-screen">
+          <FilterSection onFilter={applyFilter} />
+          <ReusableTable data={filteredData} columns={columns} />
+        </div>
       </div>
     </div>
   );

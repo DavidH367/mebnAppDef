@@ -10,7 +10,7 @@ const Loader = () => {
             height:"90vh",
             padding:"$0"
         }}>
-            <Image src="/img/perfil.jpg"
+            <Image src="/img/logo_principal.png"
             height={220}
             width={220}
             alt="logo"/>

@@ -13,9 +13,6 @@ const RequestRecovery = () => {
   const [loading, setLoading] = useState(false);
   const { forgotPassword, errors, setErrors } = useAuth();
   const router = useRouter();
-  // Two phases are:
-  // 1: User enters email and request a email be sent for recovery
-  // 2: Recovery email is sent and now the user needs their email
   const handleNextPhase = () => {
     setLoading(false);
     setCurrentPhase(currentPhase < 2 ? currentPhase + 1 : currentPhase);
@@ -46,81 +43,82 @@ const RequestRecovery = () => {
   return (
     <div>
       <Head>
-        <title>Recuperacion de contraseña</title>
+        <title>Recuperacion de Contraseña</title>
         <meta name="description" content="recuperacion de contrasena" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/lccfavicon.ico" />
+        <link rel="icon" href="/img/logo_paginas.png" />
       </Head>
       <div className={styles.recoverMainContainer}>
         {/* request password */}
         {currentPhase === 0 ? (
-          <section className={styles.recoverySections}>
+          <Card className={styles.recoverySections}>
+            <h1 className="text-lg font-semibold mb-10 mt-3">
+              <p className="text-center">RECUPERACIÓN DE CONTRASEÑA</p>
+            </h1>
             <Image
-              src={"/lock-solid-question.svg"}
-              width={170}
-              height={170}
+              src={"/icons/email.png"}
+              width={120}
+              height={120}
               alt="icono para recuperacion de contrasena"
             />
-            <h1 className={styles.recoverTitle}>Recuperación de Contraseña</h1>
-            <span className={styles.recoverSubtitle}>
-              Para recuperar tu contraseña ingresa el correo electrónico
-              asociado con tu cuenta.{" "}
-            </span>
-            <TextInput
-              label="Correo Electrónico"
-              type="text"
-              value={email}
-              setValue={setEmail}
-              errorMessage={errors}
-            />
-            {loading && <Spinner color="primary" />}
-            <div className="recovery-buttons-container">
-              <Button
-                color="secondary"
-                size="lg"
-                variant="bordered"
-                onPress={handlePreviousPhase}
-              >
-                Regresar
-              </Button>
-              <Button size="lg" color="primary" onPress={sendResetEmail}>
-                Siguiente
-              </Button>
+            <div className="text-center my-5">
+              <span className="text-default-500 font-bold my-5">
+                Para recuperar tu contraseña ingresa el correo electrónico
+                asociado con tu cuenta.{" "}
+              </span>
             </div>
-          </section>
+            <div className="w-[80%]">
+              <TextInput
+                label="Correo Electrónico"
+                type="text"
+                value={email}
+                setValue={setEmail}
+                errorMessage={errors}
+              />  
+            </div>
+            {loading && <Spinner color="primary" />}
+            <div className="mb-3">
+              <div className="mb-3 mt-4">
+                <Button
+                  color="danger"
+                  size="lg"
+                  onPress={handlePreviousPhase}>
+                  Regresar
+                </Button>
+              </div>
+              <div>
+                <Button size="lg" color="primary" onPress={sendResetEmail}>
+                  Siguiente
+                </Button>
+              </div>
+            </div>
+          </Card>
         ) : null}
         {currentPhase === 1 ? (
-          <Card className="psswrd-recovery-container">
+          <Card className={styles.recoverySections}>
+            <h1 className="text-lg font-semibold mb-10  mt-3">
+            <p className="text-center">REVISE SU CORREO ELECTRÓNICO</p>
+          </h1>
             <Image
-              src={"/envelope-open-email.svg"}
-              width={170}
-              height={170}
+              src={"/icons/recover.svg"}
+              width={120}
+              height={120}
               alt="icono para recuperacion de contrasena"
             />
-            <h1 className={styles.recoverTitle}>
-              Revise su Correo Electrónico
-            </h1>
-            <span className={styles.recoverSubtitle}>
-              Sigue las instrucciones enviadas al correo <b>{email}</b> para
-              reiniciar tu contraseña. Al terminar, intenta iniciar sesion
-              nuevamente.
-            </span>
-            <div className="recovery-buttons-container">
-              <Button
-                onClick={handlePreviousPhase}
-                variant="bordered"
-                color="secondary"
-                size="lg"
-              >
-                Regresar
-              </Button>
+            <div className="text-center my-5">
+              <span className="text-default-500 font-bold"> 
+                Revisar en SPAM y seguir las instrucciones enviadas al correo <b>{email}</b> para
+                reiniciar tu contraseña. Al terminar, intenta iniciar sesion
+                nuevamente.
+              </span>
+            </div>
+            <div className="mt-3 mb-3">
               <Button
                 color="primary"
                 size="lg"
                 onClick={() => {
                   router.push("/auth/Login");
-                }}
-              >
+                }}>
                 Iniciar sesión
               </Button>
             </div>

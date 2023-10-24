@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import "firebase/firestore";
-import { db } from "../../lib/firebase";
-import {
-  addDoc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-} from "firebase/firestore";
+import { Input, Chip } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../lib/context/AuthContext";
 import addNewUser from "../../lib/firebase/firebaseNewUser";
 import { registrerWithEmail } from "../../lib/firebase/firebaseAuth";
+import {
+  validateCellphone,
+  ValidateEmail,
+  validateString,
+} from "../../lib/Validators";
 
 const UserRegister = () => {
   const [firstName, setFirstName] = useState("");
@@ -20,15 +19,15 @@ const UserRegister = () => {
   const [email, setEmail] = useState("");
   const [userRole, setUserRole] = useState("ADMINISTRADOR");
   const [userState, setUserState] = useState("ACTIVO");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user,logout, errors, setErrors } = useAuth();
+  const { user, logout, errors, setErrors } = useAuth();
   useEffect(() => {
     if (!user) {
       setErrors("");
       router.push("/auth/Login");
     }
   }, []);
+
   const handleLogout = async () => {
     localStorage.removeItem("user");
     const logoutUser = await logout();
@@ -37,149 +36,170 @@ const UserRegister = () => {
       return;
     }
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const DataNew = {
-      email: email,
-      displayName: `${firstName.toUpperCase()} ${lastName.toUpperCase()}`,
-      firstName: firstName.toUpperCase(),
-      lastName: lastName.toUpperCase(),
-      cellphone: phoneNumber,
-      user_role: userRole,
-      user_state: userState,
-      adminRegister: user.uid,
-    };
-
-    await addDoc(collection(db, "users"), DataNew)
-      .then(() => {
-        // Limpiar los campos del formulario después de guardar
-        setFirstName("");
-        setLastName("");
-        setPhoneNumber("");
-        setEmail("");
-        setUserRole("");
-        setUserState("");
-        fetchUsers();
-        handleLogout();
-      })
-      .catch((error) => {
-        console.error("Error al guardar los datos:", error);
-      });
+  const handleSubmit = async () => {
+    if (firstName === "") {
+      setErrors("El nombre no puede estar vacío");
+      return;
+    }
+    if (!validateString(firstName)) {
+      setErrors("Nombre incorrecto");
+      return;
+    }
+    if (lastName === "") {
+      setErrors("El apellido no puede estar vacío");
+      return;
+    }
+    if (!validateString(lastName)) {
+      setErrors("Apellido incorrecto");
+      return;
+    }
+    if (phoneNumber === "") {
+      setErrors("El número de teléfono no puede estar vacío");
+      return;
+    }
+    if (!validateCellphone(phoneNumber)) {
+      setErrors("Número de teléfono incorrecto");
+      return;
+    }
+    if (email === "") {
+      setErrors("El correo electrónico no puede estar vacío");
+      return;
+    }
+    if (!ValidateEmail(email)) {
+      setErrors("Correo electrónico incorrecto");
+      return;
+    }
+    const password = "CAFE2023!";
+    const { user, error } = await registrerWithEmail(email, password);
+    if (error != null) {
+      console.log("error", error);
+      alert("error: ", error);
+    } else {
+      await addNewUser(
+        user,
+        firstName,
+        lastName,
+        phoneNumber,
+        userRole,
+        userState
+      );
+      handleLogout();
+    }
   };
   return (
-    <div className="container mx-auto flex justify-center items-center h-screen">
-      <div className=" container mx-auto p-6 justify-center items-center h-screen ">
-        <h1 className="text-2xl font-semibold mb-4 ">
-          <p className="text-center">USUARIOS</p>
-        </h1>
+    <div className="espacioU">
+      <Head>
+        <title>REGISTRO DE USUARIOS</title>
+        <meta name="description" content="REGISTRO DE USUARIOS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/img/logo_paginas.png" />
+      </Head>
+      <div className="container mx-auto p-10 justify-center items-center h-full">
+        <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
+          <h2 className="text-lg font-semibold mb-2 ">
+            <p className="text-center">REGISTRO DE USUARIOS</p>
+          </h2>
+          <p className="text-sm text-gray-600 mb-6">
+            POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS
+          </p>
 
-        <div className="px-8 ">
-          <div className="bg-white shadow rounded p-4 box-border h-400 w-800 p-2 border-4 ">
-            <div>
-              <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
-                <div className="sm:col-span-1">
-                  <label
-                    htmlFor="nombre"
-                    className=" block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    <p className="font-bold text-lg">Nombre</p>
-                  </label>
-                  <div className="mt-2 pr-4">
-                    <input
-                      type="text"
-                      name="nombre"
-                      id="nombre"
-                      autoComplete="given-name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
+            <div className="sm:col-span-1">
+              <label
+                htmlFor="nombre"
+                className=" block text-sm font-medium leading-6 text-gray-900"
+              >
+                <p className="font-bold text-lg">Nombre</p>
+              </label>
+              <div className="mt-2 pr-4">
+                <Input
+                  isRequired
+                  label="Ej: David"
+                  type="text"
+                  name="nombre"
+                  id="nombre"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+            </div>
 
-                <div className="sm:col-span-1">
-                  <label
-                    htmlFor="apellido"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    <a className="font-bold text-lg">Apellido</a>
-                  </label>
-                  <div className="mt-2 pr-4">
-                    <input
-                      type="text"
-                      name="apellido"
-                      id="apellido"
-                      autoComplete="family-name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
+            <div className="sm:col-span-1">
+              <label
+                htmlFor="apellido"
+                className=" block text-sm font-medium leading-6 text-gray-900"
+              >
+                <p className="font-bold text-lg">Apellido</p>
+              </label>
+              <div className="mt-2 pr-4">
+                <Input
+                  isRequired
+                  label="Ej: Hernández"
+                  type="text"
+                  name="apellido"
+                  id="apellido"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+            </div>
 
-                <div className="sm:col-span-1">
-                  <label
-                    htmlFor="fecha"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    <a className="font-bold text-lg">Numero de telefono</a>
-                  </label>
-                  <div className="mt-2 pr-4 ">
-                    <input
-                      type="numeric"
-                      name="telefono"
-                      id="telefono"
-                      autoComplete="family-name"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
+            <div className="sm:col-span-1">
+              <label
+                htmlFor="telefono"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                <a className="font-bold text-lg">Numero de teléfono</a>
+              </label>
+              <div className="mt-2 pr-4">
+                <Input
+                  isRequired
+                  label="Ej: 96365214"
+                  type="numeric"
+                  name="telefono"
+                  id="telefono"
+                  value={phoneNumber
+                    .replace(/[^0-9]/g, "")
+                    .replace(/(\d{4})(\d{4})/, "$1-$2")
+                    .slice(0, 9)}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+            </div>
 
-                <div className="sm:col-span-1">
-                  <label
-                    htmlFor="fecha"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    <a className="font-bold text-lg">Email</a>
-                  </label>
-                  <div className="mt-2 pr-4 ">
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      autoComplete="family-name"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
+            <div className="sm:col-span-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                <a className="font-bold text-lg">Correo Electrónico</a>
+              </label>
+              <div className="mt-2 pr-4">
+                <Input
+                  isRequired
+                  label="Ej: <EMAIL>"
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-1 mt-5">
+              {errors ? (
+                <Chip color="warning" variant="flat" className="mb-3">
+                  <span className="form-errors">{errors}</span>
+                </Chip>
+              ) : null}
+              <div>
                 <button
-                  onClick={async () => {
-                    const password = "CAFE2023!";
-                    const { user, error } = await registrerWithEmail(
-                      email,
-                      password
-                    );
-                    if (error != null) {
-                      console.log("error", error);
-                      alert("error: ", error);
-                    } else {
-                      await addNewUser(
-                        user,
-                        firstName,
-                        lastName,
-                        phoneNumber,
-                        email,
-                        userRole,
-                        userState
-                      );
-                      handleLogout();
-                    }
-                  }}
-                  className="h-9 w-40 mt-9 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  onClick={handleSubmit}
+                  className="h-9 w-40 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Guardar
                 </button>
