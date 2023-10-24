@@ -294,7 +294,6 @@ const MainComponent = () => {
       };
 
       const newUpdateDataSupliers = {
-        capital: parseFloat(sCap - parseFloat(pagado)),
         date: new Date(), // Guardar la fecha actual en Firebase
         paid: parseFloat(newPaid + parseFloat(pagado)),
         pending: parseFloat(newPending - parseFloat(pagado)),
