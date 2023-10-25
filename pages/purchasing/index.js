@@ -15,8 +15,7 @@ import { Input, Select, SelectItem } from "@nextui-org/react";
 import { jsPDF } from "jspdf";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
-import {imgData} from "../../Data/svg_data/svg_logoData"
-
+import { imgData } from "../../Data/svg_data/svg_logoData";
 
 const purchasesRef = collection(db, "purchases");
 
@@ -56,179 +55,202 @@ const Purchasing1 = () => {
     if (!guardando) {
       setGuardando(true);
 
-    // Verificar si los campos obligatorios están llenos
-    if (
-      !nombre ||
-      !apellido ||
-      !zona ||
-      !tipoCafe ||
-      !quintales ||
-      !peso ||
-      !precio
-    ) {
-      setFormValid(false);
-      setErrorMessage("Por favor, complete todos los campos obligatorios.");
-      return; // No enviar el formulario si falta algún campo obligatorio
-    }
-    try {
-      // Obtener el último valor de "n_transaction"
-      const querySnapshot1 = await getDocs(
-        query(
-          collection(db, "purchases"),
-          orderBy("n_transaction", "desc"),
-          limit(1)
-        )
-      ); 
-
-      let numTrans;
-      if (!querySnapshot1.empty) {
-        querySnapshot1.forEach((doc) => {
-          numTrans = doc.data().n_transaction + 1;
-        });
-      } else {
-        numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+      // Verificar si los campos obligatorios están llenos
+      if (
+        !nombre ||
+        !apellido ||
+        !zona ||
+        !tipoCafe ||
+        !quintales ||
+        !peso ||
+        !precio
+      ) {
+        setFormValid(false);
+        setErrorMessage("Por favor, complete todos los campos obligatorios.");
+        return; // No enviar el formulario si falta algún campo obligatorio
       }
+      try {
+        // Obtener el último valor de "n_transaction"
+        const querySnapshot1 = await getDocs(
+          query(
+            collection(db, "purchases"),
+            orderBy("n_transaction", "desc"),
+            limit(1)
+          )
+        );
 
-      const rtnValue = rtn || "Consumidor Final";
-      // Incrementar el valor de "n_transaction" para el nuevo documento
+        let numTrans;
+        if (!querySnapshot1.empty) {
+          querySnapshot1.forEach((doc) => {
+            numTrans = doc.data().n_transaction + 1;
+          });
+        } else {
+          numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+        }
 
-      //obtener peso neto:
-      let pNeto;
-      pNeto = (peso * 100) - quintales;
-      pNeto = pNeto / 100;
+        const rtnValue = rtn || "Consumidor Final";
+        // Incrementar el valor de "n_transaction" para el nuevo documento
 
-      const newData = {
-        rtn: rtnValue,
-        name: nombre,
-        last_name: apellido,
-        zone: zona,
-        coffee_type: tipoCafe,
-        bags: parseFloat(quintales),
-        weight: parseFloat(peso),
-        weightN: parseFloat(pNeto.toFixed(2)),
-        total: parseFloat(precio),
-        date: new Date(), // Guardar la fecha actual en Firebase
-        n_transaction: numTrans,
-      };
+        //obtener peso neto:
+        let pNeto;
+        pNeto = peso * 100 - quintales;
+        pNeto = pNeto / 100;
 
-      await addDoc(purchasesRef, newData);
+        const newData = {
+          rtn: rtnValue,
+          name: nombre,
+          last_name: apellido,
+          zone: zona,
+          coffee_type: tipoCafe,
+          bags: parseFloat(quintales),
+          weight: parseFloat(peso),
+          weightN: parseFloat(pNeto.toFixed(2)),
+          total: parseFloat(precio),
+          date: new Date(), // Guardar la fecha actual en Firebase
+          n_transaction: numTrans,
+        };
 
-      // Obtener los datos recién guardados desde Firestore
-      const querySnapshot = await getDocs(
-        query(collection(db, "purchases"), orderBy("date", "desc"))
-      );
-      const purchaseData4 = [];
-      let indexs = 1;
-      querySnapshot.forEach((doc) => {
-        purchaseData4.push({ ...doc.data(), indexs: indexs++ });
-      });
-      const fecha = new Date(newData.date);
+        await addDoc(purchasesRef, newData);
 
-      // Obtener la fecha en formato dd/mm/aaaa
-      const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1
+        // Obtener los datos recién guardados desde Firestore
+        const querySnapshot = await getDocs(
+          query(collection(db, "purchases"), orderBy("date", "desc"))
+        );
+        const purchaseData4 = [];
+        let indexs = 1;
+        querySnapshot.forEach((doc) => {
+          purchaseData4.push({ ...doc.data(), indexs: indexs++ });
+        });
+        const fecha = new Date(newData.date);
+
+        // Obtener la fecha en formato dd/mm/aaaa
+        const fechaFormateada = `${fecha.getDate()}/${
+          fecha.getMonth() + 1
         }/${fecha.getFullYear()}`;
 
-      // Obtener la hora en formato hh:mm:ss
-      const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
+        // Obtener la hora en formato hh:mm:ss
+        const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
 
-      const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
-      // Limpiar los campos del formulario después de guardar
-      setRTN("");
-      setNombre("");
-      setApellido("");
-      setZona("");
-      setTipoCafe("");
-      setPrecio("");
-      setQuintales("");
-      setPeso("");
+        const fechaYHora = `${fechaFormateada}, ${horaFormateada}`;
+        // Limpiar los campos del formulario después de guardar
+        setRTN("");
+        setNombre("");
+        setApellido("");
+        setZona("");
+        setTipoCafe("");
+        setPrecio("");
+        setQuintales("");
+        setPeso("");
 
-      //addlogo
-      
-      //PDF
-      const doc = new jsPDF({ unit: "mm", format: [215, 140] });
-      doc.addImage(imgData, "PNG", 3, 3, 27, 27);
+        //addlogo
 
-      doc.setFontSize(16);
-      doc.setFont("helvetica", "bold");
-      doc.text("BODEGA - GAD", 50, 10);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text("Compra Venta de Café", 53, 15);
-      doc.setFontSize(8);
-      doc.text("RTN: 03131985004693", 56, 19);
-      doc.setFontSize(10);
-      doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
-      doc.text("COMPROBANTE DE COMPRA", 46, 31);
-      doc.text(`Fecha: ${fechaYHora}`, 4, 38);
-      doc.text(`N° de Factura: ${newData.n_transaction}`, 97, 38);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text(`RTN: ${newData.rtn}`, 4, 45);
-      doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 4, 52);
-      doc.text(`Zona: ${newData.zone}`, 97, 52);
-      doc.setFont("helvetica", "bold");
-      doc.text(`Sacos de Producto: ${newData.bags}`, 4, 59);
-      doc.text(`Tipo de Café: ${newData.coffee_type}`, 4, 66);
-      doc.text(`Peso Bruto: ${newData.weight} Quintales`, 4, 73);
-      doc.text(`Peso Neto: ${newData.weightN} Quintales`, 4, 80);
-      doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
-        style: "currency",
-        currency: "HNL",
-        minimumFractionDigits: 2,
-      })}`, 79, 80);
-      doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
-      // Agregar una nueva página
-      doc.addPage();
-      //PDF
-      doc.setFontSize(16);
-      doc.addImage(imgData, "PNG", 3, 3, 27, 27);
-      doc.setFont("helvetica", "bold");
-      doc.text("BODEGA - GAD", 50, 10);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text("Compra Venta de Café", 53, 15);
-      doc.setFontSize(8);
-      doc.text("RTN: 03131985004693", 56, 19);
-      doc.setFontSize(10);
-      doc.text("Telefono: (504) 9860-9162 - (504) 9541-9092 ", 35, 24);
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
-      doc.text("COMPROBANTE DE COMPRA (Copia de Cliente)", 28, 31);
-      doc.text(`Fecha: ${fechaYHora}`, 5, 38);
-      doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.text(`RTN: ${newData.rtn}`, 5, 45);
-      doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
-      doc.text(`Zona: ${newData.zone}`, 95, 52);
-      doc.setFont("helvetica", "bold");
-      doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
-      doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
-      doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
-      doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
-      doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
-        style: "currency",
-        currency: "HNL",
-        minimumFractionDigits: 2,
-      })}`, 79, 80);
-      doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+        //PDF
+        const doc = new jsPDF({ unit: "mm", format: [215, 140] });
+        doc.addImage(imgData, "PNG", 3, 3, 27, 27);
 
-      //guardar el PDF con un identificador
-      // Set the document to automatically print via JS
-      doc.autoPrint();
-      doc.output("dataurlnewwindow");
-      
-    // Recargar la página
-      window.location.reload();
-    } catch (error) {
-      console.error("Error al guardar los datos:", error);
-    }finally {
-      // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
-      setGuardando(false);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("BODEGA - GAD", 50, 10);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Compra Venta de Café", 53, 15);
+        doc.setFontSize(8);
+        doc.text("RTN: 03131985004693", 56, 19);
+        doc.setFontSize(10);
+        doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("COMPROBANTE DE COMPRA", 46, 31);
+        doc.text(`Fecha: ${fechaYHora}`, 4, 38);
+        doc.text(`N° de Factura: ${newData.n_transaction}`, 97, 38);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(`RTN: ${newData.rtn}`, 4, 45);
+        doc.text(
+          `Nombre Cliente: ${newData.name}, ${newData.last_name}`,
+          4,
+          52
+        );
+        doc.text(`Zona: ${newData.zone}`, 97, 52);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Sacos de Producto: ${newData.bags}`, 4, 59);
+        doc.text(`Tipo de Café: ${newData.coffee_type}`, 4, 66);
+        doc.text(`Peso Bruto: ${newData.weight} Quintales`, 4, 73);
+        doc.text(`Peso Neto: ${newData.weightN} Quintales`, 4, 80);
+        doc.text(
+          `TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString(
+            "es-ES",
+            {
+              style: "currency",
+              currency: "HNL",
+              minimumFractionDigits: 2,
+            }
+          )}`,
+          79,
+          80
+        );
+        doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+        // Agregar una nueva página
+        doc.addPage();
+        //PDF
+        doc.setFontSize(16);
+        doc.addImage(imgData, "PNG", 3, 3, 27, 27);
+        doc.setFont("helvetica", "bold");
+        doc.text("BODEGA - GAD", 50, 10);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Compra Venta de Café", 53, 15);
+        doc.setFontSize(8);
+        doc.text("RTN: 03131985004693", 56, 19);
+        doc.setFontSize(10);
+        doc.text("Telefono: (504) 9860-9162 - (504) 9541-9092 ", 35, 24);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("COMPROBANTE DE COMPRA (Copia de Cliente)", 28, 31);
+        doc.text(`Fecha: ${fechaYHora}`, 5, 38);
+        doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(`RTN: ${newData.rtn}`, 5, 45);
+        doc.text(
+          `Nombre Cliente: ${newData.name}, ${newData.last_name}`,
+          5,
+          52
+        );
+        doc.text(`Zona: ${newData.zone}`, 95, 52);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
+        doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
+        doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
+        doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
+        doc.text(
+          `TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString(
+            "es-ES",
+            {
+              style: "currency",
+              currency: "HNL",
+              minimumFractionDigits: 2,
+            }
+          )}`,
+          79,
+          80
+        );
+        doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+
+        //guardar el PDF con un identificador
+        // Set the document to automatically print via JS
+        doc.autoPrint();
+        doc.output("dataurlnewwindow");
+
+        // Recargar la página
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al guardar los datos:", error);
+      } finally {
+        // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
+        setGuardando(false);
+      }
     }
-  }
     // Reiniciar la validación y el mensaje de error
     setFormValid(true);
     setErrorMessage("");
@@ -431,7 +453,7 @@ const Purchasing1 = () => {
                 </div>
               </div>
               <button
-                type='submit'
+                type="submit"
                 className="h-9 w-40 mt-11 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Guardar

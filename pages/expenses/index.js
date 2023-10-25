@@ -24,6 +24,9 @@ import { jsPDF } from "jspdf";
 const expensesRef = collection(db, "expenses");
 
 const Gastos = () => {
+  //estado para formulario
+  const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
+
   // Estado para manejar la validez del formulario
   const [formValid, setFormValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -48,240 +51,246 @@ const Gastos = () => {
   // Función para guardar datos
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!guardando) {
+      setGuardando(true);
 
-    // Verificar si los campos obligatorios están llenos
-    if (!type || !denomination || !description || !n_document || !value) {
-      setFormValid(false);
-      setErrorMessage("Por favor, complete todos los campos obligatorios.");
-      return; // No enviar el formulario si falta algún campo obligatorio
+      // Verificar si los campos obligatorios están llenos
+      if (!type || !denomination || !description || !n_document || !value) {
+        setFormValid(false);
+        setErrorMessage("Por favor, complete todos los campos obligatorios.");
+        return; // No enviar el formulario si falta algún campo obligatorio
+      }
+      try {
+        const newData = {
+          coments: coments,
+          date: new Date(),
+          denomination: denomination,
+          description: description,
+          n_document: n_document,
+          type: type,
+          value: parseFloat(value),
+        };
+        await addDoc(expensesRef, newData);
+
+        // Limpiar los campos del formulario después de guardar
+        setComents("");
+        setDenomination("");
+        setDescription("");
+        setN_document("");
+        setType("");
+        setValue("");
+
+        alert("Datos guardados con exito.");
+      } catch (error) {
+        console.error("Error al guardar los datos:", error);
+      }
+
+      // Reiniciar la validación y el mensaje de error
+      setFormValid(true);
+      setErrorMessage("");
     }
-    try {
-      const newData = {
-        coments: coments,
-        date: new Date(),
-        denomination: denomination,
-        description: description,
-        n_document: n_document,
-        type: type,
-        value: parseFloat(value),
-      };
-      await addDoc(expensesRef, newData);
 
-      // Limpiar los campos del formulario después de guardar
-      setComents("");
-      setDenomination("");
-      setDescription("");
-      setN_document("");
-      setType("");
-      setValue("");
-
-      alert("Datos guardados con exito.");
-    } catch (error) {
-      console.error("Error al guardar los datos:", error);
-    }
-
-    // Reiniciar la validación y el mensaje de error
-    setFormValid(true);
-    setErrorMessage("");
-  };
-
-  //Seccion para el Reporte de Gastos
-  const [valorFechas, setValorFechas] = useState({
-    startDate: null,
-    endDate: null,
-  });
-
-  const handleCambioFechas = (key, value) => {
-    setValorFechas((prevValues) => ({
-      ...prevValues,
-      [key]: value,
-    }));
-  };
-
-  const clearData = () => {
-    setValorFechas({
+    //Seccion para el Reporte de Gastos
+    const [valorFechas, setValorFechas] = useState({
       startDate: null,
       endDate: null,
     });
-  };
 
-  // Función para guardar datos
-  const handleSubmitG = async (event) => {
-    event.preventDefault();
-    if (valorFechas.startDate === null || valorFechas.endDate === null) {
+    const handleCambioFechas = (key, value) => {
+      setValorFechas((prevValues) => ({
+        ...prevValues,
+        [key]: value,
+      }));
+    };
+
+    const clearData = () => {
+      setValorFechas({
+        startDate: null,
+        endDate: null,
+      });
+    };
+
+    // Función para guardar datos
+    const handleSubmitG = async (event) => {
+      event.preventDefault();
+      if (valorFechas.startDate === null || valorFechas.endDate === null) {
         return;
-    }
-    
-    if (valorFechas.startDate > valorFechas.endDate) {
-      return;
-    }
+      }
 
-    // Verificar si los campos obligatorios están llenos
-    if ({}) {
-      try {
-        const querySnapshot = await getDocs(
-          query(
-            collection(db, "expenses"),
-            where("date", ">=", valorFechas.startDate), // Filtrar por fecha de inicio
-            where("date", "<=", valorFechas.endDate), // Filtrar por fecha de fin
-            orderBy("date", "desc")
-          )
-        );
+      if (valorFechas.startDate > valorFechas.endDate) {
+        return;
+      }
 
-        //suma total de gastos
-        const querySnapshot2 = await getDocs(
-          query(
-            collection(db, "expenses"),
-            where("date", ">=", valorFechas.startDate), // Filtrar por fecha de inicio
-            where("date", "<=", valorFechas.endDate), // Filtrar por fecha de fin
-            orderBy("date", "desc")
-          )
-        );
-        let latestGastos = 0;
-        querySnapshot2.forEach((doc) => {
-          const dataI = doc.data();
-          // Asegúrate de que la propiedad 'capital' exista en el documento
-          if (dataI.hasOwnProperty("value")) {
-            latestGastos += dataI.value; // Suma el valor de 'value' al total
-          }
-        });
+      // Verificar si los campos obligatorios están llenos
+      if ({}) {
+        try {
+          const querySnapshot = await getDocs(
+            query(
+              collection(db, "expenses"),
+              where("date", ">=", valorFechas.startDate), // Filtrar por fecha de inicio
+              where("date", "<=", valorFechas.endDate), // Filtrar por fecha de fin
+              orderBy("date", "desc")
+            )
+          );
 
-        //traer datos en JSON
-        let datosProvidiers = [];
-        if (!querySnapshot.empty) {
-          querySnapshot.forEach((doc) => {
-            datosProvidiers.push(doc.data());
+          //suma total de gastos
+          const querySnapshot2 = await getDocs(
+            query(
+              collection(db, "expenses"),
+              where("date", ">=", valorFechas.startDate), // Filtrar por fecha de inicio
+              where("date", "<=", valorFechas.endDate), // Filtrar por fecha de fin
+              orderBy("date", "desc")
+            )
+          );
+          let latestGastos = 0;
+          querySnapshot2.forEach((doc) => {
+            const dataI = doc.data();
+            // Asegúrate de que la propiedad 'capital' exista en el documento
+            if (dataI.hasOwnProperty("value")) {
+              latestGastos += dataI.value; // Suma el valor de 'value' al total
+            }
           });
-        } else {
-          console.log("No se pudo traer los datos de esta consulta"); // Si no hay documentos anteriores.
-        }
 
-        const doc1 = new jsPDF({ orientation: "landscape" });
-        doc1.text(
-          `Total Gastos: ${parseFloat(latestGastos).toLocaleString("es-ES", {
-            style: "currency",
-            currency: "HNL",
-            minimumFractionDigits: 2,
-          })}`,
-          145,
-          15
-        );
-        let pagina = 1;
-        doc1.text(`${pagina}`, 280, 210);
-        // Definir las columnas, ancho de columna y posición inicial
-        const columns = [
-          "Fecha",
-          "Tipo",
-          "Denominación",
-          "Descripción",
-          "N° Factura",
-          "Valor",
-        ];
-        const columnWidth = 45;
-        let x = 15;
-        let y = 30;
-
-        // Función para agregar los encabezados de columna
-
-        function addPageHeader() {
-          doc1.setFontSize(14);
-          doc1.setFont("helvetica", "bold");
-          doc1.text("REPORTE DE GASTOS:", 15, 15);
-          doc1.text("BODEGA - GAD", 90, 15);
-        }
-        function addColumnHeaders() {
-          columns.forEach((column, index) => {
-            const columnX = x + index * columnWidth;
-            doc1.rect(columnX, y, columnWidth, 10);
-            doc1.text(column, columnX + columnWidth / 2, y + 5, {
-              align: "center",
-              valign: "middle",
+          //traer datos en JSON
+          let datosProvidiers = [];
+          if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+              datosProvidiers.push(doc.data());
             });
-          });
-        }
+          } else {
+            console.log("No se pudo traer los datos de esta consulta"); // Si no hay documentos anteriores.
+          }
 
-        function addNewPage() {
-          doc1.addPage({ format: "a4", orientation: "landscape" });
+          const doc1 = new jsPDF({ orientation: "landscape" });
+          doc1.text(
+            `Total Gastos: ${parseFloat(latestGastos).toLocaleString("es-ES", {
+              style: "currency",
+              currency: "HNL",
+              minimumFractionDigits: 2,
+            })}`,
+            145,
+            15
+          );
+          let pagina = 1;
+          doc1.text(`${pagina}`, 280, 210);
+          // Definir las columnas, ancho de columna y posición inicial
+          const columns = [
+            "Fecha",
+            "Tipo",
+            "Denominación",
+            "Descripción",
+            "N° Factura",
+            "Valor",
+          ];
+          const columnWidth = 45;
+          let x = 15;
+          let y = 30;
+
+          // Función para agregar los encabezados de columna
+
+          function addPageHeader() {
+            doc1.setFontSize(14);
+            doc1.setFont("helvetica", "bold");
+            doc1.text("REPORTE DE GASTOS:", 15, 15);
+            doc1.text("BODEGA - GAD", 90, 15);
+          }
+          function addColumnHeaders() {
+            columns.forEach((column, index) => {
+              const columnX = x + index * columnWidth;
+              doc1.rect(columnX, y, columnWidth, 10);
+              doc1.text(column, columnX + columnWidth / 2, y + 5, {
+                align: "center",
+                valign: "middle",
+              });
+            });
+          }
+
+          function addNewPage() {
+            doc1.addPage({ format: "a4", orientation: "landscape" });
+            addPageHeader(); // Agrega el encabezado en cada nueva página
+            addColumnHeaders();
+            // Establecer el tamaño de la fuente para los datos
+            doc1.setFontSize(10);
+            doc1.setFont("helvetica", "normal");
+            y = 30;
+            recordCount = 0; // Reinicia el contador de registros en cada nueva página
+            pagina++;
+            doc1.text(`${pagina}`, 280, 210);
+          }
+
+          // Inicializar un contador para realizar un seguimiento de los registros
+          let recordCount = 0;
+          // Agrega la primera página y encabezado
           addPageHeader(); // Agrega el encabezado en cada nueva página
           addColumnHeaders();
-          // Establecer el tamaño de la fuente para los datos
           doc1.setFontSize(10);
           doc1.setFont("helvetica", "normal");
-          y = 30;
-          recordCount = 0; // Reinicia el contador de registros en cada nueva página
-          pagina++;
-          doc1.text(`${pagina}`, 280, 210);
-        }
+          // Ajusta el valor de desplazamiento en el eje X (horizontal)
+          const offsetX = 20; // Cambia este valor según tus necesidades
 
-        // Inicializar un contador para realizar un seguimiento de los registros
-        let recordCount = 0;
-        // Agrega la primera página y encabezado
-        addPageHeader(); // Agrega el encabezado en cada nueva página
-        addColumnHeaders();
-        doc1.setFontSize(10);
-        doc1.setFont("helvetica", "normal");
-        // Ajusta el valor de desplazamiento en el eje X (horizontal)
-        const offsetX = 20; // Cambia este valor según tus necesidades
+          // Recorrer los datos obtenidos de Firestore
+          datosProvidiers.forEach((data, dataIndex) => {
+            if (recordCount >= 15) {
+              // Agrega una nueva página cuando alcanzas 16 registros
+              addNewPage();
+            }
 
-        // Recorrer los datos obtenidos de Firestore
-        datosProvidiers.forEach((data, dataIndex) => {
-          if (recordCount >= 15) {
-            // Agrega una nueva página cuando alcanzas 16 registros
-            addNewPage();
-          }
+            const rowX = 15 + offsetX;
+            const rowY = 30 + (recordCount + 1) * 10;
+            const rowWidth = columns.length * columnWidth;
+            const rowHeight = 10;
 
-          const rowX = 15 + offsetX;
-          const rowY = 30 + (recordCount + 1) * 10;
-          const rowWidth = columns.length * columnWidth;
-          const rowHeight = 10;
+            // Dibujar un rectángulo alrededor de la fila
+            doc1.rect(rowX - 20, rowY, rowWidth, rowHeight);
 
-          // Dibujar un rectángulo alrededor de la fila
-          doc1.rect(rowX - 20, rowY, rowWidth, rowHeight);
+            // Formatear los datos en un arreglo según el orden de las columnas
+            const rowData = [
+              data.date ? format(data.date.toDate(), "dd/MM/yyyy") : "",
+              data.type ? String(data.type) : "",
+              data.denomination ? String(data.denomination) : "",
+              data.description ? String(data.description) : "",
+              data.n_document ? String(data.n_document) : "",
+              data.value
+                ? parseFloat(data.value).toLocaleString("es-ES", {
+                    style: "currency",
+                    currency: "HNL",
+                    minimumFractionDigits: 2,
+                  })
+                : "",
+            ];
 
-          // Formatear los datos en un arreglo según el orden de las columnas
-          const rowData = [
-            data.date ? format(data.date.toDate(), "dd/MM/yyyy") : "",
-            data.type ? String(data.type) : "",
-            data.denomination ? String(data.denomination) : "",
-            data.description ? String(data.description) : "",
-            data.n_document ? String(data.n_document) : "",
-            data.value
-              ? parseFloat(data.value).toLocaleString("es-ES", {
-                  style: "currency",
-                  currency: "HNL",
-                  minimumFractionDigits: 2,
-                })
-              : "",
-          ];
+            // Agregar los datos al reporte
+            rowData.forEach((value, columnIndex) => {
+              doc1.text(
+                String(value),
+                rowX + columnIndex * columnWidth,
+                rowY + rowHeight / 2,
+                { align: "center", valign: "middle" }
+              );
+            });
 
-          // Agregar los datos al reporte
-          rowData.forEach((value, columnIndex) => {
-            doc1.text(
-              String(value),
-              rowX + columnIndex * columnWidth,
-              rowY + rowHeight / 2,
-              { align: "center", valign: "middle" }
-            );
+            recordCount++;
           });
 
-          recordCount++;
-        });
-
-        // Guardar o mostrar el documento PDF, por ejemplo, descargarlo
-        doc1.autoPrint();
-        doc1.output("dataurlnewwindow");
-        setValorFechas({
-          startDate: null,
-          endDate: null,
-        });
-      } catch (error) {
-        console.error("Error al traer los datos:", error);
+          // Guardar o mostrar el documento PDF, por ejemplo, descargarlo
+          doc1.autoPrint();
+          doc1.output("dataurlnewwindow");
+          setValorFechas({
+            startDate: null,
+            endDate: null,
+          });
+        } catch (error) {
+          console.error("Error al traer los datos:", error);
+        } finally {
+          // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
+          setGuardando(false);
+        }
       }
 
       setFormValid(false);
       setErrorMessage("Por favor, complete todos los campos obligatorios.");
       return; // No enviar el formulario si falta algún campo obligatorio
-    }
+    };
     // Reiniciar la validación y el mensaje de error
     setFormValid(true);
     setErrorMessage("");
@@ -445,10 +454,8 @@ const Gastos = () => {
           </div>
           <div className="bg-white py-10">
             <h2 className="text-lg font-semibold mb-2 ">
-            <p className='text-center'>
-                INFORME DE GASTOS
-            </p>
-          </h2>
+              <p className="text-center">INFORME DE GASTOS</p>
+            </h2>
             <div className="px-8 bg-white shadow rounded-lg shadow-lg  p-4 box-border h-400 w-800 p-2 border-4 ">
               <p className="text-sm text-gray-600 mb-6">
                 LLENAR TODOS LOS CAMPOS NECESARIOS
