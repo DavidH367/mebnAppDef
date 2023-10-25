@@ -34,6 +34,10 @@ const MainComponent = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
 
+  //estado para validar solo un guardado
+  const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
+
+
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
@@ -110,212 +114,218 @@ const MainComponent = () => {
 
   //Funcion para guardar datos
   const handleSubmit = async (event) => {
-    const idDocumentos = selectedSupplier;
     event.preventDefault();
+    if (!guardando) {
+      setGuardando(true);
+      const idDocumentos = selectedSupplier;
 
-    // Verificar si los campos obligatorios están llenos
-    if (!tipoCafe || !quintales || !peso) {
-      setFormValid(false);
-      setErrorMessage("Por favor, complete todos los campos obligatorios.");
-      return; // No enviar el formulario si falta algún campo obligatorio
-    }
-
-    try {
-      // Obtener el último valor de "n_transaction"
-      const querySnapshot1 = await getDocs(
-        query(
-          collection(db, "inventories"),
-          orderBy("n_transaction", "desc"),
-          limit(1)
-        )
-      );
-      //obtener el ultimo valor de balance
-      const querySnapshot2 = await getDocs(
-        query(
-          collection(db, "inventories"),
-          orderBy("n_transaction", "desc"),
-          limit(1)
-        )
-      );
-      let auxCode;
-      const docId2 = idDocumentos;
-      //obbtener codigo
-      const docRef3 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-
-      const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
-      if (docSnapshot2.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxCode = docSnapshot2.data().code;
-      } else {
-        // El documento no existe
-        console.log('El documento no existe.');
+      // Verificar si los campos obligatorios están llenos
+      if (!tipoCafe || !quintales || !peso) {
+        setFormValid(false);
+        setErrorMessage("Por favor, complete todos los campos obligatorios.");
+        return; // No enviar el formulario si falta algún campo obligatorio
       }
 
+      try {
+        // Obtener el último valor de "n_transaction"
+        const querySnapshot1 = await getDocs(
+          query(
+            collection(db, "inventories"),
+            orderBy("n_transaction", "desc"),
+            limit(1)
+          )
+        );
+        //obtener el ultimo valor de balance
+        const querySnapshot2 = await getDocs(
+          query(
+            collection(db, "inventories"),
+            orderBy("n_transaction", "desc"),
+            limit(1)
+          )
+        );
+        let auxCode;
+        const docId2 = idDocumentos;
+        //obbtener codigo
+        const docRef3 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+
+        const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
+        if (docSnapshot2.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxCode = docSnapshot2.data().code;
+        } else {
+          // El documento no existe
+          console.log('El documento no existe.');
+        }
 
 
-      //asignar el nuevo valor de numero transaccion
-      let numTrans;
 
-      if (!querySnapshot1.empty) {
-        querySnapshot1.forEach((doc) => {
-          numTrans = doc.data().n_transaction + 1;
-        });
-      } else {
-        numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
-      }
+        //asignar el nuevo valor de numero transaccion
+        let numTrans;
 
-      //obtener nombre
-      let auxName;
-      const docRef2 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-      const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
-      if (docSnapshot1.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxName = docSnapshot1.data().name;
-      } else {
-        // El documento no existe
-        console.log('El documento no existe.');
-      }
+        if (!querySnapshot1.empty) {
+          querySnapshot1.forEach((doc) => {
+            numTrans = doc.data().n_transaction + 1;
+          });
+        } else {
+          numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+        }
 
-      
+        //obtener nombre
+        let auxName;
+        const docRef2 = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+        const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
+        if (docSnapshot1.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxName = docSnapshot1.data().name;
+        } else {
+          // El documento no existe
+          console.log('El documento no existe.');
+        }
 
-      //obtener RTN
-      let auxRtn;
-      const docRef = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
-      const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
-      if (docSnapshot.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxRtn = docSnapshot.data().rtn;
-      } else {
-        // El documento no existe
-        console.log('El documento no existe.');
-        auxRtn = "Consumidor Final";
-      }
 
-      const querySnapshot4 = await getDocs(
-        query(
+
+        //obtener RTN
+        let auxRtn;
+        const docRef = doc(db, 'supliers_info', docId2); // Crear una referencia al documento específico
+        const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
+        if (docSnapshot.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxRtn = docSnapshot.data().rtn;
+        } else {
+          // El documento no existe
+          console.log('El documento no existe.');
+          auxRtn = "Consumidor Final";
+        }
+
+        const querySnapshot4 = await getDocs(
+          query(
+            collection(db, 'supliers'),
+            where('code', '==', auxCode), // Filtrar por n_cheque
+            orderBy('code', 'desc'),
+            limit(1)
+          )
+        );
+
+        //traer capital anterior
+        let sCap;
+        if (!querySnapshot4.empty) {
+          querySnapshot4.forEach((doc) => {
+            sCap = doc.data().capital;
+          });
+        } else {
+          sCap = 0; // Si no hay documentos anteriores, empezar desde 1
+        }
+
+        //traer pendiente anterior
+        let newPending;
+        // Verificar si se encontraron documentos
+        if (!querySnapshot4.empty) {
+          // Obtener el primer documento encontrado
+          const doc = querySnapshot4.docs[0];
+          // Acceder al campo "capital" y asignarlo a la variable
+          newPending = doc.data().pending;
+        } else {
+          newPending = 0;
+        }
+
+        //traer ultimo pagado 
+        let newPaid;
+        // Verificar si se encontraron documentos
+        if (!querySnapshot4.empty) {
+          // Obtener el primer documento encontrado
+          const doc = querySnapshot4.docs[0];
+          // Acceder al campo "paid" y asignarlo a la variable
+          newPaid = doc.data().paid;
+        } else {
+          newPaid = 0;
+        }
+
+
+        // Verificar si se están ingresando más de lo que se debe
+        if (parseFloat(pagado) > parseFloat(newPending)) {
+          alert('Estás ingresando más de lo que se debe. Por favor, verifica los valores.');
+          return;
+        }
+
+        // Crear una consulta que busca documentos que coincidan con las condiciones
+        let docId;
+        const q = query(
           collection(db, 'supliers'),
-          where('code', '==', auxCode), // Filtrar por n_cheque
+          where('code', '==', auxCode),
           orderBy('code', 'desc'),
           limit(1)
-        )
-      );
-
-      //traer capital anterior
-      let sCap;
-      if (!querySnapshot4.empty) {
-        querySnapshot4.forEach((doc) => {
-          sCap = doc.data().capital;
-        });
-      } else {
-        sCap = 0; // Si no hay documentos anteriores, empezar desde 1
-      }
-
-      //traer pendiente anterior
-      let newPending;
-      // Verificar si se encontraron documentos
-      if (!querySnapshot4.empty) {
-        // Obtener el primer documento encontrado
-        const doc = querySnapshot4.docs[0];
-        // Acceder al campo "capital" y asignarlo a la variable
-        newPending = doc.data().pending;
-      } else {
-        newPending = 0;
-      }
-
-      //traer ultimo pagado 
-      let newPaid;
-      // Verificar si se encontraron documentos
-      if (!querySnapshot4.empty) {
-        // Obtener el primer documento encontrado
-        const doc = querySnapshot4.docs[0];
-        // Acceder al campo "paid" y asignarlo a la variable
-        newPaid = doc.data().paid;
-      } else {
-        newPaid = 0;
-      }
-
-
-      // Verificar si se están ingresando más de lo que se debe
-      if (parseFloat(pagado) > parseFloat(newPending)) {
-        alert('Estás ingresando más de lo que se debe. Por favor, verifica los valores.');
-        return;
-      }
-
-      // Crear una consulta que busca documentos que coincidan con las condiciones
-      let docId;
-      const q = query(
-        collection(db, 'supliers'),
-        where('code', '==', auxCode), 
-        orderBy('code', 'desc'),
-        limit(1)
-      );
-      try {
-        const querySnapshot = await getDocs(q);
-        // Verificar si se encontraron documentos que cumplan con las condiciones
-        if (!querySnapshot.empty) {
-          // Obtener el primer documento que cumple con las condiciones
-          const doc = querySnapshot.docs[0];
-          // Obtener el docId del documento
-          docId = doc.id;
-          console.log('DocId encontrado:', docId);
-        } else {
-          console.log('No se encontraron documentos que cumplan con las condiciones.');
+        );
+        try {
+          const querySnapshot = await getDocs(q);
+          // Verificar si se encontraron documentos que cumplan con las condiciones
+          if (!querySnapshot.empty) {
+            // Obtener el primer documento que cumple con las condiciones
+            const doc = querySnapshot.docs[0];
+            // Obtener el docId del documento
+            docId = doc.id;
+            console.log('DocId encontrado:', docId);
+          } else {
+            console.log('No se encontraron documentos que cumplan con las condiciones.');
+          }
+        } catch (error) {
+          console.error('Error al realizar la consulta:', error);
         }
+
+        const supliersDocRef = doc(db, 'supliers', docId);
+        //obtener peso neto:
+        let pNeto;
+        pNeto = peso - quintales;
+
+        const newData = {
+          rtn: auxRtn,
+          name: auxName,
+          coffee_type: tipoCafe,
+          bags_sold: parseFloat(quintales),
+          weight: parseFloat(peso),
+          weightN: parseFloat(pNeto),
+          total: parseFloat(pagado),
+          date: new Date(), // Guardar la fecha actual en Firebase
+          n_transaction: numTrans,
+        };
+
+
+        const newsupData = {
+          capital: parseFloat(pagado),
+          code: auxCode,
+          date: new Date(), // Guardar la fecha actual en Firebase
+          n_check: 'N/A',
+          n_document: n_documento,
+          name: auxName,
+          rtn: auxRtn,
+          status: 'Abono a Capital',
+        };
+
+        const newUpdateDataSupliers = {
+          date: new Date(), // Guardar la fecha actual en Firebase
+          paid: parseFloat(newPaid + parseFloat(pagado)),
+          pending: parseFloat(newPending - parseFloat(pagado)),
+          rtn: auxRtn,
+        };
+
+        await addDoc(salesRef, newData);
+        await addDoc(supliers_historyRef, newsupData);
+        await updateDoc(supliersDocRef, newUpdateDataSupliers);
+
+        // Limpiar los campos del formulario después de guardar
+        setSelectedSupplier('');
+        setN_documento("");
+        setTipoCafe("");
+        setQuintales("");
+        setPeso("");
+        setPagado("");
+
+        alert("Venta realizada"); // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
       } catch (error) {
-        console.error('Error al realizar la consulta:', error);
+        console.error("Error al guardar los datos:", error);
+      } finally {
+        // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
+        setGuardando(false);
       }
-
-      const supliersDocRef = doc(db, 'supliers', docId);
-      //obtener peso neto:
-      let pNeto;
-      pNeto = peso - quintales;
-
-      const newData = {
-        rtn: auxRtn,
-        name: auxName,
-        coffee_type: tipoCafe,
-        bags_sold: parseFloat(quintales),
-        weight: parseFloat(peso),
-        weightN: parseFloat(pNeto),
-        total: parseFloat(pagado),
-        date: new Date(), // Guardar la fecha actual en Firebase
-        n_transaction: numTrans,
-      };
-
-
-      const newsupData = {
-        capital: parseFloat(pagado),
-        code: auxCode,
-        date: new Date(), // Guardar la fecha actual en Firebase
-        n_check: 'N/A',
-        n_document: n_documento,
-        name: auxName,
-        rtn: auxRtn,
-        status: 'Abono a Capital',
-      };
-
-      const newUpdateDataSupliers = {
-        date: new Date(), // Guardar la fecha actual en Firebase
-        paid: parseFloat(newPaid + parseFloat(pagado)),
-        pending: parseFloat(newPending - parseFloat(pagado)),
-        rtn: auxRtn,
-      };
-
-      await addDoc(salesRef, newData);
-      await addDoc(supliers_historyRef, newsupData);
-      await updateDoc(supliersDocRef, newUpdateDataSupliers);
-
-      // Limpiar los campos del formulario después de guardar
-      setSelectedSupplier('');
-      setN_documento("");
-      setTipoCafe("");
-      setQuintales("");
-      setPeso("");
-      setPagado("");
-
-      alert("Venta realizada"); // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
-    } catch (error) {
-      console.error("Error al guardar los datos:", error);
     }
 
     // Reiniciar la validación y el mensaje de error

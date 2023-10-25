@@ -379,7 +379,6 @@ const Gastos = () => {
                   </label>
                   <div className="mt-2 pr-4">
                     <Input
-                      isRequired
                       type="text"
                       label="N° Factura"
                       id="n_document"
