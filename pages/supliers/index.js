@@ -31,6 +31,9 @@ const Providers = () => {
   //estado par el checkbox
   const [inputDisabled, setInputDisabled] = useState(false);
 
+  //estado para formulario
+  const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
+
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filterApplied, setFilterApplied] = useState(false); // Estado para controlar si se ha aplicado el filtro
@@ -135,181 +138,188 @@ const Providers = () => {
   };
 
   const handleSubmit = async (event) => {
-    const idDocumentos = selectedSupplier;
 
     event.preventDefault();
-    try {
-      // Verificar si los campos obligatorios están llenos
-      if (!n_documento) {
-        setFormValid(false);
-        setErrorMessage("Por favor, Ingrese el numero de Factura.");
-        return; // No enviar el formulario si falta algún campo obligatorio
-      }
-      // Obtener el último valor de "n_transaction"
-      const querySnapshot1 = await getDocs(
-        query(
-          collection(db, "supliers_history"),
-          orderBy("n_transaction", "desc"),
-          limit(1)
-        )
-      );
+    if (!guardando) {
+      setGuardando(true);
+      const idDocumentos = selectedSupplier;
 
-      const querySnapshot2 = await getDocs(
-        query(collection(db, "supliers"), orderBy("code", "desc"), limit(1))
-      );
+      try {
+        // Verificar si los campos obligatorios están llenos
+        if (!n_documento) {
+          setFormValid(false);
+          setErrorMessage("Por favor, Ingrese el numero de Factura.");
+          return; // No enviar el formulario si falta algún campo obligatorio
+        }
+        // Obtener el último valor de "n_transaction"
+        const querySnapshot1 = await getDocs(
+          query(
+            collection(db, "supliers_history"),
+            orderBy("n_transaction", "desc"),
+            limit(1)
+          )
+        );
 
-      const querySnapshot3 = await getDocs(
-        query(
-          collection(db, "supliers"),
-          where("n_check", "==", n_cheque), // Filtrar por n_cheque
-          where("n_document", "==", n_documento), // Filtrar por n_documento
-          orderBy("code", "desc"),
-          limit(1)
-        )
-      );
+        const querySnapshot2 = await getDocs(
+          query(collection(db, "supliers"), orderBy("code", "desc"), limit(1))
+        );
 
-      let auxRtn;
-      const docId2 = idDocumentos;
+        const querySnapshot3 = await getDocs(
+          query(
+            collection(db, "supliers"),
+            where("n_check", "==", n_cheque), // Filtrar por n_cheque
+            where("n_document", "==", n_documento), // Filtrar por n_documento
+            orderBy("code", "desc"),
+            limit(1)
+          )
+        );
 
-      const docRef = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
-      const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
-      //obtener RTN
-      if (docSnapshot.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxRtn = docSnapshot.data().rtn;
-      } else {
-        // El documento no existe
-        console.log("El documento no existe.");
-      }
+        let auxRtn;
+        const docId2 = idDocumentos;
 
-      //obtener nombre
-      let auxName;
-      const docRef2 = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
-      const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
-      if (docSnapshot1.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxName = docSnapshot1.data().name;
-      } else {
-        // El documento no existe
-        console.log("El documento no existe.");
-      }
+        const docRef = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
+        const docSnapshot = await getDoc(docRef); // Obtener el snapshot del documento
+        //obtener RTN
+        if (docSnapshot.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxRtn = docSnapshot.data().rtn;
+        } else {
+          // El documento no existe
+          console.log("El documento no existe.");
+        }
 
-      //obbtener codigo
-      let auxCode;
-      const docRef3 = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
-      const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
-      if (docSnapshot2.exists()) {
-        // El documento existe, puedes acceder al valor de rtn
-        auxCode = docSnapshot2.data().code;
-      } else {
-        // El documento no existe
-        console.log("El documento no existe.");
-      }
+        //obtener nombre
+        let auxName;
+        const docRef2 = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
+        const docSnapshot1 = await getDoc(docRef2); // Obtener el snapshot del documento
+        if (docSnapshot1.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxName = docSnapshot1.data().name;
+        } else {
+          // El documento no existe
+          console.log("El documento no existe.");
+        }
 
-      const querySnapshot4 = await getDocs(
-        query(
+        //obbtener codigo
+        let auxCode;
+        const docRef3 = doc(db, "supliers_info", docId2); // Crear una referencia al documento específico
+        const docSnapshot2 = await getDoc(docRef3); // Obtener el snapshot del documento
+        if (docSnapshot2.exists()) {
+          // El documento existe, puedes acceder al valor de rtn
+          auxCode = docSnapshot2.data().code;
+        } else {
+          // El documento no existe
+          console.log("El documento no existe.");
+        }
+
+        const querySnapshot4 = await getDocs(
+          query(
+            collection(db, "supliers"),
+            where("code", "==", auxCode), // Filtrar por n_cheque
+            orderBy("code", "desc"),
+            limit(1)
+          )
+        );
+
+        let sCap;
+        if (!querySnapshot4.empty) {
+          querySnapshot4.forEach((doc) => {
+            sCap = doc.data().capital;
+          });
+        } else {
+          sCap = 0; // Si no hay documentos anteriores, empezar desde 1
+        }
+
+        let numTrans;
+        if (!querySnapshot1.empty) {
+          querySnapshot1.forEach((doc) => {
+            numTrans = doc.data().n_transaction + 1;
+          });
+        } else {
+          numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
+        }
+
+        let code1;
+        if (!querySnapshot2.empty) {
+          querySnapshot2.forEach((doc) => {
+            code1 = doc.data().code + 1;
+          });
+        } else {
+          code1 = 1; // Si no hay documentos anteriores, empezar desde 1
+        }
+        let newPending;
+        // Verificar si se encontraron documentos
+        if (!querySnapshot4.empty) {
+          // Obtener el primer documento encontrado
+          const doc = querySnapshot4.docs[0];
+          // Acceder al campo "capital" y asignarlo a la variable
+          newPending = doc.data().pending;
+        } else {
+          newPending = 0;
+        }
+
+        // Crear una consulta que busca documentos que coincidan con las condiciones
+        let docId;
+        const q = query(
           collection(db, "supliers"),
           where("code", "==", auxCode), // Filtrar por n_cheque
           orderBy("code", "desc"),
           limit(1)
-        )
-      );
-
-      let sCap;
-      if (!querySnapshot4.empty) {
-        querySnapshot4.forEach((doc) => {
-          sCap = doc.data().capital;
-        });
-      } else {
-        sCap = 0; // Si no hay documentos anteriores, empezar desde 1
-      }
-
-      let numTrans;
-      if (!querySnapshot1.empty) {
-        querySnapshot1.forEach((doc) => {
-          numTrans = doc.data().n_transaction + 1;
-        });
-      } else {
-        numTrans = 1; // Si no hay documentos anteriores, empezar desde 1
-      }
-
-      let code1;
-      if (!querySnapshot2.empty) {
-        querySnapshot2.forEach((doc) => {
-          code1 = doc.data().code + 1;
-        });
-      } else {
-        code1 = 1; // Si no hay documentos anteriores, empezar desde 1
-      }
-      let newPending;
-      // Verificar si se encontraron documentos
-      if (!querySnapshot4.empty) {
-        // Obtener el primer documento encontrado
-        const doc = querySnapshot4.docs[0];
-        // Acceder al campo "capital" y asignarlo a la variable
-        newPending = doc.data().pending;
-      } else {
-        newPending = 0;
-      }
-
-      // Crear una consulta que busca documentos que coincidan con las condiciones
-      let docId;
-      const q = query(
-        collection(db, "supliers"),
-        where("code", "==", auxCode), // Filtrar por n_cheque
-        orderBy("code", "desc"),
-        limit(1)
-      );
-      try {
-        const querySnapshot = await getDocs(q);
-        // Verificar si se encontraron documentos que cumplan con las condiciones
-        if (!querySnapshot.empty) {
-          // Obtener el primer documento que cumple con las condiciones
-          const doc = querySnapshot.docs[0];
-          // Obtener el docId del documento
-          docId = doc.id;
-          console.log("DocId encontrado:", docId);
-        } else {
-          console.log(
-            "No se encontraron documentos que cumplan con las condiciones."
-          );
+        );
+        try {
+          const querySnapshot = await getDocs(q);
+          // Verificar si se encontraron documentos que cumplan con las condiciones
+          if (!querySnapshot.empty) {
+            // Obtener el primer documento que cumple con las condiciones
+            const doc = querySnapshot.docs[0];
+            // Obtener el docId del documento
+            docId = doc.id;
+            console.log("DocId encontrado:", docId);
+          } else {
+            console.log(
+              "No se encontraron documentos que cumplan con las condiciones."
+            );
+          }
+        } catch (error) {
+          console.error("Error al realizar la consulta:", error);
         }
+
+        const supliersDocRef = doc(db, "supliers", docId);
+
+        const newData = {
+          capital: parseFloat(parseFloat(capital) + sCap),
+          date: new Date(), // Guardar la fecha actual en Firebase
+          pending: parseFloat(parseFloat(capital) + newPending),
+          rtn: auxRtn,
+        };
+
+        const newInvData = {
+          rtn: auxRtn,
+          status: "Ingreso de Capital",
+          name: auxName,
+          date: new Date(), // Guardar la fecha actual en Firebase
+          n_check: n_cheque,
+          n_document: n_documento,
+          capital: parseFloat(capital),
+          code: auxCode,
+        };
+
+        await updateDoc(supliersDocRef, newData);
+        await addDoc(supliers_historyRef, newInvData);
+
+        // Limpiar los campos del formulario después de guardar
+        setSelectedSupplier("");
+        setN_cheque("");
+        setN_documento("");
+        setCapital("");
+
+        alert("Registro Ingresado con Exito");
       } catch (error) {
-        console.error("Error al realizar la consulta:", error);
+        console.error("Error al guardar los datos:", error);
+      } finally {
+        // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
+        setGuardando(false);
       }
-
-      const supliersDocRef = doc(db, "supliers", docId);
-
-      const newData = {
-        capital: parseFloat(parseFloat(capital) + sCap),
-        date: new Date(), // Guardar la fecha actual en Firebase
-        pending: parseFloat(parseFloat(capital) + newPending),
-        rtn: auxRtn,
-      };
-
-      const newInvData = {
-        rtn: auxRtn,
-        status: "Ingreso de Capital",
-        name: auxName,
-        date: new Date(), // Guardar la fecha actual en Firebase
-        n_check: n_cheque,
-        n_document: n_documento,
-        capital: parseFloat(capital),
-        code: auxCode,
-      };
-
-      await updateDoc(supliersDocRef, newData);
-      await addDoc(supliers_historyRef, newInvData);
-
-      // Limpiar los campos del formulario después de guardar
-      setSelectedSupplier("");
-      setN_cheque("");
-      setN_documento("");
-      setCapital("");
-
-      alert("Registro Ingresado con Exito");
-    } catch (error) {
-      console.error("Error al guardar los datos:", error);
     }
 
     // Reiniciar la validación y el mensaje de error

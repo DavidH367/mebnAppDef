@@ -124,9 +124,8 @@ const Purchasing1 = () => {
         const fecha = new Date(newData.date);
 
         // Obtener la fecha en formato dd/mm/aaaa
-        const fechaFormateada = `${fecha.getDate()}/${
-          fecha.getMonth() + 1
-        }/${fecha.getFullYear()}`;
+        const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1
+          }/${fecha.getFullYear()}`;
 
         // Obtener la hora en formato hh:mm:ss
         const horaFormateada = `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`;
@@ -166,29 +165,18 @@ const Purchasing1 = () => {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(`RTN: ${newData.rtn}`, 4, 45);
-        doc.text(
-          `Nombre Cliente: ${newData.name}, ${newData.last_name}`,
-          4,
-          52
-        );
+        doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 4, 52);
         doc.text(`Zona: ${newData.zone}`, 97, 52);
         doc.setFont("helvetica", "bold");
         doc.text(`Sacos de Producto: ${newData.bags}`, 4, 59);
         doc.text(`Tipo de Café: ${newData.coffee_type}`, 4, 66);
         doc.text(`Peso Bruto: ${newData.weight} Quintales`, 4, 73);
         doc.text(`Peso Neto: ${newData.weightN} Quintales`, 4, 80);
-        doc.text(
-          `TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString(
-            "es-ES",
-            {
-              style: "currency",
-              currency: "HNL",
-              minimumFractionDigits: 2,
-            }
-          )}`,
-          79,
-          80
-        );
+        doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
+          style: "currency",
+          currency: "HNL",
+          minimumFractionDigits: 2,
+        })}`, 79, 80);
         doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
         // Agregar una nueva página
         doc.addPage();
@@ -212,29 +200,18 @@ const Purchasing1 = () => {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(`RTN: ${newData.rtn}`, 5, 45);
-        doc.text(
-          `Nombre Cliente: ${newData.name}, ${newData.last_name}`,
-          5,
-          52
-        );
+        doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
         doc.text(`Zona: ${newData.zone}`, 95, 52);
         doc.setFont("helvetica", "bold");
         doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
         doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
         doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
         doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
-        doc.text(
-          `TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString(
-            "es-ES",
-            {
-              style: "currency",
-              currency: "HNL",
-              minimumFractionDigits: 2,
-            }
-          )}`,
-          79,
-          80
-        );
+        doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
+          style: "currency",
+          currency: "HNL",
+          minimumFractionDigits: 2,
+        })}`, 79, 80);
         doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
 
         //guardar el PDF con un identificador
