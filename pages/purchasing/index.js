@@ -49,6 +49,7 @@ const Purchasing1 = () => {
       router.push("/auth/Login");
     }
   }, []);
+
   // Función para guardar datos
   const handleSubmit = async (event) => {
     event.preventDefault();

@@ -112,6 +112,8 @@ const MainComponent = () => {
     setFilteredData(filtered);
   };
 
+  
+
   //Funcion para guardar datos
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -272,9 +274,10 @@ const MainComponent = () => {
         }
 
         const supliersDocRef = doc(db, 'supliers', docId);
-        //obtener peso neto:
-        let pNeto;
-        pNeto = peso - quintales;
+         //obtener peso neto:
+         let pNeto;
+         pNeto = (peso * 100) - quintales;
+         pNeto = pNeto / 100;
 
         const newData = {
           rtn: auxRtn,
@@ -319,7 +322,7 @@ const MainComponent = () => {
         setPeso("");
         setPagado("");
 
-        alert("Venta realizada"); // Mostrar el mensaje de alerta solo si la compra se ha completado con éxito
+        window.location.reload();
       } catch (error) {
         console.error("Error al guardar los datos:", error);
       } finally {
@@ -453,7 +456,7 @@ const MainComponent = () => {
                   htmlFor="peso"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  <a className="font-bold text-lg">Peso Total</a>
+                  <a className="font-bold text-lg">Quintales</a>
                 </label>
                 <div className="mt-2 pr-4">
                   <Input
