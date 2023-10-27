@@ -179,7 +179,9 @@ const Purchasing1 = () => {
           currency: "HNL",
           minimumFractionDigits: 2,
         })}`, 79, 80);
-        doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+        doc.setFont("helvetica", "italic");
+        doc.text("'Dios Bendiga los Frutos de tus Labores.'", 32, 87);
+        doc.setFont("helvetica", "normal");
         // Agregar una nueva página
         doc.addPage();
         //PDF
@@ -214,7 +216,9 @@ const Purchasing1 = () => {
           currency: "HNL",
           minimumFractionDigits: 2,
         })}`, 79, 80);
-        doc.text("¡GRACIAS POR TU PREFERENCIA!", 40, 87);
+        doc.setFont("helvetica", "italic");
+        doc.text("'Dios Bendiga los Frutos de tus Labores.'", 32, 87);
+        doc.setFont("helvetica", "normal");
 
         //guardar el PDF con un identificador
         // Set the document to automatically print via JS

@@ -197,13 +197,15 @@ const Reportes = () => {
         const imagePath = "../img/logo_principal.png"; // Ruta a tu imagen
 
         const doc1 = new jsPDF({ orientation: "landscape" });
+        doc1.setFontSize(14);
+        doc1.setFont("helvetica", "bold");
         doc1.text(
           `PENDIENTE: ${parseFloat(latestIngresos).toLocaleString("es-ES", {
             style: "currency",
             currency: "HNL",
             minimumFractionDigits: 2,
           })}`,
-          195,
+          180,
           11
         );
         doc1.text(
@@ -212,7 +214,7 @@ const Reportes = () => {
             currency: "HNL",
             minimumFractionDigits: 2,
           })}`,
-          195,
+          180,
           20
         );
         let pagina = 1;
