@@ -313,7 +313,7 @@ const Providers = () => {
         setN_documento("");
         setCapital("");
 
-        alert("Registro Ingresado con Exito");
+        window.location.reload();
       } catch (error) {
         console.error("Error al guardar los datos:", error);
       } finally {

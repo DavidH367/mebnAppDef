@@ -96,7 +96,7 @@ export default function Searches() {
                   <h4 className="font-bold text-large">COMPRADORES</h4>
                   <Divider />
                   <small className="text-default-500 font-bold">
-                    Abonos Pendientes y Capital
+                    Historial de Ingresos y Abonos de Capital
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">

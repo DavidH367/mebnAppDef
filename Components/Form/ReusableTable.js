@@ -116,18 +116,52 @@ const onNextPage = React.useCallback(() => {
                     
                     if (column.field === 'total') {
                       // Formatea la columna 'value' como moneda
-                      cellValue = parseFloat(data.capital).toLocaleString("es-ES", {
+                      cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
                         style: "currency",
                         currency: "HNL",
                         minimumFractionDigits: 2,
                     })
                     }
-                    
-        
-                    return <TableCell key={columnIndex}>
+
+                    if (column.field === 'capital') {
+                      // Formatea la columna 'value' como moneda
+                      cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
+                        style: "currency",
+                        currency: "HNL",
+                        minimumFractionDigits: 2,
+                    })
+                    }
+
+                    if (column.field === 'paid') {
+                      // Formatea la columna 'value' como moneda
+                      cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
+                        style: "currency",
+                        currency: "HNL",
+                        minimumFractionDigits: 2,
+                    })
+                    }
+
+                    if (column.field === 'pending') {
+                      // Formatea la columna 'value' como moneda
+                      cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
+                        style: "currency",
+                        currency: "HNL",
+                        minimumFractionDigits: 2,
+                    })
+                    }
+
+                    if (column.field === 'value') {
+                      // Formatea la columna 'value' como moneda
+                      cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
+                        style: "currency",
+                        currency: "HNL",
+                        minimumFractionDigits: 2,
+                    })
+                    }
+                    return <TableCell key={columnIndex}>        
                     {column.field === 'date' && row[column.field]
                       ? row[column.field].toDate().toLocaleString() // Convierte la marca de tiempo en una cadena formateada
-                      : row[column.field]}
+                      : cellValue} 
                   </TableCell>
                 })}
               </TableRow>
