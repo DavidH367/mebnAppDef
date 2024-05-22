@@ -69,7 +69,7 @@ const UserRegister = () => {
       setErrors("Correo electrónico incorrecto");
       return;
     }
-    const password = "CAFE2023!";
+    const password = "MEBN2024!";
     const { user, error } = await registrerWithEmail(email, password);
     if (error != null) {
       console.log("error", error);

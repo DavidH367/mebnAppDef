@@ -1,20 +1,13 @@
 
 export const columns = [
     { title: '#', field: 'indexs' },
-    { title: 'TIPO', field: 'type' },
-    { title: 'FECHA', field: 'date' },
-    { title: 'DENOMINACION', field: 'denomination' },
+    { title: 'CATEGORIA', field: 'category' },
     { title: 'DESCRIPCION', field: 'description' },
-    { title: 'VALOR', field: 'value' },
-    { title: 'COMENTARIOS', field: 'coments' },
+    { title: 'NOMBRE', field: 'ministry_name' },
+    { title: 'MISION', field: 'mision' },
+    { title: 'VISION', field: 'vision' },
+    { title: 'INICIO', field: 'start_year' },
+    { title: 'LOGO', field: 'logo_url' },
+
 ];
 
-export const tipoGasto = [
-    {label: "PAGO DE PLANILLA", value: "PAGO DE PLANILLA"},
-    {label: "VEHICULOS", value: "VEHICULOS"},
-    {label: "VIATICOS", value: "VIATICOS"},
-    {label: "PAPELERIA/OFICINA", value: "PAPELERIA/OFICINA"},
-    {label: "MOBILIARIO", value: "MOBILIARIO"},
-    {label: "IMPUESTOS", value: "IMPUESTOS"},
-    {label: "OTROS", value: "OTROS"},
-];

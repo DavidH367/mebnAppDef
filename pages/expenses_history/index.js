@@ -57,7 +57,7 @@ const InformeGastos = () => {
   //traer datos de FireStore
   useEffect(() => {
     const fetchExpenses = async () => {
-      const q = query(collection(db, "expenses"), orderBy("date", "desc"));
+      const q = query(collection(db, "ministries"));
 
       const querySnapshot = await getDocs(q);
 
@@ -67,7 +67,8 @@ const InformeGastos = () => {
         expensesData.push({ ...doc.data(), indexs: indexs++ });
       });
       setData(expensesData);
-      setFilteredData(expensesData); // Inicializa los datos filtrados con los datos originales
+      setFilteredData(expensesData);
+      console.log(expensesData); // Inicializa los datos filtrados con los datos originales
     };
     fetchExpenses();
   }, []);
@@ -76,14 +77,14 @@ const InformeGastos = () => {
     <>
       <div className="espacioU">
         <Head>
-          <title>GASTOS RECIENTES</title>
-          <meta name="description" content="GASTOS RECIENTES" />
+          <title>PROYECTOS ACTUALUES</title>
+          <meta name="description" content="PROYECTOS ACTUALUES" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/img/logo_paginas.png" />
         </Head>
         <div className="container mx-auto p-10 justify-center items-center h-full">
           <h2 className="text-lg font-semibold mb-2 ">
-            <p className="text-center">GASTOS RECIENTES</p>
+            <p className="text-center">PROYECTOS ACTUALUES</p>
           </h2>
           <FilterSection onFilter={applyFilter} />
           <ReusableTable data={filteredData} columns={columns} />

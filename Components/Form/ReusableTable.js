@@ -158,8 +158,16 @@ const onNextPage = React.useCallback(() => {
                         minimumFractionDigits: 2,
                     })
                     }
+                    if (column.field === 'logo_url') {
+                      // Render image for logo_url
+                      return (
+                        <TableCell key={columnIndex}>
+                          <img src={cellValue} alt={`Logo for ${row.name || 'Unknown'}`} />
+                        </TableCell>
+                      );
+                    }
                     return <TableCell key={columnIndex}>        
-                    {column.field === 'date' && row[column.field]
+                    {column.field === 'fecha_nacimiento' && row[column.field]
                       ? row[column.field].toDate().toLocaleString() // Convierte la marca de tiempo en una cadena formateada
                       : cellValue} 
                   </TableCell>

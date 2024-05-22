@@ -60,8 +60,8 @@ export default function App() {
 
   const menuItems = [
     { text: "Inicio", url: "../" },
-    { text: "Compras", url: "/purchasing" },
-    { text: "Ventas", url: "/sales" },
+    { text: "PROYECTOS", url: "/purchasing" },
+    { text: "ACTUALIZACION DE PROYECTO", url: "/sales" },
     { text: "Proveedores", url: "/supliers" },
     { text: "Gastos", url: "/expenses" },
     { text: "Consultas", url: "/searches" },
@@ -95,38 +95,25 @@ export default function App() {
         <NavbarItem >
           <Link href="/purchasing" color="foreground" aria-current="page">
           <p className="text-large">
-            COMPRAS
+            PROYECTOS
           </p>
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/sales">
             <p className="text-large">
-              VENTAS
+              ACTUALIZAR PROYECTOS
             </p>
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="/supliers">
             <p className="text-large">
-              PROVEEDORES  
+              REGISTRO DE EVENTOS  
             </p>
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/expenses">
-            <p className="text-large">
-              GASTOS  
-            </p>
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/searches">
-            <p className="text-large">
-              CONSULTAS
-            </p>
-          </Link>
-        </NavbarItem>
+        
         <NavbarItem>
           <Link color="foreground" href="/users">
             <p className="text-large">

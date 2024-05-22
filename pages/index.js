@@ -52,10 +52,7 @@ export default function Home() {
           BIENVENIDO(A): {localUser.displayname}
         </h1>
 
-        {}
-        <div className="container mx-auto p-10 justify-center items-center h-full">
-          <CafePerformance />
-        </div>
+        
       </div>
     </>
   );
