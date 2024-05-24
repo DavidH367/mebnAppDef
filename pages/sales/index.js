@@ -19,33 +19,33 @@ const MainComponent = () => {
   return (
     <div className={"homeSearches"}>
       <Head>
-        <title>CURSOS Y MATRICULAS</title>
+        <title>ACTUALIZACION DE PROYECTOS</title>
         <meta name="description" content="CURSOS Y MATRICULAS" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/img/logo_paginas.png" />
       </Head>
-      <h2 className="text-lg font-semibold mb-2 p-4 text-center">CURSOS Y MATRICULAS</h2>
+      <h2 className="text-lg font-semibold mb-2 p-4 text-center">ACTUALIZACION DE PROYECTOS</h2>
       <div className="justify-center">
-        <div className=" p-4 grid gap-12 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3  justify-items-center">
+        <div className=" p-4 grid gap-12 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
           <div>
-            <Link href="../../purchasing_history">
+            <Link href="../../sales_history">
               <Card
                 className="py-4"
                 isPressable
                 onPress={() => console.log("item pressed")}
               >
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">REGISTRAR ASIGNATURA</h4>
+                  <h4 className="font-bold text-large">ACTUALIZACION DE MINISTERIO</h4>
                   <Divider />
                   <small className="text-default-500 font-bold">
-                    Crear o Modificar Clases.
+                    Registrar actualización
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-360"
-                    src="../img/modificar_clase.jpeg"
+                    src="../img/modificar_clase.jpg"
                     width={270}
                   />
                 </CardBody>
@@ -53,24 +53,24 @@ const MainComponent = () => {
             </Link>
           </div>
           <div>
-            <Link href="../../expenses_history">
+            <Link href="../../expenses">
               <Card
                 className="py-4 "
                 isPressable
                 onPress={() => console.log("item pressed")}
               >
                 <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">HORARIOS DE CLASES</h4>
+                  <h4 className="font-bold text-large">HISTORIAL DE ACTUALIZACIONES</h4>
                   <Divider />
                   <small className="text-default-500 font-bold">
-                    Registrar y Actualizar horarios.
+                    Consulta de actividades por Ministerio
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl h-40 w-360"
-                    src="../img/horario.jpeg"
+                    src="../img/horario.jpg"
                     width={270}
                   />
                 </CardBody>
@@ -78,31 +78,6 @@ const MainComponent = () => {
             </Link>
           </div>
 
-          <div>
-            <Link href="../../expenses_history">
-              <Card
-                className="py-4 "
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">ASIGNAR DOCENTES</h4>
-                  <Divider />
-                  <small className="text-default-500 font-bold">
-                    Registrar docentes para asignaturas y horarios.
-                  </small>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-360"
-                    src="../img/registrar_docente.jpeg"
-                    width={270}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
 
         
         </div>

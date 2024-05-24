@@ -21,6 +21,8 @@ const UserRegister = () => {
   const [userState, setUserState] = useState("ACTIVO");
   const router = useRouter();
   const { user, logout, errors, setErrors } = useAuth();
+  const upReference = collection(db, "updates");
+
   useEffect(() => {
     if (!user) {
       setErrors("");
@@ -83,6 +85,13 @@ const UserRegister = () => {
         userRole,
         userState
       );
+      const newUpData = {
+        action: "Se Creo un Nuevo Usuario",
+        date: new Date(),
+        uid: user.uid,
+      };
+      await addDoc(upReference, newUpData);
+
       handleLogout();
     }
   };

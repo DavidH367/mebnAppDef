@@ -62,6 +62,8 @@ const onNextPage = React.useCallback(() => {
       setCurrentPage(currentPage - 1);
     }
   }, [currentPage]);
+
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return (
       <div>
         <Table aria-label="Example table with custom cells, pagination and sorting"
@@ -132,7 +134,7 @@ const onNextPage = React.useCallback(() => {
                     })
                     }
 
-                    if (column.field === 'paid') {
+                    if (column.field === 'budget') {
                       // Formatea la columna 'value' como moneda
                       cellValue = parseFloat(row[column.field]).toLocaleString("es-ES", {
                         style: "currency",
@@ -166,10 +168,14 @@ const onNextPage = React.useCallback(() => {
                         </TableCell>
                       );
                     }
+                     
                     return <TableCell key={columnIndex}>        
-                    {column.field === 'fecha_nacimiento' && row[column.field]
-                      ? row[column.field].toDate().toLocaleString() // Convierte la marca de tiempo en una cadena formateada
-                      : cellValue} 
+                    {
+                    column.field === 'date' && row[column.field]
+                      ? row[column.field].toDate().toLocaleString('es-ES', options) // Convierte la marca de tiempo en una cadena formateada
+                      : cellValue}
+                     
+                      
                   </TableCell>
                 })}
               </TableRow>

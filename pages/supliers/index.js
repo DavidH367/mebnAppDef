@@ -1,85 +1,115 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import {
-  Card,
-  CardFooter,
-  Image,
-  Button,
-  CardHeader,
-  CardBody,
-  Divider,
-} from "@nextui-org/react";
 import "firebase/firestore";
+import { db } from "../../lib/firebase";
+import {
+  addDoc,
+  collection,
+  query,
+  getDocs,
+  orderBy,
+  limit,
+  getDoc,
+  doc
+} from "firebase/firestore";
+import { useAuth } from "../../lib/context/AuthContext";
+import { useRouter } from "next/router";
+import ReusableTable from "../../Components/Form/ReusableTable";
+import { columns } from "../../Data/supliers/datas";
+import FilterSection from "../../Components/Form/FilterSectionGastos";
+import { startOfDay, endOfDay } from "date-fns";
+import { parse, isAfter, isBefore } from "date-fns";
 
+const InformeGastos = () => {
+  //inicio para el filtro de datos
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
+  const [combinedData, setCombinedData] = useState([]); 
+  //Valida acceso a la pagina
+  const router = useRouter();
+  const { user, errors, setErrors } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
 
-const Providers = () => {
   
+
+  //traer datos de FireStore
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      // Consulta a la colección "updates"
+      const updatesQuery = query(collection(db, "updates"));
+      const updatesSnapshot = await getDocs(updatesQuery);
+  
+      const updatesData = [];
+      const userIds = new Set(); // Usaremos un Set para almacenar los UID únicos
+  
+      updatesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        updatesData.push({ ...data, id: doc.id });
+        userIds.add(data.uid); // Asumiendo que los documentos en "updates" tienen un campo "uid"
+      });
+  
+      // Crear un array de promesas para obtener los documentos de la colección "users"
+      const userPromises = Array.from(userIds).map(uid =>
+        getDoc(doc(db, "users", uid))
+      );
+  
+      // Esperar a que todas las promesas se resuelvan
+      const userDocs = await Promise.all(userPromises);
+  
+      // Crear un mapa para acceder a los datos de los usuarios por su UID
+      const usersArray = userDocs.map(userDoc => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          return {
+            uid: userDoc.id,
+            displayName: userData.displayName,
+            role: userData.role,
+          };
+        }
+        return null;
+      }).filter(user => user !== null);
+  
+      const combinedData = updatesData.map(update => {
+        const user = usersArray.find(user => user.uid === update.uid);
+        return {
+          ...update,
+          displayName: user ? user.displayName : "Unknown",
+          role: user ? user.role : "Unknown",
+        };
+      });
+  
+      setData(combinedData);
+      setCombinedData(combinedData);
+      console.log(combinedData); // Inicializa los datos filtrados con los datos originales
+    };
+  
+    fetchExpenses();
+  }, []);
+  
+
   return (
-    <div className={"homeSearches"}>
-      <Head>
-        <title>EVALUACIONES</title>
-        <meta name="description" content="EVALUACIONES" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/img/logo_paginas.png" />
-      </Head>
-      <h2 className="text-lg font-semibold mb-2 p-4 text-center">EVALUACIONES DE ALUMNOS</h2>
-      <div className="justify-center">
-        <div className=" p-4 grid gap-12 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2  justify-items-center">
-          <div>
-            <Link href="../../purchasing_history">
-              <Card
-                className="py-4"
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">INGRESO DE CALIFICACIONES</h4>
-                  <Divider />
-                  <small className="text-default-500 font-bold">
-                    Calificaciones de Alumnos.
-                  </small>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-360"
-                    src="../img/ingreso_calificaciones.jpeg"
-                    width={270}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
-          <div>
-            <Link href="../../expenses_history">
-              <Card
-                className="py-4 "
-                isPressable
-                onPress={() => console.log("item pressed")}
-              >
-                <CardHeader className="pb-0 pt-1 px-4 flex-col text-center">
-                  <h4 className="font-bold text-large">HISTORIAL DE CALIFICACIONES</h4>
-                  <Divider />
-                  <small className="text-default-500 font-bold">
-                    Historial de Calificaciones en Asignaturas.
-                  </small>
-                </CardHeader>
-                <CardBody className="overflow-visible py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-40 w-360"
-                    src="../img/historial_calificaciones.jpeg"
-                    width={270}
-                  />
-                </CardBody>
-              </Card>
-            </Link>
-          </div>
+    <>
+      <div className="espacioU">
+        <Head>
+          <title>ACTUALIZACIONES DE ACTIVIDADES</title>
+          <meta name="description" content="ACTUALIZACIONES DE ACTIVIDADES" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/img/logo_paginas.png" />
+        </Head>
+        <div className="container mx-auto p-10 justify-center items-center h-full">
+          <h2 className="text-lg font-semibold mb-2 ">
+            <p className="text-center">ACTUALIZACIONES DE ACTIVIDADES</p>
+          </h2>
+          <ReusableTable data={data} columns={columns} />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default Providers;
+export default InformeGastos;

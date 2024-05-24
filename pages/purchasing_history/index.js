@@ -9,8 +9,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../../lib/context/AuthContext";
 import Estados from "@/Components/Form/statsC";
 import { CalendarDate, parseDate } from "@internationalized/date";
-import {parseZonedDateTime, parseAbsoluteToLocal} from "@internationalized/date";
-import {DateValue, now} from "@internationalized/date";
+import { parseZonedDateTime, parseAbsoluteToLocal } from "@internationalized/date";
+import { DateValue, now } from "@internationalized/date";
+import { useFirebaseUpload } from 'react-firebase-hooks/storage';
+
 
 import FirebaseFirestore from 'firebase/app';
 import "firebase/firestore";
@@ -22,27 +24,35 @@ import {
   getDocs,
   orderBy,
   limit,
+  
 } from "firebase/firestore";
 
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-import { zonas, tipoC, columns } from "../../Data/purchasing/datas";
 import { Input, Select, SelectItem, Textarea, DatePicker, Divider } from "@nextui-org/react";
 import { jsPDF } from "jspdf";
 import { useRouter } from "next/router";
 import { imgData } from "../../Data/svg_data/svg_logoData";
 
 const nlpReference = collection(db, "ministries");
+const upReference = collection(db, "updates");
+const storage = getStorage();
+const imagenesRef = ref(storage, 'imagenes/imagenes/logos'); // Reemplaza 'imagenes' con la carpeta deseada
 
 const ConsultasClientes = () => {
   //datos para factura
   //usos de datos
+
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [logo_url, setLogo_url] = useState("");
+  const [leader, setLeader] = useState("");
+  const [budget, setBudget] = useState("");
   const [ministry_name, setMinistry_name] = useState("");
   const [mision, setMision] = useState("");
   const [vision, setVision] = useState("");
   const [start_year, setStart_year] = React.useState(parseDate("2024-04-04"));
+  const [archivo, setArchivo] = useState(null);
 
 
   //estado para formulario
@@ -62,12 +72,11 @@ const ConsultasClientes = () => {
     }
   }, []);
 
-
-  const handleFilterChange = (key, value) => {
-    setFecha_nacimiento((prevValues) => ({
-      ...prevValues,
-      [key]: value,
-    }));
+  
+  const handleChange = (event) => {
+    const archivo = event.target.files[0];
+    console.log("Archivo seleccionado:", archivo);
+    setArchivo(archivo);
   };
 
   // Función para guardar datos
@@ -84,27 +93,60 @@ const ConsultasClientes = () => {
         !ministry_name ||
         !mision ||
         !vision ||
-        !start_year 
+        !start_year ||
+        !leader ||
+        !budget
       ) {
         setFormValid(false);
         setErrorMessage("Por favor, complete todos los campos obligatorios.");
         return; // No enviar el formulario si falta algún campo obligatorio
       }
       try {
-             
+
+        let logoUrl = "";
+        if (archivo) {
+          const archivoRef = ref(storage, `imagenes/imagenes/logos/${archivo.name}`);
+          const uploadTask = uploadBytesResumable(archivoRef, archivo);
+
+          logoUrl = await new Promise((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                // Progress function ...
+              },
+              (error) => {
+                reject(error);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
+              }
+            );
+          });
+        }
+
         const newData = {
           category: category,
           description: description,
           ministry_name: ministry_name,
           mision: mision,
           vision: vision,
-          start_year: new Date(start_year),
-       
+          date: new Date(start_year),
+          leader: leader,
+          budget: parseFloat(budget),
+          logo_url: logoUrl,
         };
 
-        await addDoc(nlpReference, newData);
+        const newUpData = {
+          action: "Registra Nuevo Proyecto",
+          date: new Date(),
+          uid: user.uid,
+        };
 
-      
+
+        await addDoc(nlpReference, newData);
+        await addDoc(upReference, newUpData);
+
         // Limpiar los campos del formulario después de guardar
         setCategory("");
         setDescription("");
@@ -112,93 +154,10 @@ const ConsultasClientes = () => {
         setMision("");
         setVision("");
         setStart_year("");
-  
-        //addlogo
+        setArchivo(null);
 
-        //PDF
-        /*
-        const doc = new jsPDF({ unit: "mm", format: [215, 140] });
-        doc.addImage(imgData, "PNG", 3, 3, 27, 27);
 
-        doc.setFontSize(16);
-        doc.setFont("helvetica", "bold");
-        doc.text("BODEGA - GAD", 50, 10);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text("Compra Venta de Café", 53, 15);
-        doc.setFontSize(8);
-        doc.text("RTN: 03131985004693", 56, 19);
-        doc.setFontSize(10);
-        doc.text("Telefono: (504) 9541-9092 - (504) 9860-9162", 35, 24);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("COMPROBANTE DE COMPRA", 46, 31);
-        doc.text(`Fecha: ${fechaYHora}`, 4, 38);
-        doc.text(`N° de Factura: ${newData.n_transaction}`, 97, 38);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(`RTN: ${newData.rtn}`, 4, 45);
-        doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 4, 52);
-        doc.text(`Zona: ${newData.zone}`, 97, 52);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Sacos de Producto: ${newData.bags}`, 4, 59);
-        doc.text(`Tipo de Café: ${newData.coffee_type}`, 4, 66);
-        doc.text(`Peso Bruto: ${newData.weight} Quintales`, 4, 73);
-        doc.text(`Peso Neto: ${newData.weightN} Quintales`, 4, 80);
-        doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
-          style: "currency",
-          currency: "HNL",
-          minimumFractionDigits: 2,
-        })}`, 79, 80);
-        doc.setFont("helvetica", "italic");
-        doc.text("'Dios Bendiga los Frutos de tus Labores.'", 32, 87);
-        doc.setFont("helvetica", "normal");
-        // Agregar una nueva página
-        doc.addPage();
-        //PDF
-        doc.setFontSize(16);
-        doc.addImage(imgData, "PNG", 3, 3, 27, 27);
-        doc.setFont("helvetica", "bold");
-        doc.text("BODEGA - GAD", 50, 10);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text("Compra Venta de Café", 53, 15);
-        doc.setFontSize(8);
-        doc.text("RTN: 03131985004693", 56, 19);
-        doc.setFontSize(10);
-        doc.text("Telefono: (504) 9860-9162 - (504) 9541-9092 ", 35, 24);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("COMPROBANTE DE COMPRA (Copia de Cliente)", 28, 31);
-        doc.text(`Fecha: ${fechaYHora}`, 5, 38);
-        doc.text(`N° de Factura: ${newData.n_transaction}`, 95, 38);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.text(`RTN: ${newData.rtn}`, 5, 45);
-        doc.text(`Nombre Cliente: ${newData.name}, ${newData.last_name}`, 5, 52);
-        doc.text(`Zona: ${newData.zone}`, 95, 52);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Sacos de Producto: ${newData.bags}`, 5, 59);
-        doc.text(`Tipo de Café: ${newData.coffee_type}`, 5, 66);
-        doc.text(`Peso Bruto: ${newData.weight} Lbs`, 5, 73);
-        doc.text(`Peso Neto: ${newData.weightN} Lbs`, 5, 80);
-        doc.text(`TOTAL FACTURADO: ${parseFloat(newData.total).toLocaleString("es-ES", {
-          style: "currency",
-          currency: "HNL",
-          minimumFractionDigits: 2,
-        })}`, 79, 80);
-        doc.setFont("helvetica", "italic");
-        doc.text("'Dios Bendiga los Frutos de tus Labores.'", 32, 87);
-        doc.setFont("helvetica", "normal");
-
-        //guardar el PDF con un identificador
-        // Set the document to automatically print via JS
-        doc.autoPrint();
-        doc.output("dataurlnewwindow");
-
-        // Recargar la página
-        */
-       window.location.reload();
+        window.location.reload();
       } catch (error) {
         console.error("Error al guardar los datos:", error);
       } finally {
@@ -338,7 +297,7 @@ const ConsultasClientes = () => {
                 <label className="block text-sm font-medium leading-6 text-gray-900">
                   <a className="font-bold text-lg">Fecha de Inicio</a>
                 </label>
-                <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                <div className="mt-2 pr-12">
                   <DatePicker
                     id="start_year"
                     label="Fecha de Inicio"
@@ -352,6 +311,48 @@ const ConsultasClientes = () => {
                     dateFormat="dd/MM/yyyy"
                   />
 
+                </div>
+              </div>
+
+              <div className="sm:col-span-1">
+                <label
+                  htmlFor="Name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  <a className="font-bold text-lg">Encargado / Lider</a>
+                </label>
+                <div className="mt-2 pr-4">
+                  <Input
+                    isRequired
+                    type="text"
+                    label="Ej: Daniel H"
+                    id="leader"
+                    autoComplete="Name"
+                    value={leader}
+                    onChange={(e) => setLeader(e.target.value)}
+                    className="max-w-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-1">
+                <label
+                  htmlFor="Name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  <a className="font-bold text-lg">Presupuesto</a>
+                </label>
+                <div className="mt-2 pr-4">
+                  <Input
+                    isRequired
+                    type="number"
+                    label="L"
+                    id="budget"
+                    autoComplete="Presupuesto"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="max-w-xs"
+                  />
                 </div>
               </div>
 
@@ -372,31 +373,21 @@ const ConsultasClientes = () => {
                   <a className="font-bold text-lg">LOGO</a>
                 </label>
                 <div className="mt-2 pr-4">
-                  
 
 
-                </div>
-              </div>
+                <input
+                  type="file"
+                  id="logo"
+                  onChange={handleChange}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                />
 
-
-
-              <div className="sm:col-span-1">
-                <label
-                  htmlFor="precio"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  <a className="font-bold text-lg">IMAGENES PRINCIPALES</a>
-                </label>
-                <div className="mt-2 pr-4">
-                  
-
-
-
+      
                 </div>
               </div>
 
               <button
-              onSubmit={handleSubmit}
+                onSubmit={handleSubmit}
                 type="submit"
                 className="h-9 w-40 mt-11 rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
