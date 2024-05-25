@@ -29,7 +29,7 @@ class NavBar extends StatelessWidget {
           tabs:  [
             GButton(
               icon: Icons.home,
-              text: "HOME PAGE",
+              text: "RECENT UPDATES",
               textStyle: GoogleFonts.fredoka(textStyle: const TextStyle(color: Color.fromARGB(255, 255, 255, 255))),              
             ),
             GButton(

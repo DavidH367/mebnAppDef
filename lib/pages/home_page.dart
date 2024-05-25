@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
         preferredSize:
             const Size.fromHeight(40.0), // Ajusta este valor según tu preferencia
         child: AppBar(
-          title: const Text("HOME PAGE"),
+          title: const Text("RECENT UPDATES"),
           centerTitle: true,
           backgroundColor: const Color.fromARGB(255, 20, 78, 119),
         ),
