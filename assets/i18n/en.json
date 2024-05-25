@@ -1,0 +1,45 @@
+{
+	"app_bar": 
+	{
+		"title":
+		{
+			"homepagetitle" :"NEWS",
+			"settingstitle":"SETTINGS",
+			"registerpageTitle":"REGISTER",
+			"ministriespageTitle":"MINISTRIES"
+		}
+	},
+	"button": 
+	{
+		"cancel": "Cancel",
+		"change_language": "Change Language",
+    	"logout" :"Logout"
+	},
+	"language": 
+	{
+		"name": 
+		{
+			"en": "English",
+			"es": "Spanish",
+			"fa": "Persian",
+			"ar": "Arabic",
+			"ru": "Russian"
+		},
+		"selected_message": "Currently selected language is {language}",
+		"selection": 
+		{
+			"message": "Please select a language from the list",
+			"title": "Language Selection"
+		}
+	},
+	"plural": 
+	{
+		"demo": 
+		{
+			"zero": "Please start pushing the 'plus' button.",
+			"one": "You have pushed the button one time.",
+			"two": "You have pushed the button two times.",
+			"other": "You have pushed the button {{value}} times."
+		}
+	}
+}
