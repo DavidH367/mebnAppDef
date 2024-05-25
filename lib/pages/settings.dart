@@ -23,6 +23,11 @@ class _SettingsPageState extends State<SettingsPage> {
         title: const Text("Settings"),
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(20, 78, 119, 1.0),
+        titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
       ),
       body: Center(
         child: Column(

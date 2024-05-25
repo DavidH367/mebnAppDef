@@ -13,6 +13,11 @@ class AboutUs extends StatelessWidget {
         title: const Text("ABOUT US"),
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(20, 78, 119, 1.0),
+        titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
       ),
       body: SingleChildScrollView(
   child: Center(

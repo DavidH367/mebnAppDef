@@ -120,6 +120,11 @@ class Ministries extends StatelessWidget {
           title: const Text("MINISTRIES"),
           centerTitle: true,
           backgroundColor: const Color.fromRGBO(20, 78, 119, 1.0),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(

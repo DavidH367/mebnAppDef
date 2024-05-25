@@ -75,6 +75,11 @@ class HomePage extends StatelessWidget {
           title: const Text("RECENT UPDATES"),
           centerTitle: true,
           backgroundColor: const Color.fromARGB(255, 20, 78, 119),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(
