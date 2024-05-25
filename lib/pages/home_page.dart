@@ -93,8 +93,8 @@ class HomePage extends StatelessWidget {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return GFImageOverlay(
-                      height: 150,
-                      width: constraints.maxWidth,
+                      height: 100,
+                      width: 250,
                       image: const AssetImage('assets/images/NEW_MEBN_LOGO.png'),
                       colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.0),
@@ -175,7 +175,9 @@ class HomePage extends StatelessWidget {
                                         vertical: 8.0, horizontal: 6.0),
                                     child: Text(
                                       descriptionText,
-                                      style: const TextStyle(fontSize: 14.0),
+                                      style: const TextStyle(fontSize: 14.0,
+                                      color: Color.fromRGBO(20, 78, 119, 1.0),),
+                                      
                                     ),
                                   ),
                                 ],
