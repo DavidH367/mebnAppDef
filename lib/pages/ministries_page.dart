@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // Variables para almacenar los valores del título y la descripción
 String titleText = '';
 String descriptionText = '';
+String mision = '';
+String vision = '';
+int budget = 0;
 
 class Ministries extends StatelessWidget {
   final PageController pageController;
@@ -20,16 +23,76 @@ class Ministries extends StatelessWidget {
   @pragma('vm:entry-point')
   static Route<Object?> _dialogBuilder(
       BuildContext context, Object? arguments) {
+    final Map<String, dynamic> data = arguments as Map<String, dynamic>;
     return DialogRoute<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Basic dialog title'),
-          content: const Text(
-            'A dialog is a type of modal window that\n'
-            'appears in front of app content to\n'
-            'provide critical information, or prompt\n'
-            'for a decision to be made.',
+          title: Text(
+            data['ministry_name'],
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text(
+                  'Description:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  data['description'],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Mission:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  data['mision'],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Vision:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  data['vision'],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Budget: \$${data['budget']}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                )
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
@@ -78,7 +141,9 @@ class Ministries extends StatelessWidget {
                     for (var doc in snapshot.data!.docs) {
                       String titleText = doc['ministry_name'];
                       String descriptionText = doc['description'];
-                      // ... (rest of your code to fetch image URLs)
+                      String mision = doc['mision'];
+                      String vision = doc['vision'];
+                      budget = doc['budget'];
 
                       // Create the ListTile widget outside the loop
                       newsCards.add(
@@ -97,7 +162,7 @@ class Ministries extends StatelessWidget {
                                 ),
                                 child: Image.network(
                                   doc['logo_url'],
-                                  height: 200,
+                                  height: 400,
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                 ),
@@ -121,15 +186,28 @@ class Ministries extends StatelessWidget {
                                     Expanded(
                                       child: OutlinedButton(
                                         onPressed: () {
-                                          Navigator.of(context)
-                                              .restorablePush(_dialogBuilder);
+                                          Navigator.of(context).push(
+                                            _dialogBuilder(
+                                              context,
+                                              {
+                                                'ministry_name': titleText,
+                                                'description': descriptionText,
+                                                'mision': mision,
+                                                'vision': vision,
+                                                'budget': budget,
+                                              },
+                                            ),
+                                          );
                                         },
-                                        child: const Text("Learn More",
+                                        child: const Text(
+                                          "Learn More",
                                           style: TextStyle(
-                                            color: Color.fromARGB(255, 255, 255, 255),
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
                                             fontSize: 20,
-                                            fontWeight: FontWeight.w500,),
-                                      ),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
