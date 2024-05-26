@@ -138,6 +138,19 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+   // Método para limpiar los campos de texto
+  void clearFields() {
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _churchController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmpasswordController.clear();
+    setState(() {
+      _selectedCountry = 'United States';
+    });
+  }
+
   Future signUp() async {
     //crea el usuario
     try {
@@ -154,6 +167,9 @@ class _RegisterPageState extends State<RegisterPage> {
           _churchController.text.trim(),
           _emailController.text.trim(),
         );
+        // Limpiar los campos de texto
+        clearFields();
+
       }
     } on FirebaseAuthException catch (e) {
       showDialog(
@@ -170,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
       String email) async {
     final user = FirebaseAuth.instance.currentUser!;
     final userId = user.uid;
-    await FirebaseFirestore.instance.collection('users').doc(userId).set({
+    await FirebaseFirestore.instance.collection('usersmebn').doc(userId).set({
       "first_name": firstName,
       "last_name": lastName,
       "church_name": churchName,
@@ -198,6 +214,11 @@ class _RegisterPageState extends State<RegisterPage> {
           title: const Text("REGISTER"),
           centerTitle: true,
           backgroundColor: const Color.fromRGBO(20, 78, 119, 1.0),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 233, 255, 227),
