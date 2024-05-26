@@ -9,6 +9,8 @@ import {
   getDocs,
   orderBy,
   limit,
+  updateDoc,
+  doc
 } from "firebase/firestore";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
@@ -17,8 +19,76 @@ import { columns } from "../../Data/expenses_history/data";
 import FilterSection from "../../Components/Form/FilterSectionGastos";
 import { startOfDay, endOfDay } from "date-fns";
 import { parse, isAfter, isBefore } from "date-fns";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+import "react-datepicker/dist/react-datepicker.css";
+import { CalendarDate, parseDate } from "@internationalized/date";
+import { parseZonedDateTime, parseAbsoluteToLocal } from "@internationalized/date";
+import { Input, Select, SelectItem, Textarea, DatePicker, Divider } from "@nextui-org/react";
+
+const supliersInfoRef = collection(db, "ministries");
+const upReference = collection(db, "updates");
 
 const InformeGastos = () => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState('md')
+  const sizes = ["5xl"];
+  const [formValid, setFormValid] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [formData, setFormData] = useState({
+    category: "",
+    description: "",
+    ministry_name: "",
+    mision: "",
+    vision: "",
+    leader: "",
+    budget: "",
+  });
+
+
+  //estado para formulario
+  const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
+
+  const handleOpen = (size) => {
+    setSize(size)
+    onOpen();
+  }
+
+  function handleSupplierChange(event) {
+    const selectedSupplierValue = event.target.value;
+    // Actualiza el estado con el nuevo valor seleccionado
+    setSelectedSupplier(selectedSupplierValue);
+    console.log("Seleccionado: ", selectedSupplierValue);
+    if (!selectedSupplierValue) {
+      // Si no hay valor seleccionado, limpia el formulario
+      setFormData({
+        category: "",
+        description: "",
+        ministry_name: "",
+        mision: "",
+        vision: "",
+        leader: "",
+        budget: "",
+      });
+    } else {
+      const selectedSupplierData = suppliers.find(supplier => supplier.id === selectedSupplierValue);
+      setFormData({
+        category: selectedSupplierData.category,
+        description: selectedSupplierData.description,
+        ministry_name: selectedSupplierData.ministry_name,
+        mision: selectedSupplierData.mision,
+        vision: selectedSupplierData.vision,
+        leader: selectedSupplierData.leader,
+        budget: selectedSupplierData.budget,
+      });
+    }
+
+  }
+
+
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
@@ -32,27 +102,97 @@ const InformeGastos = () => {
     }
   }, []);
 
-  const applyFilter = ({ type, startDate, endDate }) => {
-    const filtered = data.filter((item) => {
-      const itemDate = item.date.toDate();
 
-      // Verifica si las fechas de inicio y fin están definidas
-      const start = startDate ? startOfDay(startDate) : null;
-      const end = endDate ? endOfDay(endDate) : null;
 
-      // Comprueba si la fecha del elemento está dentro del rango (si se proporcionan fechas)
-      const isWithinDateRange =
-        (!start || isAfter(itemDate, start)) &&
-        (!end || isBefore(itemDate, end));
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const querySnapshot = await getDocs(supliersInfoRef);
 
-      return (
-        item.type.toLowerCase().includes(type.toLowerCase()) &&
-        isWithinDateRange
-      );
-    });
+        const supplierData = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          supplierData.push({
+            id: doc.id,
+            name: data.ministry_name,
+            category: data.category,
+            description: data.description,
+            ministry_name: data.ministry_name,
+            mision: data.mision,
+            vision: data.vision,
+            leader: data.leader,
+            budget: data.budget,
+          });
+        });
 
-    setFilteredData(filtered);
+        setSuppliers(supplierData);
+      } catch (error) {
+        console.error("Error fetching suppliers from Firestore:", error);
+      }
+    };
+    fetchSuppliers();
+  }, []);
+
+  // Función para guardar datos
+  const handleSubmit = async () => {
+
+    if (!guardando) {
+      setGuardando(true);
+
+      const idDocumentos = selectedSupplier;
+      
+      // Verificar si los campos obligatorios están llenos
+      if (
+        !formData.ministry_name ||
+        !formData.category ||
+        !formData.description ||
+        !formData.leader ||
+        !formData.mision ||
+        !formData.vision ||
+        !formData.budget
+      ) {
+        setFormValid(false);
+        setErrorMessage("Por favor, complete todos los campos obligatorios.");
+        return; // No enviar el formulario si falta algún campo obligatorio
+      }
+      try {
+        //id del ministerio
+        const docRef = doc(supliersInfoRef, idDocumentos);
+
+        const newData = {
+          ministry_name: formData.ministry_name,
+          category: formData.category,
+          description: formData.description,
+          mision: formData.mision,
+          vision: formData.vision,
+          leader: formData.leader,
+          budget: parseFloat(formData.budget),
+        };
+
+        const newUpData = {
+          action: "Se Cambio Informacion de Proyecto",
+          date: new Date(),
+          uid: user.uid,
+        };
+
+
+        await updateDoc(docRef, newData);
+        await addDoc(upReference, newUpData);
+
+
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al guardar los datos:", error);
+      } finally {
+        // Vuelve a habilitar el botón después del guardado (independientemente de si tuvo éxito o no)
+        setGuardando(false);
+      }
+    }
+    // Reiniciar la validación y el mensaje de error
+    setFormValid(true);
+    setErrorMessage("");
   };
+
 
   //traer datos de FireStore
   useEffect(() => {
@@ -84,9 +224,218 @@ const InformeGastos = () => {
         </Head>
         <div className="container mx-auto p-10 justify-center items-center h-full">
           <h2 className="text-lg font-semibold mb-2 ">
+            <p className="text-center">CORREGIR INFORMACION DE PROYECTO PROYECTO</p>
+
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            {sizes.map((size) => (
+              <Button key={size} onPress={() => handleOpen(size)}>Modificar Proyecto</Button>
+            ))}
+          </div>
+          <Modal
+            size={size}
+            isOpen={isOpen}
+            onClose={onClose}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">INGRESE DATOS QUE DESEA CORREGIR</ModalHeader>
+                  <ModalBody>
+                    <form onSubmit={handleSubmit}>
+                      <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
+                        <div className="mt-2 pr-4">
+                          <Select
+                            items={suppliers}
+                            label="Actualizar a:"
+                            placeholder="Selecciona un Proyecto"
+                            className="max-w-xs"
+                            value={selectedSupplier}
+                            
+                            onChange={handleSupplierChange}
+                          >
+                            {suppliers.map((supplier) => (
+                              <SelectItem key={supplier.id} textValue={supplier.name}>
+                                <div className="flex gap-2 items-center">
+                                  <div className="flex flex-col">
+                                    <span className="text-small">{supplier.name}</span>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            className=" block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <p className="font-bold text-lg ">CATEGORIA</p>
+                          </label>
+                          <div className="mt-2 pr-4">
+                            <Input
+                              isRequired
+                              type="text"
+                              label="Tipo"
+                              id="category"
+                              value={formData.category}
+                              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Descripcion"
+                            className=" block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <p className="font-bold text-lg">DESCRIPCION</p>
+                          </label>
+                          <div className="mt-2 pr-4">
+                            <Input
+                              isRequired
+                              type="text"
+                              label="Descript."
+                              id="description"
+                              autoComplete="description"
+                              value={formData.description}
+                              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <a className="font-bold text-lg">Nombre de Proyecto</a>
+                          </label>
+                          <div className="mt-2 pr-4">
+                            <Input
+                              isRequired
+                              type="text"
+                              label="Ej: New Life Project"
+                              id="ministry_name"
+                              autoComplete="Name"
+                              value={formData.ministry_name}
+                              onChange={(e) => setFormData({ ...formData, ministry_name: e.target.value })}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Mision"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <a className="font-bold text-lg">MISION</a>
+                          </label>
+                          <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                            <Textarea
+                              isRequired
+                              id="mision"
+                              placeholder="Ej. "
+                              autoComplete="mision"
+                              className="max-w-xs"
+                              value={formData.mision}
+                              onChange={(e) => setFormData({ ...formData, mision: e.target.value })}
+                            >
+
+                            </Textarea>
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Vision"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <a className="font-bold text-lg">VISION</a>
+                          </label>
+                          <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                            <Textarea
+                              isRequired
+                              id="vision"
+                              placeholder="Ej. "
+                              autoComplete="vision"
+                              className="max-w-xs"
+                              value={formData.vision}
+                              onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
+                            >
+                            </Textarea>
+                          </div>
+                        </div>
+
+
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <a className="font-bold text-lg">Encargado / Lider</a>
+                          </label>
+                          <div className="mt-2 pr-4">
+                            <Input
+                              isRequired
+                              type="text"
+                              label="Ej: Daniel H"
+                              id="leader"
+                              autoComplete="Name"
+                              value={formData.leader}
+                              onChange={(e) => setFormData({ ...formData, leader: e.target.value })}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="Name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            <a className="font-bold text-lg">Presupuesto</a>
+                          </label>
+                          <div className="mt-2 pr-4">
+                            <Input
+                              isRequired
+                              type="number"
+                              label="L"
+                              id="budget"
+                              autoComplete="Presupuesto"
+                              value={formData.budget}
+                              onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                              className="max-w-xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                    </form>
+
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Cerrar
+                    </Button>
+                    <Button color="primary" onPress={handleSubmit}>
+                      Guardar
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+
+          <Divider className="my-4" />
+          <h2 className="text-lg font-semibold mb-2 ">
             <p className="text-center">PROYECTOS ACTUALUES</p>
           </h2>
-          <FilterSection onFilter={applyFilter} />
+          <Divider className="my-4" />
           <ReusableTable data={filteredData} columns={columns} />
         </div>
       </div>

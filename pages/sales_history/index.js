@@ -130,6 +130,7 @@ const MainComponent = () => {
     const selectedSupplierValue = event.target.value;
     // Actualiza el estado con el nuevo valor seleccionado
     setSelectedSupplier(selectedSupplierValue);
+    console.log("Selecciona: ", selectedSupplierValue);
   }
 
 

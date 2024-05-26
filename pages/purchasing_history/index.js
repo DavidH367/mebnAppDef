@@ -26,13 +26,9 @@ import {
   limit,
   
 } from "firebase/firestore";
-
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-
 import { Input, Select, SelectItem, Textarea, DatePicker, Divider } from "@nextui-org/react";
-import { jsPDF } from "jspdf";
 import { useRouter } from "next/router";
-import { imgData } from "../../Data/svg_data/svg_logoData";
 
 const nlpReference = collection(db, "ministries");
 const upReference = collection(db, "updates");
@@ -103,6 +99,8 @@ const ConsultasClientes = () => {
       }
       try {
 
+
+        
         let logoUrl = "";
         if (archivo) {
           const archivoRef = ref(storage, `imagenes/imagenes/logos/${archivo.name}`);
