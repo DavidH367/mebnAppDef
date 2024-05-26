@@ -22,56 +22,57 @@ import {
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 import { Select, SelectItem, Textarea, DatePicker, Divider } from "@nextui-org/react";
 
+
 const supliersInfoRef = collection(db, "users");
 const upReference = collection(db, "updates");
 
 const UserRegister = () => {
-//seccion para Actualizar Roles
-const { isOpen, onOpen, onClose } = useDisclosure();
-const [size, setSize] = React.useState('md')
-const sizes = ["5xl"];
-const [formValid, setFormValid] = useState(true);
-const [errorMessage, setErrorMessage] = useState("");
+  //seccion para Actualizar Roles
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState('md')
+  const sizes = ["5xl"];
+  const [formValid, setFormValid] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-const [suppliers, setSuppliers] = useState([]);
-const [selectedSupplier, setSelectedSupplier] = useState(null);
-const [formData, setFormData] = useState({
-  firstName: "",
-  lastName: "",
-  role: "",
-});
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    role: "",
+  });
 
-function handleSupplierChange(event) {
-  const selectedSupplierValue = event.target.value;
-  // Actualiza el estado con el nuevo valor seleccionado
-  setSelectedSupplier(selectedSupplierValue);
-  console.log("Seleccionado: ", selectedSupplierValue);
-  if (!selectedSupplierValue) {
-    // Si no hay valor seleccionado, limpia el formulario
-    setFormData({
-      firstName: "",
-      lastName: "",
-      role: "",
-    });
-  } else {
-    const selectedSupplierData = suppliers.find(supplier => supplier.id === selectedSupplierValue);
-    setFormData({
-      firstName: selectedSupplierData.firstName,
-      lastName: selectedSupplierData.lastName,
-      role: selectedSupplierData.role,
-    });
+  function handleSupplierChange(event) {
+    const selectedSupplierValue = event.target.value;
+    // Actualiza el estado con el nuevo valor seleccionado
+    setSelectedSupplier(selectedSupplierValue);
+    console.log("Seleccionado: ", selectedSupplierValue);
+    if (!selectedSupplierValue) {
+      // Si no hay valor seleccionado, limpia el formulario
+      setFormData({
+        firstName: "",
+        lastName: "",
+        role: "",
+      });
+    } else {
+      const selectedSupplierData = suppliers.find(supplier => supplier.id === selectedSupplierValue);
+      setFormData({
+        firstName: selectedSupplierData.firstName,
+        lastName: selectedSupplierData.lastName,
+        role: selectedSupplierData.role,
+      });
+    }
   }
-}
 
-//estado para formulario
-const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
+  //estado para formulario
+  const [guardando, setGuardando] = useState(false); // Estado para controlar el botón
 
-const handleOpen = (size) => {
-  setSize(size)
-  onOpen();
-}
+  const handleOpen = (size) => {
+    setSize(size)
+    onOpen();
+  }
 
-//Seccion para crear Usario
+  //Seccion para crear Usario
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -106,6 +107,22 @@ const handleOpen = (size) => {
     fetchSuppliers();
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      setErrors("");
+      router.push("/auth/Login");
+    }
+  }, []);
+  
+  const handleLogout = async () => {
+    localStorage.removeItem("user");
+    const logoutUser = await logout();
+    if (logoutUser) {
+      router.push("/auth/Login");
+      return;
+    }
+  };
+
   // Función para guardar datos
   const handleSubmit2 = async () => {
 
@@ -113,12 +130,12 @@ const handleOpen = (size) => {
       setGuardando(true);
 
       const idDocumentos = selectedSupplier;
-      
+
       // Verificar si los campos obligatorios están llenos
       if (
         !formData.firstName ||
         !formData.lastName ||
-        !formData.role 
+        !formData.role
       ) {
         setFormValid(false);
         setErrorMessage("Por favor, complete todos los campos obligatorios.");
@@ -141,6 +158,13 @@ const handleOpen = (size) => {
           uid: user.uid,
         };
 
+        // Validar el rol del usuario antes de guardar los cambios
+        if (!user || user.role === 'OPERARIO') {
+          setErrorMessage("No tienes permisos para realizar esta acción.");
+          setGuardando(false);
+          return;
+        }
+
         await updateDoc(docRef, newData);
         await addDoc(upReference, newUpData);
 
@@ -158,21 +182,8 @@ const handleOpen = (size) => {
     setErrorMessage("");
   };
 
-  useEffect(() => {
-    if (!user) {
-      setErrors("");
-      router.push("/auth/Login");
-    }
-  }, []);
 
-  const handleLogout = async () => {
-    localStorage.removeItem("user");
-    const logoutUser = await logout();
-    if (logoutUser) {
-      router.push("/auth/Login");
-      return;
-    }
-  };
+
   const handleSubmit = async () => {
     if (firstName === "") {
       setErrors("El nombre no puede estar vacío");
@@ -247,15 +258,16 @@ const handleOpen = (size) => {
             POR FAVOR LLENAR TODOS LOS CAMPOS NECESARIOS
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {sizes.map((size) => (
-              <Button key={size} onPress={() => handleOpen(size)}>Modificar Usuario</Button>
+              <Button key={size} onPress={() => handleOpen(size)}>Modificar Usuario{console.log("usuario:",user.role,)}</Button>
             ))}
           </div>
           <Modal
             size={size}
             isOpen={isOpen}
             onClose={onClose}
+            className="flex flex-wrap gap-2 "
           >
             <ModalContent>
               {(onClose) => (
@@ -263,7 +275,7 @@ const handleOpen = (size) => {
                   <ModalHeader className="flex flex-col gap-1">INGRESE DATOS QUE DESEA CORREGIR</ModalHeader>
                   <ModalBody>
                     <form onSubmit={handleSubmit2}>
-                      <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 md:grid-cols-2">
                         <div className="mt-2 pr-4">
                           <Select
                             items={suppliers}
@@ -271,7 +283,7 @@ const handleOpen = (size) => {
                             placeholder="Selecciona un Usuario"
                             className="max-w-xs"
                             value={selectedSupplier}
-                            
+
                             onChange={handleSupplierChange}
                           >
                             {suppliers.map((supplier) => (
@@ -464,12 +476,12 @@ const handleOpen = (size) => {
               </div>
             </div>
 
-            
-            
+
+
           </div>
-          
+
         </div>
-        
+
       </div>
     </div>
   );
