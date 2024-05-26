@@ -88,7 +88,6 @@ const InformeGastos = () => {
 
   }
 
-
   //inicio para el filtro de datos
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]); // Agrega el estado para los datos filtrados
@@ -101,8 +100,6 @@ const InformeGastos = () => {
       router.push("/auth/Login");
     }
   }, []);
-
-
 
   useEffect(() => {
     const fetchSuppliers = async () => {

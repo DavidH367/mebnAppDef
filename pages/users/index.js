@@ -4,6 +4,7 @@ import { Card, Image, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import React, { useEffect } from "react";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRouter } from "next/router";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 
 export default function Users() {
   //Valida acceso a la pagina
@@ -23,7 +24,7 @@ export default function Users() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/img/logo_paginas.png" />
       </Head>
-      <h2 className="text-lg font-semibold mb-2 p-4 text-center">USUARIOS</h2>
+      <h2 className="text-lg font-semibold mb-2 p-4 text-center">REGISTRAR O ACTUALIZAR USUARIOS</h2>
       <div className="justify-center">
         <div className="p-4 grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 justify-items-center">
           <div>
@@ -37,7 +38,7 @@ export default function Users() {
                   <h4 className="font-bold text-large">Registrar Usuario</h4>
                   <Divider />
                   <small className="text-default-500 font-bold">
-                    Ingresar Datos de Usuarios
+                    Cambiar Rol de Usuario
                   </small>
                 </CardHeader>
                 <CardBody className="overflow-visible py-2">
