@@ -86,7 +86,6 @@ const InformeGastos = () => {
           <h2 className="text-lg font-semibold mb-2 ">
             <p className="text-center">ACTUALIZACIONES DE ACTIVIDADES</p>
           </h2>
-          <FilterSection onFilter={applyFilter} />
           <ReusableTable data={filteredData} columns={columns} />
         </div>
       </div>

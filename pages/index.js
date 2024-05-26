@@ -4,7 +4,9 @@ import { db } from "../lib/firebase";
 import { doc, onSnapshot } from "@firebase/firestore";
 import { useAuth } from "../lib/context/AuthContext";
 import { useRouter } from "next/router";
-import { Card, CardBody, Image, Button, Progress } from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
+
 
 import CafePerformance from "../Components/Form/coffee_performance";
 
@@ -51,8 +53,28 @@ export default function Home() {
         <h1 className="text-lg font-bold p-4 text-center">
           BIENVENIDO(A): {localUser.displayname}
         </h1>
+        <Divider className="my-6" />
+        <div className="flex justify-center items-center">
+          <Image
+            isBlurred
+            height={400}
+            width={440}
+            src="/img/NEW_MEBN_LOGO.png"
+            alt="LogoImages"
+            className="m-5"
+          />
+        </div>
+        <div className="flex justify-center items-center">
+        <Image
+            isBlurred
+            height={400}
+            width={440}
+            src="/img/LOGO_letras_deg.png"
+            alt="LogoImages"
+            className="m-5"
+          />
+        </div>
 
-        
       </div>
     </>
   );

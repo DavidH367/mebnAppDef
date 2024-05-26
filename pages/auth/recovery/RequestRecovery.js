@@ -7,12 +7,24 @@ import { ValidateEmail } from "../../../lib/Validators";
 import { useAuth } from "../../../lib/context/AuthContext";
 import styles from "../../../styles/Login.module.css";
 import { Button, Card, Spinner } from "@nextui-org/react";
+import { db } from "/lib/firebase";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  doc,
+  updateDoc
+} from "firebase/firestore";
+
+const upReference = collection(db, "updates");
+
 const RequestRecovery = () => {
   const [email, setEmail] = useState("");
   const [currentPhase, setCurrentPhase] = useState(0);
   const [loading, setLoading] = useState(false);
   const { forgotPassword, errors, setErrors } = useAuth();
   const router = useRouter();
+
   const handleNextPhase = () => {
     setLoading(false);
     setCurrentPhase(currentPhase < 2 ? currentPhase + 1 : currentPhase);
@@ -38,6 +50,11 @@ const RequestRecovery = () => {
       setLoading(false);
       return;
     }
+    const newUpData = {
+      action: "Se Solicito cambio de Contraseña",
+      date: new Date(),
+      uid: email,
+    };await addDoc(upReference, newUpData);
     handleNextPhase();
   };
   return (

@@ -13,6 +13,7 @@ import {
   where,
   updateDoc,
   doc,
+  addDoc,
 } from "@firebase/firestore";
 import { db, auth } from "../../lib/firebase";
 import { Button, Spinner } from "@nextui-org/react";
@@ -24,6 +25,8 @@ const ResetPassword = () => {
   const [isUpdatedPassword, setIsUpdatedPassword] = useState(false);
   const { errors, setErrors, logout, user } = useAuth();
   const router = useRouter();
+  const upReference = collection(db, "updates");
+
   useEffect(() => {
     if (!user) {
       setErrors("");
@@ -52,6 +55,12 @@ const ResetPassword = () => {
         console.log("Password updated successfully");
         const collectionRef = collection(db, "users");
         const q = query(collectionRef, where("uid", "==", user.uid));
+        const newUpData = {
+          action: "Se Modifico la Contraseña",
+          date: new Date(),
+          uid: user.uid,
+        }; addDoc(upReference, newUpData);
+
         getDocs(q).then((querySnapshot) => {
           if (querySnapshot.empty) {
             console.log("No documents found");
@@ -63,6 +72,7 @@ const ResetPassword = () => {
               .then(() => {
                 console.log("Document updated successfully");
                 setIsUpdatedPassword(true);
+                
               })
               .catch((error) => {
                 console.log("Error updating document:", error);

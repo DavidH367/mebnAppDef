@@ -213,7 +213,7 @@ const ConsultasClientes = () => {
                   <p className="font-bold text-lg">DESCRIPCION</p>
                 </label>
                 <div className="mt-2 pr-4">
-                  <Input
+                  <Textarea
                     isRequired
                     type="text"
                     label="Descript."
@@ -222,7 +222,8 @@ const ConsultasClientes = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="max-w-xs"
-                  />
+                  >
+                  </Textarea>
                 </div>
               </div>
 

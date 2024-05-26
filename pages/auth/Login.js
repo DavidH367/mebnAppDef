@@ -37,7 +37,7 @@ const Login = () => {
 return (
     <div>
         <Head>
-            <title>Bodega-Gad</title>
+            <title>MEBN</title>
             <meta name="description" content="inicio de sesión"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <link rel="icon" href="/img/logo_paginas.png"/>
@@ -69,7 +69,7 @@ return (
                             type="email"
                             setValue={setEmail}
                             className="login-input"
-                            errorMessage={errors.code === 1 ? errors.message : ""}
+                            //errorMessage={errors.code === 1 ? errors.message : ""}
                         />
                     </div>
                     <div>
@@ -79,7 +79,7 @@ return (
                             type="password"
                             setValue={setPassword}
                             className={"login-input"}
-                            errorMessage={errors.code === 2 ? errors.message : ""}
+                            //errorMessage={errors.code === 2 ? errors.message : ""}
                         />
                     </div>
                     
@@ -88,13 +88,7 @@ return (
             </Card>
             <div className={styles.loginButtonContainer}>
                 {loading && <Spinner label="Iniciando sesión..." color="primary" />}
-                {errors.code === 3 && (
-                    <Chip color="danger" className="mb-3">
-                        <span className="form-errors">
-                        {errors.code === 3 ? errors.message : ""}
-                        </span>
-                    </Chip>
-                )}
+                
                 <PrimaryButton
                     text="Iniciar Sesión"
                     onClick={loginUser}

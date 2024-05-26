@@ -41,7 +41,7 @@ const InformeGastos = () => {
   useEffect(() => {
     const fetchExpenses = async () => {
       // Consulta a la colección "updates"
-      const updatesQuery = query(collection(db, "updates"));
+      const updatesQuery = query(collection(db, "updates"),orderBy("date","desc"));
       const updatesSnapshot = await getDocs(updatesQuery);
   
       const updatesData = [];
